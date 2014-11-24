@@ -282,6 +282,19 @@ class CI_Config {
 		return $this->slash_item('base_url').ltrim($this->_uri_string($uri), '/');
 	}
 
+	/**
+	 * Static URL
+	 * Returns static_url [. uri_string]
+	 *
+	 * @access public
+	 * @param string $uri
+	 * @return string
+	 */
+	function static_url($uri = '')
+	{
+		return $this->slash_item('static_url').ltrim($this->_uri_string($uri),'/');
+	}
+
 	// -------------------------------------------------------------
 
 	/**
