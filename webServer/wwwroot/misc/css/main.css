@@ -674,18 +674,25 @@ Footer
   }
 
 /*--------------page components-----------*/
-.login-bg{
-  background: url(../images/login.jpg) no-repeat left bottom;
-  width: 100%;
-  min-width: 1200px;
+.before-login{
+  background: #444 url(../images/bg.png);
 
-  height: 500px;
-  padding: 20px;
+  height: 100%;
   overflow: hidden;
-    -webkit-background-size: cover;
- -moz-background-size: cover;
- -o-background-size: cover;
- background-size: cover;
+}
+.loginBox {
+  width: 420px;
+  height: 230px;
+  padding: 0 20px;
+  border: 1px solid #fff;
+  color: #000;
+  margin-top: 40px;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 0 15px #222;
+  background: -moz-linear-gradient(top, #fff, #efefef 8%);
+  background: -webkit-gradient(linear, 0 0, 0 100%, from(#f6f6f6), to(#f4f4f4));
+  font: 11px/1.5em 'Microsoft YaHei';
 }
 .logo{
   background:  url(../images/logo.png) no-repeat top left 10px;
@@ -1175,187 +1182,4 @@ span.has-error {
   text-transform: uppercase;
   font-color:#000;
   font-weight: 300;
-}
-
-/***
-Chats
-***/
-.chats {
-  margin:0;
-  padding: 0;
-  margin-top: -15px;
-  margin-right: 10px;
-}
-
-.chats li {
-  list-style: none;
-  padding: 5px 0;
-  margin: 10px auto;
-  font-size: 12px;
-}
-
-.chats li img.avatar {
-  height: 45px;
-  width: 45px;
-  -webkit-border-radius: 50% !important;
-     -moz-border-radius: 50% !important;
-          border-radius: 50% !important;
-}
-
-.chats li.in img.avatar {
-  float: left;
-  margin-right: 10px;
-}
-
-.chats li .name {
-  color:#3590c1;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.chats li .datetime {
-  color:#333;
-  font-size: 13px;
-  font-weight: 400;
-}
-
-.chats li.out img.avatar {
-  float: right;
-  margin-left: 10px;
-}
-
-.chats li .message {
-  display: block; 
-  padding: 5px;
-  position: relative;
-}
-.chats .senderOrg{
-
-}
-.chats li.in .message {  
-  -webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
-          border-radius: 4px;
-  text-align: left;
-  border: 1px solid #ddd;
-  margin-left: 105px;
-  background: #fafafa 
-}
-
-.chats li.in .message.unread {  
-  -webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
-          border-radius: 4px;
-  text-align: left;
-  border: 1px solid #ddd;
-  margin-left: 105px;
-  background: #fadddd 
-}
-
-.chats li.in .message .arrow {
-  display: block;
-  position: absolute;
-  top: 5px;
-  left: -8px;  
-  width: 0; 
-  height: 0; 
-
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;  
-  border-right: 8px solid #ddd;  
-}
-
-.chats li.out .message .arrow {
-  display: block;
-  position: absolute;
-  top: 5px;
-  right: -8px;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;  
-  border-left: 8px solid #ddd;  
-}
-
-.chats li.out .message {
-  border: 1px solid #ddd;
-  -webkit-border-radius: 4px;
-     -moz-border-radius: 4px;
-          border-radius: 4px;
-  margin-right: 65px;
-  text-align: right;
-}
-
-.chats li.out .name, 
-.chats li.out .datetime  {  
-  text-align: right;
-}
-
-.chats li .message .body {
-  display: block; 
-}
-
-.chat-form {
-  margin-top: 15px;
-  padding: 10px;
-  background-color: #e9eff3;
-  overflow: hidden;
-  clear: both;   
-}
-
-.chat-form .input-cont {
-  margin-right: 40px;
-}
-
-.chat-form .input-cont .form-control {
-  width: 100% !important;
-  margin-bottom: 0px;
-}
-
-.chat-form .input-cont input{
-  border: 1px solid #ddd;
-  width: 100%  !important;  
-  margin-top: 0;
-}
-
-.chat-form .input-cont input {
-  background-color: #fff !important;
-}
-
-.chat-form .input-cont input:focus{
-  border: 1px solid #4b8df9 !important;
-}
-
-.chat-form .btn-cont {
-  margin-top: -42px;
-  position: relative;
-  float: right;
-  width:44px;
-}
-
-.chat-form .btn-cont .arrow {
-  position: absolute;
-  top: 17px;
-  right: 43px;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;  
-  border-right: 8px solid #428bca;   
-    -webkit-box-sizing: border-box;
-       -moz-box-sizing: border-box;
-            box-sizing: border-box; 
-}
-
-.chat-form .btn-cont:hover .arrow {
-  border-right-color: #0362fd;
-}
-
-.chat-form .btn-cont:hover .btn {
-  background-color: #0362fd;
-}
-
-.chat-form .btn-cont .btn {
-  border-radius: 0px 4px 4px 0px;
-  margin-top: 8px;
-}
-
-.table-striped > tbody > tr:nth-child(odd) > td, .table-striped > tbody > tr:nth-child(odd) > th {
-background-color: #f5f5f5;
 }
