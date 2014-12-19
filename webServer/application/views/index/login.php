@@ -1,52 +1,75 @@
-<div class="row loginBox" >
-    <div class="col-md-7 col-sm-7 col-lg-7 left">
-        <h2>商户登录</h2>
-        <form class="form-horizontal" role="form" id="loginForm">
-                <div class="form-group" id="uEmailGroup">
-                    <label for="uEmail" class="col-sm-3 control-label">登录邮箱</label>
-                    <div class="col-sm-9">
-                        <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="邮箱" required value="<?php echo $this->loginname?>">
-                    </div>
-                </div>
-                <div class="form-group" id="uPasswordGroup">
-                    <label for="uPassword" class="col-sm-3 control-label">密码</label>
-                    <div class="col-sm-9">
-                        <input type="password" minlength="6" class="form-control" id="uPassword" placeholder="密码" name="uPassword" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <div class="col-sm-offset-3 col-sm-9">
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" id="uRememberMe">记住我
-                            </label>
-                      </div>
-                    </div>
-                </div>
-                <div class="text-center">
-
-                <!-- <a href="<?php echo site_url('project/index') ?>" class="btn btn-primary">登   录</a> -->
-                <a href="javascript:void(0);" onclick="req_login()" class="btn btn-primary">登   录</a>
-                </div>
-                <a href="<?php echo site_url('index/reg') ?>">注   册</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="javascript:void(0)" onclick="lightbox({url:'<?php echo site_url('index/forgot') ?>',size:'m'})">忘记密码</a>
-        </form>
-      </div>
-      <div class="col-md-5 col-sm-5 col-lg-5 right">
-        <h2>没有帐户？</h2>
-        <div>
-          <p>这里有一段文字啊，很多的文字啊，太多太多的文字了，主要可以介绍介绍注册的好处和公司或者项目概况。。。</p>
-                        
-          <p><input type="button" value=" 注册 " class="btn regBtn"></p>
+<!-- BEGIN LOGIN FORM -->
+<form id="loginForm" class="login-form" action="<?=site_url("index/doLogin")?>" method="post">
+    <h3 class="form-title">登录</h3>
+    <div class="form-group">
+        <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+        <label class="control-label visible-ie8 visible-ie9">登录邮箱/手机号</label>
+        <div class="input-icon">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="登录邮箱/手机号" id="uEmail" name="uEmail">
         </div>
-      </div>
-    </div><!-- /loginBox -->
-
-    <div class="col-md-8  col-sm-8 col-lg-8">
-        
     </div>
-</div>
+    <div class="form-group">
+        <label class="control-label visible-ie8 visible-ie9">密码</label>
+        <div class="input-icon">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="密码" id="uPassword" name="uPassword">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-6">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" id="uRememberMe">记住我
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <button type="button" class="btn green-haze pull-right" onclick="req_login()">
+            登录 <span class="glyphicon glyphicon-ok"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+    <hr/>
+    <div class="login-options">
+        <h4>或使用以下帐号登录</h4>
+        <ul class="social-icons">
+            <li>
+                <a class="facebook" data-original-title="facebook" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
+                </a>
+            </li>
+            <li>
+                <a class="twitter" data-original-title="Twitter" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
+                </a>
+            </li>
+            <li>
+                <a class="googleplus" data-original-title="Goole Plus" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
+                </a>
+            </li>
+            <li>
+                <a class="linkedin" data-original-title="Linkedin" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
+                </a>
+            </li>
+        </ul>
+    </div>
+    <hr/>
+    <div class="forget-password">
+        <h4>忘记密码？</h4>
+        <p>
+            <a href="javascript:void(0)" onclick="lightbox({url:'<?php echo site_url('index/forgot') ?>',size:'m'})">点击这里</a>
+            重置密码
+        </p>
+    </div>
+    <div class="create-account">
+        <h4>还没有帐号？</h4>
+        <p>
+            <a href="<?php echo site_url('index/reg') ?>">点击注册</a>或使用上面其他帐号登录
+        </p>
+    </div>
+</form>
+<!-- END LOGIN FORM -->
 <script>
 var validator = $("#loginForm").validate();
 function req_login(){

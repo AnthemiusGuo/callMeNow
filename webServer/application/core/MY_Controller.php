@@ -20,6 +20,7 @@ class P_Controller extends CI_Controller {
 	public $orgId = 0;
 	public $orgName = '';
 	public $viewType;
+	public $pageClass = 'normal';
 	function __construct($login_verify = true) {
 		parent::__construct();
 		date_default_timezone_set("Asia/Shanghai");

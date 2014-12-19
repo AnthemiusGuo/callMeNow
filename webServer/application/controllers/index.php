@@ -7,9 +7,8 @@ class Index extends P_Controller {
 	}
 
 	function index() {
-		echo(333);
-		exit;
 		$this->login_verify();
+		
 		if ($this->userInfo->field_list['everEdit']->value==0) {
 			$this->needInputUserInfo = true;
 		} else {
@@ -219,6 +218,7 @@ http://www.npone.cn<br/>
 
 	function login() {
 		$this->is_login = false;
+		$this->pageClass = 'login';
 		if ($this->login->is_login()){
 			$this->login->logout();
 		}
@@ -230,6 +230,7 @@ http://www.npone.cn<br/>
 	}
 	function reg() {
 		$this->is_login = false;
+		$this->pageClass = 'login';
 		if ($this->login->is_login()){
 			$this->login->logout();
 		}

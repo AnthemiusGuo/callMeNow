@@ -519,6 +519,70 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "webServer/application/views/common/header.php",
+			"settings":
+			{
+				"buffer_size": 3714,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "webServer/application/views/common/footer.php",
+			"settings":
+			{
+				"buffer_size": 267,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/home/guojia/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+			"settings":
+			{
+				"buffer_size": 521,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/data/Codes/the9demo/dist/index.html",
+			"settings":
+			{
+				"buffer_size": 6717,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "webServer/application/views/default_before_login.php",
+			"settings":
+			{
+				"buffer_size": 205,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "webServer/application/views/index/login.php",
+			"settings":
+			{
+				"buffer_size": 3003,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "webServer/wwwroot/misc/css/main.css",
+			"settings":
+			{
+				"buffer_size": 20740,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "webServer/application/index.html",
+			"settings":
+			{
+				"buffer_size": 114,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -572,10 +636,25 @@
 	},
 	"expanded_folders":
 	[
-		"/data/Codes/callMeNow/webServer"
+		"/data/Codes/callMeNow/webServer",
+		"/data/Codes/callMeNow/webServer/application",
+		"/data/Codes/callMeNow/webServer/system",
+		"/data/Codes/callMeNow/webServer/wwwroot"
 	],
 	"file_history":
 	[
+		"/home/guojia/.config/sublime-text-3/Packages/Default/Default (Linux).sublime-keymap",
+		"/data/Codes/callMeNow/webServer/application/config/autoload.php",
+		"/data/Codes/callMeNow/webServer/application/config/config.php",
+		"/data/Codes/callMeNow/webServer/application/controllers/index.php",
+		"/data/Codes/callMeNow/webServer/system/core/Config.php",
+		"/data/Codes/callMeNow/webServer/system/helpers/url_helper.php",
+		"/data/Codes/callMeNow/webServer/application/logs/log-2014-11-20.php",
+		"/data/Codes/callMeNow/webServer/application/config/routes.php",
+		"/data/Codes/callMeNow/webServer/application/core/MY_Controller.php",
+		"/data/Codes/the9demo/dist/index.html",
+		"/data/Codes/callMeNow/webServer/application/controllers/welcome.php",
+		"/data/Codes/callMeNow/callMeNow.sublime-project",
 		"/data/Codes/ddz_lua/scripts/izxFW/ResourceManager.lua",
 		"/data/Codes/ddz_lua/scripts/moduleLobby/ctrllers/LoadingSceneCode.lua",
 		"/data/Codes/ddz_lua/scripts/moduleZJH/views/GameScene.lua",
@@ -587,7 +666,6 @@
 		"/data/Codes/ddz_lua/scripts/moduleDdz/logics/GameLogic.lua",
 		"/data/Codes/ddz_lua/scripts/config.lua",
 		"/data/Codes/ddz_lua/scripts/izxFW/PacketDefine.lua",
-		"/data/Codes/the9demo/dist/index.html",
 		"/data/Codes/ddz_lua/scripts/moduleLobby/views/UpdaterSceneCode.lua",
 		"/data/Codes/ddz_lua/scripts/moduleLobby/views/LobbyScene.lua",
 		"/data/Codes/ddz_lua/scripts/moduleLobby/views/BiSaiChangScene.lua",
@@ -692,18 +770,7 @@
 		"/data/Codes/ddz_lua/sources/luaExt/PluginProxy.h",
 		"/home/guojia/Documents/Bromski充分认识到观众的需求，观众经过多年的吞咽那些西方作品，终于感觉到回家的冲动，回到波兰的",
 		"/home/guojia/Documents/电影娱乐化.txt",
-		"/home/guojia/Documents/1989年后波兰电影的商业策略.txt",
-		"/data/Codes/ddz_lua/proj.web_upgrade/moduleDdz/codeTemp/izxFW/ResourceManager.lua",
-		"/home/guojia/Share/package/ydmm.sh",
-		"/data/Codes/quick/quick-cocos2d-x-2.2.5.weiping/samples/touch/scripts/app/MyApp.lua",
-		"/data/Codes/quick/quick-cocos2d-x/framework/framework/audio.lua",
-		"/data/Codes/ddz_lua/scripts/moduleDdz/ctrllers/Me.lua",
-		"/data/Codes/quick/quick-cocos2d-x/samples/coinflip/scripts/app/ui/ScrollView.lua",
-		"/data/Codes/quick/quick-cocos2d-x/samples/iap4ios/scripts/scenes/MainScene.lua",
-		"/data/Codes/quick/quick-cocos2d-x/samples/dragonbones/scripts/scenes/MainScene.lua",
-		"/data/Codes/OldDDZ/workspace/trunk/BDMobile/BDCasino/DDZ_LUA/tags/3.0.9/scripts/config.lua",
-		"/data/Codes/ddz_lua/scripts/moduleDdz/views/InformationLayer.lua",
-		"/data/Codes/OldDDZ/workspace/trunk/BDMobile/BDCasino/DDZ_LUA/tags/3.0.9/scripts/izxFW/MiniGameManager.lua"
+		"/home/guojia/Documents/1989年后波兰电影的商业策略.txt"
 	],
 	"find":
 	{
@@ -817,6 +884,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"%;",
 			"setBaoXiangSprite(true)",
 			"setBaoXiangSprite",
 			"self.nodeGonggao:addTouchEventListener",
@@ -943,8 +1011,7 @@
 			"BM",
 			"newScale9Sprite",
 			"scale9",
-			"display.LEFT_CENTER",
-			"newTTFLabel"
+			"display.LEFT_CENTER"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1057,8 +1124,254 @@
 	"groups":
 	[
 		{
+			"selected": 3,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "webServer/application/views/common/header.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3714,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								649,
+								649
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tabs_extra_last_activated": 1418118870.0,
+							"tabs_extra_last_activated_sheet_index": 0,
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 408.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "webServer/application/views/common/footer.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 267,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								267,
+								267
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tabs_extra_last_activated": 1418285095.02,
+							"tabs_extra_last_activated_sheet_index": 1
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/guojia/.config/sublime-text-3/Packages/User/Default (Linux).sublime-keymap",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 521,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								49,
+								49
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
+							"tabs_extra_last_activated": 1418285332.97,
+							"tabs_extra_last_activated_sheet_index": 2
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/data/Codes/the9demo/dist/index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6717,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2561,
+								2561
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1418373543.01,
+							"tabs_extra_last_activated_sheet_index": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 204.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "webServer/application/views/default_before_login.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 205,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								101,
+								101
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tabs_extra_last_activated": 1416909349.99,
+							"tabs_extra_last_activated_sheet_index": 3
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "webServer/application/views/index/login.php",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3003,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								24,
+								24
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/PHP/PHP.tmLanguage",
+							"tab_size": 4,
+							"tabs_extra_last_activated": 1416909417.77,
+							"tabs_extra_last_activated_sheet_index": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "webServer/wwwroot/misc/css/main.css",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 20740,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								886,
+								886
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 2,
+							"tabs_extra_last_activated": 1418089022.75,
+							"tabs_extra_last_activated_sheet_index": 5,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 840.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "webServer/application/index.html",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 114,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				}
 			]
 		}
 	],
