@@ -1,11 +1,11 @@
 <!-- BEGIN REGISTRATION FORM -->
- <form class="login-form" id="regForm" action="<?=site_url("index/doReg")?>" method="post">
+ <form class="login-form" id="regForm" method="post">
     <h3>注册</h3>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">登录邮箱</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="text" placeholder="登录邮箱" name="uEmail">
+            <input class="form-control placeholder-no-fix" type="text" placeholder="登录邮箱" id="uEmail" name="uEmail">
         </div>
         <span class="help-block">可以使用qq号@qq.com</span>
     </div>
@@ -13,21 +13,21 @@
         <label class="control-label visible-ie8 visible-ie9">登录手机号</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="text" placeholder="登录手机号" name="uEmail">
+            <input class="form-control placeholder-no-fix" type="text" placeholder="登录手机号" id="uPhone" name="uPhone">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">姓名</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="姓名" name="username">
+            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="姓名" id="uName"  name="uName">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">密码</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="register_password" placeholder="密码" name="password">
+            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="uPassword" placeholder="密码" name="uPassword">
         </div>
     </div>
     <div class="form-group">
@@ -35,7 +35,7 @@
         <div class="controls">
             <div class="input-icon">
                 <span class="glyphicon glyphicon-edit"></span>
-                <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="重输密码" name="rpassword">
+                <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="重输密码" id="uPassword2" name="uPassword2">
             </div>
         </div>
     </div>
@@ -49,7 +49,7 @@
         </div>
     </div>
     <div class="form-group">
-        <button type="submit" id="register-submit-btn" class="btn green-haze pull-right" onclick="req_reg()">
+        <button type="button" id="register-submit-btn" class="btn green-haze pull-right" onclick="req_reg()">
         注册<span class="glyphicon glyphicon-edit"></span>
         </button>
     </div>

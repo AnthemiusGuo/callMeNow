@@ -292,27 +292,27 @@ http://www.npone.cn<br/>
 
 		$uid = $this->userModel->reg_user($email,$pwd,$uName,$inviteCode);
 		if ($uid>0){
-			$content = "{username}，您好，<br/>
-<br/>
-感谢您注册npone.cn。<br/>
-您的注册邮箱是：{useremail}。<br/>
-<br/>
-NPONE专注于公益行业信息化解决方案的研究和建设。<br/>
-想了解我们的产品更新和新闻，请关注：<br/>
-新浪微博：@xxxx（http://www.weibo.com/xxxxxxxx）<br/>
-微博公众号：xxxxxxxx<br/>
-<br/>
-敬上，<br/>
-NPONE团队<br/>
-<br/>
-http://www.npone.cn<br/>
-客服邮箱：xxxx@npone.cn<br/>
-";
-			$content = str_replace(array('{username}',"{useremail}"),
-			array($uName,$email),$content);
+// 			$content = "{username}，您好，<br/>
+// <br/>
+// 感谢您注册npone.cn。<br/>
+// 您的注册邮箱是：{useremail}。<br/>
+// <br/>
+// NPONE专注于公益行业信息化解决方案的研究和建设。<br/>
+// 想了解我们的产品更新和新闻，请关注：<br/>
+// 新浪微博：@xxxx（http://www.weibo.com/xxxxxxxx）<br/>
+// 微博公众号：xxxxxxxx<br/>
+// <br/>
+// 敬上，<br/>
+// NPONE团队<br/>
+// <br/>
+// http://www.npone.cn<br/>
+// 客服邮箱：xxxx@npone.cn<br/>
+// ";
+// 			$content = str_replace(array('{username}',"{useremail}"),
+// 			array($uName,$email),$content);
 
-			$this->sendMail($email,$content,"感谢您注册npone.cn");
-			$this->sendMsg($uid,0,0,$content);
+// 			$this->sendMail($email,$content,"感谢您注册npone.cn");
+// 			$this->sendMsg($uid,0,0,$content);
 			$this->login->process_login($email,$uid,$rememberMe);
 			$data = array();
 			$data['goto_url'] = site_url('index/index');

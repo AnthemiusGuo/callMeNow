@@ -123,8 +123,8 @@ class User_model extends Record_model {
     }
 
     public function check_user_exist($email){
-        $sql = "SELECT * FROM uUser where email='{$email}'";
-        $query  = $this->db->query($sql, array($email)); 
+        $this->cimongo->where(array('email'=>$email));
+        $query = $this->cimongo->get($this->tableName);
         if ($query->num_rows() > 0)
         {
             return true;
@@ -229,8 +229,10 @@ class User_model extends Record_model {
            'regTS' =>time(),
         );
 
-        $this->db->insert('uUser', $data); 
-        $uid = $this->db->insert_id();
+        $this->cimongo->insert('uUser', $data); 
+        $insert_ret = $this->cimongo->insert_id();
+        $uid = $insert_ret->id;
+
         $data['uid'] = $uid;
         $this->init_with_data($uid,$data);
 
@@ -263,9 +265,10 @@ class User_model extends Record_model {
     }
 
     public function verify_login($email,$pwd){
-        
-        $sql = "SELECT * FROM uUser where email='{$email}'";
-        $query  = $this->db->query($sql, array($email)); 
+
+        $this->cimongo->where(array('email'=>$email));
+        $query = $this->cimongo->get($this->tableName);
+
         if ($query->num_rows() > 0)
         {
             $result = $query->row_array(); 
