@@ -6,14 +6,14 @@
         <label class="control-label visible-ie8 visible-ie9">登录邮箱/手机号</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="登录邮箱/手机号" id="uEmail" name="uEmail">
+            <input class="form-control placeholder-no-fix" type="text" placeholder="登录邮箱/手机号" id="uEmail" name="uEmail">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">密码</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="密码" id="uPassword" name="uPassword">
+            <input class="form-control placeholder-no-fix" type="password" placeholder="密码" id="uPassword" name="uPassword">
         </div>
     </div>
     <div class="form-group">
@@ -37,21 +37,11 @@
         <h4>或使用以下帐号登录</h4>
         <ul class="social-icons">
             <li>
-                <a class="facebook" data-original-title="facebook" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
+                <a href="#">
+                    <img src="<?=static_url('images/qq.png')?>" alt="" width="25px">
                 </a>
             </li>
-            <li>
-                <a class="twitter" data-original-title="Twitter" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
-                </a>
-            </li>
-            <li>
-                <a class="googleplus" data-original-title="Goole Plus" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
-                </a>
-            </li>
-            <li>
-                <a class="linkedin" data-original-title="Linkedin" href="http://www.keenthemes.com/preview/metronic/theme/templates/admin/login_3.html#">
-                </a>
-            </li>
+            
         </ul>
     </div>
     <hr/>
@@ -65,7 +55,14 @@
     <div class="create-account">
         <h4>还没有帐号？</h4>
         <p>
-            <a href="<?php echo site_url('index/reg') ?>">点击注册</a>或使用上面其他帐号登录
+            <a href="<?php echo site_url('index/reg') ?>">点击注册</a>注册帐号，或使用上面QQ等方式登录
+        </p>
+    </div>
+    <hr/>
+    <div>
+        <h4>帮助</h4>
+        <p>
+            帐号体系说明
         </p>
     </div>
 </form>

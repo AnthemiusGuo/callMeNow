@@ -1,6 +1,6 @@
 <!-- BEGIN REGISTRATION FORM -->
  <form class="login-form" id="regForm" method="post">
-    <h3>注册</h3>
+    <h3>注册帐号</h3>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">登录邮箱</label>
         <div class="input-icon">
@@ -20,14 +20,14 @@
         <label class="control-label visible-ie8 visible-ie9">姓名</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="姓名" id="uName"  name="uName">
+            <input class="form-control placeholder-no-fix" type="text"  placeholder="姓名" id="uName"  name="uName">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">密码</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="uPassword" placeholder="密码" name="uPassword">
+            <input class="form-control placeholder-no-fix" type="password"  id="uPassword" placeholder="密码" name="uPassword">
         </div>
     </div>
     <div class="form-group">
@@ -35,8 +35,15 @@
         <div class="controls">
             <div class="input-icon">
                 <span class="glyphicon glyphicon-edit"></span>
-                <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="重输密码" id="uPassword2" name="uPassword2">
+                <input class="form-control placeholder-no-fix" type="password"  placeholder="重输密码" id="uPassword2" name="uPassword2">
             </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label visible-ie8 visible-ie9">邀请码</label>
+        <div class="input-icon">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="text" placeholder="如果您有邀请码，请输入" id="uPhone" name="uPhone">
         </div>
     </div>
     <div class="form-group">
@@ -82,8 +89,9 @@ function req_reg(){
     var uPassword = $("#uPassword").val();
     var uInvite = $("#uInvite").val();
     var uName = $("#uName").val();
+    var uPhone = $("#uPhone").val();
 
-    ajax_post({m:'index',a:'doReg',data:{uEmail:uEmail,uPassword:uPassword,uInvite:uInvite,uName:uName},callback:function(json){
+    ajax_post({m:'index',a:'doReg',data:{uPhone:uPhone,uEmail:uEmail,uPassword:uPassword,uInvite:uInvite,uName:uName},callback:function(json){
             if (json.rstno>0){
                 window.location.href=json.data.goto_url; 
             } else {

@@ -236,6 +236,15 @@ http://www.npone.cn<br/>
 		}
 		$this->template->load('default_before_login', 'index/reg');
 	}
+	function regShop() {
+		$this->is_login = false;
+		$this->pageClass = 'login';
+		if ($this->login->is_login()){
+			$this->login->logout();
+		}
+		$this->template->load('default_before_login', 'index/regShop');
+	}
+	
 
 	function doUpdatePerInfo(){
 		$this->login_verify();
@@ -290,8 +299,8 @@ http://www.npone.cn<br/>
 
 		$this->load->model('records/user_model',"userModel");
 
-		$uid = $this->userModel->reg_user($email,$pwd,$uName,$inviteCode);
-		if ($uid>0){
+		$ret = $this->userModel->reg_user($email,$pwd,$uName,$inviteCode);
+		if ($ret>0){
 // 			$content = "{username}，您好，<br/>
 // <br/>
 // 感谢您注册npone.cn。<br/>
@@ -313,7 +322,8 @@ http://www.npone.cn<br/>
 
 // 			$this->sendMail($email,$content,"感谢您注册npone.cn");
 // 			$this->sendMsg($uid,0,0,$content);
-			$this->login->process_login($email,$uid,$rememberMe);
+			$uid = $this->userModel->uid;
+			$this->login->process_login($email,$uid,true);
 			$data = array();
 			$data['goto_url'] = site_url('index/index');
 			echo $this->exportData($data,$uid);
@@ -321,10 +331,10 @@ http://www.npone.cn<br/>
 			$err_codes = array(-1=>array('id'=>'uEmail','msg'=>'用户已存在'),
 								-2=>array('id'=>'uInvite','msg'=>'已有组织录入您的数据，请咨询组织获得邀请码'),
 								-3=>array('id'=>'uInvite','msg'=>'您的邀请码输入有误!请咨询组织获得正确的邀请码'));
-			$err_code = isset($err_codes[$uid])? $err_codes[$uid]:array('id'=>'uEmail','msg'=>'未知错误');
+			$err_code = isset($err_codes[$ret])? $err_codes[$ret]:array('id'=>'uEmail','msg'=>'未知错误');
 			;
 
-			echo $this->exportData(array('err'=>$err_code),$uid);
+			echo $this->exportData(array('err'=>$err_code),$ret);
 		}
 	}
 
@@ -332,6 +342,7 @@ http://www.npone.cn<br/>
 		$email = $this->input->post('uEmail');
 		$pwd = $this->input->post('uPassword');
 		$rememberMe = $this->input->post('uRememberMe');
+		
 		$this->load->model('records/user_model',"userModel");
         $login_rst = $this->userModel->verify_login($email,$pwd);
 		if ($login_rst > 0) {

@@ -147,75 +147,13 @@ class User_model extends Record_model {
                 return -3;
             }
             if ($temp[0]=='A'){
-                //机构普通邀请码，如果尚未录入数据，则创建一条组织申请
-                //如果已经录入数据，则自动绑定该帐号
-                $this->db->select('id,name')
-                    ->from('oOrg')
-                    ->where('commonInviteCode', $inviteCode);
-
-                $query = $this->db->get();
-                if ($query->num_rows() > 0)
-                {
-                    $result = $query->row_array(); 
-                    $input_users = $this->check_user_inputed($email,$result['id']);
-                    if (count($input_users)>0){
-                        $bindOrgId = $result['id'];
-                    } else {
-                        $applyOrgId = $result['id'];
-                    }
-                } else {
-                    return -3;
-                } 
+                
 
             } elseif ($temp[0]=='B'){
-                //机构超级邀请码，如果机构的超级用户字段尚未设置，则直接成为超级用户，
-                //并自动创建人事字段，自动绑定
-                //如果已经设置，禁止注册
-                $this->db->select('id,name,supperUid')
-                    ->from('oOrg')
-                    ->where('supperInviteCode', $inviteCode);
-
-                $query = $this->db->get();
-                if ($query->num_rows() > 0)
-                {
-                    $result = $query->row_array(); 
-                    if ($result['supperUid']>0){
-                        return -3;
-                    }
-                    $input_users = $this->check_user_inputed($email,$result['id']);
-                    if (count($input_users)>0){
-                        $bindOrgId = $result['id'];
-                    } else {
-                        $data = array(
-                           'email' => $email ,
-                           'orgId' => $result['id'],
-                           'name' => $uName,
-                           'roleId' =>99,
-                           'createUid'=>0,
-                           'createTS'=>$zeit,
-                           'lastModifyUid'=>0,
-                           'lastModifyTS'=>$zeit,
-                        );
-
-                        $this->db->insert('pPeaple', $data); 
-                        $bindOrgId = $result['id'];
-                    }
-                    $updateSupperUser = $result['id'];
-                } else {
-                    return -3;
-                } 
+                
 
             } elseif ($temp[0]=='C'){
-                //个人邀请码，如果填错不允许注册
-                //如果已经录入数据，则自动绑定该帐号
-                $input_users = $this->check_user_inputed($email);
                 
-                if (count($input_users)>0){
-                    if (!isset($input_users[$inviteCode])){
-                        return -2;
-                    } 
-                    $bindOrgId = $input_users[$inviteCode];
-                } 
             } else {
                 return -3;
             }
@@ -261,7 +199,8 @@ class User_model extends Record_model {
             $this->db->where('id', $updateSupperUser)
                 ->update('oOrg', $data); 
         }
-        return $uid;
+        $this->uid = $uid;
+        return 1;
     }
 
     public function verify_login($email,$pwd){
@@ -274,7 +213,10 @@ class User_model extends Record_model {
             $result = $query->row_array(); 
             $real_pwd = $result['pwd'];
             if (strtolower(md5($pwd))==strtolower($real_pwd)){
-                $this->init_with_data($result['uid'],$result);
+                var_dump($result['_id']->id);
+                exit;
+
+                $this->init_with_data($result['_id']->id,$result);
                 return 1;
             } else {
                 return -2;

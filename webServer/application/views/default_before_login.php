@@ -4,7 +4,7 @@
 	<!-- BEGIN LOGO -->
 	<div class="logo">
 		<a href="<?=site_url()?>">
-			<img src="<?=static_url('images/logo.png')?>" alt="">
+			<img src="<?=static_url('images/logo.png')?>" alt="" width="100px">
 		</a>
 	</div>
 	<!-- END LOGO -->

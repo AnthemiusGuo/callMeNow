@@ -130,7 +130,8 @@ class P_Controller extends CI_Controller {
 				$init_result = $this->userInfo->init($this->uid);
 				$this->session->set_userdata('userInfo',$this->userInfo->fetchArray());
 			}
-			
+			var_dump($init_result);
+			exit;
 			if ($init_result<0){
 				$this->login->logout();
 				header("Location:".site_url('index/login'));
@@ -139,6 +140,8 @@ class P_Controller extends CI_Controller {
 				
 			};
 		} else {
+			var_dump(222);
+			exit;
 			header("Location:".site_url('index/login'));
 			exit;
 		}
