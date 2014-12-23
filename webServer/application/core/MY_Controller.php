@@ -21,6 +21,8 @@ class P_Controller extends CI_Controller {
 	public $orgName = '';
 	public $viewType;
 	public $pageClass = 'normal';
+	public $menus = array();
+
 	function __construct($login_verify = true) {
 		parent::__construct();
 		date_default_timezone_set("Asia/Shanghai");
@@ -36,6 +38,435 @@ class P_Controller extends CI_Controller {
 
 		}
 	}
+
+	public function limit_access_by_rule($rule) {
+        
+
+        $targetRule  = array('index'=>'all');
+        
+        if ($rule['Project']!=null){
+            $targetRule['project'] = array();
+            if (in_array('InvoledView', $rule['Project'])){
+                $targetRule['project'][] = 'index';
+            }
+            if (in_array('BaseView', $rule['Project'])){
+                $targetRule['project'][] = 'index';
+                $targetRule['project'][] = 'analytics';
+                if (!isset($targetRule['task'])){
+                    $targetRule['task'] = array();
+                }
+                $targetRule['task'][] = 'index';
+
+                if (!isset($targetRule['schedule'])){
+                    $targetRule['schedule'] = array();
+                }
+                $targetRule['schedule'][] = 'index';
+
+                if (!isset($targetRule['donation'])){
+                    $targetRule['donation'] = array();
+                }
+                $targetRule['donation'][] = 'index';
+                // $targetRule['donation'][] = 'analytics';
+
+                if (!isset($targetRule['document'])){
+                    $targetRule['document'] = array();
+                }
+                $targetRule['document'][] = 'index';
+
+                if (!isset($targetRule['crm'])){
+                    $targetRule['crm'] = array();
+                }
+                $targetRule['crm'][] = 'index';
+                $targetRule['crm'][] = 'analytics';
+                
+            }
+            if (in_array('Edit', $rule['Project'])){
+                $targetRule['project'][] = 'create';
+                if (!isset($targetRule['task'])){
+                    $targetRule['task'] = array();
+                }
+
+                $targetRule['task'][] = 'create';
+                if (!isset($targetRule['schedule'])){
+                    $targetRule['schedule'] = array();
+                }
+
+                $targetRule['schedule'][] = 'create';
+                if (!isset($targetRule['donation'])){
+                    $targetRule['donation'] = array();
+                }
+                $targetRule['donation'][] = 'create';
+
+                if (!isset($targetRule['document'])){
+                    $targetRule['document'] = array();
+                }
+                $targetRule['document'][] = 'create';
+
+                if (!isset($targetRule['crm'])){
+                    $targetRule['crm'] = array();
+                }
+                $targetRule['crm'][] = 'create';
+            }
+            if (in_array('BugetApprove', $rule['Project'])){
+                
+            }
+            
+        }
+    if ($rule['Finance']!=null){
+            $targetRule['finance'] = array();
+            if (in_array('Reimbursement', $rule['Finance'])){
+                $targetRule['finance'][] = 'viewall_reimbursement';
+            }
+            if (in_array('ReimbursementEdit', $rule['Finance'])){
+                $targetRule['finance'][] = 'new_reimbursement';
+                $targetRule['finance'][] = 'check_reimbursement';
+            }
+            if (in_array('ReimbursementApprove', $rule['Finance'])){
+                $targetRule['finance'][] = 'approve_reimbursement';
+            }
+            if (in_array('ReimbursementAudit', $rule['Finance'])){
+                $targetRule['finance'][] = 'approve_reimbursement';
+            }
+            if (in_array('BaseView', $rule['Finance'])){
+                $targetRule['finance'][] = 'cashflow';
+                $targetRule['finance'][] = 'analytics';
+
+            }
+            
+            if (in_array('TurnoverEdit', $rule['Finance'])){
+                $targetRule['finance'][] = 'cashflow';
+            }
+            if (in_array('TurnoverAudit', $rule['Finance'])){
+                $targetRule['finance'][] = 'cashflow';
+                $targetRule['finance'][] = 'setting';
+            }
+        }
+        if ($rule['Hr']!=null){
+            $targetRule['hr'] = array();
+            if (in_array('BaseView', $rule['Hr'])){
+                $targetRule['hr'][] = 'index';
+                $targetRule['hr'][] = 'analytics';
+                $targetRule['hr'][] = 'departments';
+                $targetRule['hr'][] = 'titles';
+            }
+            if (in_array('Edit', $rule['Hr'])){
+                $targetRule['hr'][] = 'create';
+                $targetRule['hr'][] = 'new_department';
+                $targetRule['hr'][] = 'new_title';
+            }
+        }
+        if ($rule['Management']!=null){
+            if (in_array('Management', $rule['Management'])){
+                $targetRule['management'] = 'all';
+            } elseif (in_array('Analytics', $rule['Management'])){
+                    $targetRule['management'][] = 'index';
+                    $targetRule['management'][] = 'orgInfo';
+                    
+                    
+                    $targetRule['project'][] = 'analytics';
+                    $targetRule['hr'][] = 'analytics';
+                    $targetRule['crm'][] = 'analytics';
+            }
+        }
+
+        $this->_limitAccessSort($targetRule);
+    }
+
+	public function load_menus(){
+		$this->_load_default_menus();
+		$this->limit_access_by_rule(array());
+	}
+
+	private function _load_default_menus(){
+		$this->all_menus["index"]=array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('index/index'),
+                        "name"=>"我的信息",
+                        "onclick"=>''
+                    ),
+                    "notifies"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('index/notifies'),
+                        "name"=>"通知",
+                        "onclick"=>''
+                    ),
+                    "mails"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('index/mails'),
+                        "name"=>"邮件",
+                        "onclick"=>''
+                    ),
+                    "settings"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('index/settings'),
+                        "name"=>"设置",
+                        "onclick"=>''
+                    ),
+                ),
+                "default_menu"=>"index",
+                "name"=>'个人面板',
+                "icon"=>'glyphicon-th',
+            );
+       
+        $this->all_menus["schedule"]=array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('schedule/index'),
+                        "name"=>"日程查询",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建日程",
+                        "onclick"=>"lightbox({url:'".site_url('schedule/create')."'})",
+                    )
+                ),
+                "default_menu"=>"index",
+                "name"=>'日程',
+                "icon"=>'glyphicon-calendar',
+            );
+        $this->all_menus["task"]=array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('task/index'),
+                        "name"=>"任务查询",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建任务",
+                        "onclick"=>"lightbox({url:'".site_url('task/create')."'})",
+                    )
+                ),
+                "default_menu"=>"index",
+                "name"=>'任务',
+                "icon"=>'glyphicon-list-alt',
+            );
+
+        
+        $this->all_menus["crm"] = array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/index'),
+                        "name"=>"社会关系查询",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建社会关系",
+                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
+                    ),
+                    "analytics"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/analytics'),
+                        "name"=>"社会关系统计",
+                        "onclick"=>''
+                    )
+                    
+                ),
+                "default_menu"=>"index",
+                "name"=>'客户管理',
+                "icon"=>'glyphicon-phone-alt',
+            );
+        $this->all_menus["finance"] = array(
+                "menu_array"=>array(
+                    "cashflow"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('finance/cashflow'),
+                        "name"=>"流水",
+                        "onclick"=>''
+                    ),
+                    "analytics"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('finance/analytics'),
+                        "name"=>"财务统计",
+                        "onclick"=>'',
+                    ),                    
+                    "setting"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('finance/setting'),
+                        "name"=>"财务设置",
+                        "onclick"=>''
+                    ),
+                   
+                ),
+                "default_menu"=>"index",
+                "name"=>'财务',
+                "icon"=>'glyphicon-usd',
+            );
+        
+        $this->all_menus["hr"] = array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('hr/index'),
+                        "name"=>"人事资料查询",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建人事资料",
+                        "onclick"=>"lightbox({url:'".site_url('hr/new_peaple')."'})",
+                    ),
+                    "analytics"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('hr/analytics'),
+                        "name"=>"人事资料统计",
+                        "onclick"=>''
+                    ),
+                    "departments"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('hr/departments'),
+                        "name"=>"部门查询",
+                        "onclick"=>''
+                    ),
+                    "new_department"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建部门",
+                        "onclick"=>"lightbox({url:'".site_url('hr/new_department')."'})",
+                    ),
+                    "titles"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('hr/titles'),
+                        "name"=>"职位查询",
+                        "onclick"=>''
+                    ),
+                    "new_title"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建职位",
+                        "onclick"=>"lightbox({url:'".site_url('hr/new_title')."'})",
+                    ),
+                   
+                ),
+                "default_menu"=>"index",
+                "name"=>'人事',
+                "icon"=>'glyphicon-tree-deciduous',
+            );
+        
+        $this->all_menus["document"]= array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('document/index'),
+                        "name"=>"文档查询",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建文档",
+                        "onclick"=>"lightbox({url:'".site_url('document/create')."'})",
+                    )
+                ),
+                "default_menu"=>"index",
+                "name"=>'文  档',
+                "icon"=>'glyphicon-paperclip',
+            );
+        $this->all_menus["management"]=array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/index'),
+                        "name"=>"组织概况",
+                        "onclick"=>''
+                    ),
+                    "orgInfo"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/orgInfo'),
+                        "name"=>"组织信息",
+                        "onclick"=>''
+                    ),
+                    "applies"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/applies'),
+                        "name"=>"用户申请",
+                        "onclick"=>''
+                    ),
+                    "role"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/role'),
+                        "name"=>"角色设置",
+                        "onclick"=>''
+                    ),
+                    "import"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/import'),
+                        "name"=>"数据导入",
+                        "onclick"=>''
+                    ),
+                ),
+                "default_menu"=>"index",
+                "name"=>'组织管理',
+                "icon"=>'glyphicon-wrench',
+            );
+        $this->all_menus["admin"]=array(
+                "menu_array"=>array(
+                    "orgs"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('admin/orgs'),
+                        "name"=>"组织管理",
+                        "onclick"=>''
+                    ),
+                    "admins"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('admin/admins'),
+                        "name"=>"管理员",
+                        "onclick"=>''
+                    ),
+                    "approveReal"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('admin/approveReal'),
+                        "name"=>"实名认证",
+                        "onclick"=>''
+                    ),
+                    "role"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('admin/role'),
+                        "name"=>"默认角色设置",
+                        "onclick"=>''
+                    ),
+                ),
+                "default_menu"=>"index",
+                "name"=>'网站管理',
+                "icon"=>'glyphicon-cog',
+            );
+		
+	}
+	private function _limitAccessSort($targetRule){
+        $this->menus = array();
+
+        foreach ($this->all_menus as $key => $menus) {
+            if (true or isset($targetRule[$key])){
+                $value = $targetRule[$key];
+
+                if (true or $value=="all"){
+                    $this->menus[$key] = $menus;
+                } else {
+                    $this->menus[$key] = $menus;
+                    $this->menus[$key]['menu_array'] = array();
+
+                    foreach ($menus['menu_array'] as $sub_key => $sub_menu) {
+                        if (in_array($sub_key,$value)){
+                            $this->menus[$key]['menu_array'][$sub_key] = $sub_menu;
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+
 
 	function setViewType($viewType){
 		$this->viewType =$viewType;
@@ -123,15 +554,9 @@ class P_Controller extends CI_Controller {
 			$this->is_login = true;
 			$this->uid = $this->login->uid;
 			$this->load->model('records/user_model',"userInfo");
-			if ($this->session->userdata('userInfo')){
-				$init_result = 0;
-				$this->userInfo->init_with_data($this->session->userdata('userInfo'));
-			} else {
-				$init_result = $this->userInfo->init($this->uid);
-				$this->session->set_userdata('userInfo',$this->userInfo->fetchArray());
-			}
-			var_dump($init_result);
-			exit;
+			
+			$init_result = $this->userInfo->init_by_uid($this->uid);
+
 			if ($init_result<0){
 				$this->login->logout();
 				header("Location:".site_url('index/login'));
@@ -140,8 +565,6 @@ class P_Controller extends CI_Controller {
 				
 			};
 		} else {
-			var_dump(222);
-			exit;
 			header("Location:".site_url('index/login'));
 			exit;
 		}

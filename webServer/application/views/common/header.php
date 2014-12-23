@@ -9,6 +9,7 @@
 	<?php echo link_tag(static_url('css/layout.css')); ?>
 	<?php echo link_tag(static_url('css/components.css')); ?>
     <?php echo link_tag(static_url('css/bootstrap-datetimepicker.min.css')); ?>
+    <?php echo link_tag(static_url('css/main.css')); ?>
 
     
 	<script type="text/javascript" src="<?php echo static_url('js/jquery-1.11.1.min.js'); ?>"></script>
@@ -22,6 +23,7 @@
 	<script type="text/javascript" src="<?php echo static_url('js/jquery.validate.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/jquery.flot.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/jquery.flot.pie.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo static_url('js/lib.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo static_url('js/main.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo static_url('js/ajaxfileupload.js'); ?>"></script>
     <script type="text/javascript">

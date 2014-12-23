@@ -104,7 +104,7 @@
     }
 
     public function init_with_data($id,$data){
-        $this->id = $id;
+        $this->id = $id->{'$id'};
         foreach ($data as $key => $value) {
             if (isset($this->field_list[$key])){
                 $this->field_list[$key]->init($value);

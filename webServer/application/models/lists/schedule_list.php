@@ -21,10 +21,8 @@ class Schedule_list extends List_model {
         $sunrise = $zeit-($zeit+3600*8)%86400;
         
         $this->record_list = array();
-        $pids = $this->get_pids_by_uid($uid);
-        if (count($pids)==0){
-            return;
-        }
+        
+        return;
         $this->db->select('pSchedule.*')
                     ->from('pSchedulePeapleRel')
                     ->join('pSchedule', 'pSchedule.id = pSchedulePeapleRel.scheduleId', 'left')

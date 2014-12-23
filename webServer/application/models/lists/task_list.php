@@ -24,10 +24,8 @@ class Task_list extends List_model {
         $month_start = mktime(0,  0,  0,  date("m"), 1, date("Y"));
         $month_end = mktime(23, 59, 59, date("m"),date("t"), date("Y"));
         $this->record_list = array(array(),array(),array(),array());
-        $pids = $this->get_pids_by_uid($uid);
-        if (count($pids)==0){
-            return;
-        }
+        return;
+        
         $this->db->select('pTask.*')
                     ->from('pTaskPeapleRel')
                     ->join('pTask', 'pTask.id = pTaskPeapleRel.taskId', 'left')

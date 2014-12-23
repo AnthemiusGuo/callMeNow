@@ -3,6 +3,7 @@
 class Login {
 	private $CI;
 	public $uid;
+	public $cookie_onlineId;
 
 	public function __construct() {
 		$this->CI =& get_instance();
@@ -13,12 +14,11 @@ class Login {
 		$logininfo = get_cookie('uinfo');
 
 		if ($logininfo==false){
-			$this->CI->session->unset_userdata('user');
 			return false;
 		} 
 
 		$loginUser = $this->decode_cookie_data($logininfo);
-
+		
 		if (substr(md5($loginUser['uuid'].$loginUser['login_ts'].'Sa34KJ9'), 10,8)!=$loginUser['auth']){
 			$this->CI->session->unset_userdata('user');
 			return false;
@@ -28,72 +28,129 @@ class Login {
 			$rememberme = true;
 		}
 
-		$user = $this->CI->session->userdata('user');
+		//取出数据库的数据
+		$sessionUser = $this->get_onlince_info();
+		
+		if ($sessionUser==false){
+			if ($rememberme) {
+				//自动登录
+
+				//先校驗用戶是否存在TODO
+				return $this->process_login($loginUser['loginname'],$loginUser['uuid'],true,true);
+
+			} else {
+				return false;	
+			}
+			
+		} 
 		
 
-		if(!empty($user['uuid']) && $loginUser['uuid'] == $user['uuid']) {
+		if($loginUser['uuid'] == $sessionUser['uuid']) {
 			//判断用户是否登录超时
 			$current_ts = time();
-			if(empty($user['login_ts']) 
-			|| $current_ts - $user['login_ts'] > $this->CI->config->item('login_expire')) {
-				$this->CI->session->unset_userdata('user');
-
+			if(empty($sessionUser['login_ts']) 
+			|| $current_ts - $sessionUser['login_ts'] > $this->CI->config->item('login_expire')) {
 				return false;
 			}
-			$user['login_ts'] = $current_ts;
-			$this->CI->session->set_userdata('user', $user);
-			$this->uid = $user['uuid'];
+			if ($current_ts - $sessionUser['login_ts'] > 60) {
+				//60秒以上，刷新session
+				$this->up_onlince_info(new MongoId($this->cookie_onlineId),array('login_ts'=>$current_ts));
+			}
+			
+			
+			$this->uid = $sessionUser['uuid'];
 			return true;
-		} elseif (!empty($user['uuid']) && $rememberme) {
-			//记住我
-			$this->process_login('',$user['uuid'],$rememberme);
-		}
-		//$this->CI->session->sess_destroy();
-		$this->CI->session->unset_userdata('user');
+		} 
+
 		return false;
 	}
 
 	public function encode_cookie_data($user){
-		$cookie_data = base64_encode($user['uuid']
+		$cookie_data = base64_encode($user['uid']
+									.'|'.$user['uuid']
 									.'|'.$user['login_ts']
 									.'|'.$user['auth']
-									.'|'.$user['rememberme']);
+									.'|'.$user['rememberme']
+									.'|'.$user['onlineId']);
 		return $cookie_data;
 	}
 	public function decode_cookie_data($data){
 
 		$cookie_data = explode('|',base64_decode($data));
-		if (count($cookie_data)!=4){
-			return array(
-				'uuid'      => -1,
+		if (count($cookie_data)!=6){
+			$user = array(
+				'uuid'      => '',
+				'uid'      => '',
 				'login_ts'  =>0,
 				'auth'=> '',
-				'rememberme'=>''
+				'rememberme'=>'',
+				'onlineId'=>''
 			);
+		} else {
+			$user['uid'] = $cookie_data[0];
+			$user['uuid'] = $cookie_data[1];
+			$user['login_ts'] = $cookie_data[2];
+			$user['auth'] = $cookie_data[3];
+			$user['rememberme'] = $cookie_data[4];
+			$user['onlineId'] = $cookie_data[5];
 		}
-		$user['uuid'] = $cookie_data[0];
-		$user['login_ts'] = $cookie_data[1];
-		$user['auth'] = $cookie_data[2];
-		$user['rememberme'] = $cookie_data[3];
+		$this->cookie_user = $user;
+		$this->cookie_onlineId = $user['onlineId'];
 		return $user;
 	}
 
-	
-	public function process_login($loginname, $uid, $save_cookie = true) {
+	public function get_onlince_info(){
+		if ($this->cookie_onlineId==""){
+			return false;
+		} else {
+			$id = new MongoId($this->cookie_onlineId);
+			$this->CI->cimongo->where(array('_id'=>$id));
+
+	        $query = $this->CI->cimongo->get('uOnlineInfo');
+
+	        if ($query->num_rows() > 0)
+	        {
+	            $result = $query->row_array(); 
+	            return $result;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	public function save_onlince_info($id,$info){
+		$info['_id'] = $id;
+		$this->CI->cimongo->insert('uOnlineInfo',$info);
+	}
+	public function remove_onlince_info(){
+		//TODO
+	}
+	public function up_onlince_info($id,$info){
+		$this->CI->cimongo->where(array('_id'=>$id));
+		$this->CI->cimongo->update('uOnlineInfo',$info);
+	}
+
+
+	public function process_login($loginname, $uid, $save_cookie = true,$auto_login = false) {
 		$zeit =  time();
 		
 		$user = array(
 			'loginname' => $loginname,
+			'uid'      => $uid,
 			'uuid'      => $uid,
 			'login_ts'  =>$zeit,
+			'last_op' =>$zeit,
 			'auth'=> substr(md5($uid.$zeit.'Sa34KJ9'), 10,8),
 			'rememberme'=>($save_cookie)?substr(md5($uid.$zeit.'qwerrrr'), 10,8):''
 		);
-		
-		$this->CI->session->set_userdata('user', $user);
+		$id = new MongoId();
+		$user['onlineId'] = $id->{'$id'};
+
+		$this->save_onlince_info($id,$user);
+
 
 		if($save_cookie){
-			$cookie_timeout = $zeit+86400*15;
+			$cookie_timeout = $zeit+86400*30;
 			
 		} else {
 			$cookie_timeout = '0';
@@ -109,12 +166,12 @@ class Login {
 			$cookie = array(
 				'name'   => 'loginname',
 				'value'  => $loginname,
-				'expire' => $zeit+86400*15
+				'expire' => $zeit+86400*10*365
 			);
 			set_cookie($cookie);
 		}
 		
-		return array('user' => $user);
+		return true;
 	}
 	
 	

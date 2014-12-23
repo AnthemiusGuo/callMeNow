@@ -1,62 +1,51 @@
 <!-- BEGIN REGISTRATION FORM -->
  <form class="login-form" id="regForm" method="post">
+    <h3>注册</h3>
     <div class="form-group">
-        <h4>您可以使用以下帐号登录，会自动注册帐号</h4>
-        <ul class="social-icons">
-            <li>
-                <a href="#">
-                    <img src="<?=static_url('images/qq.png')?>" alt="" width="25px">QQ
-                </a>
-            </li>
-            
-        </ul>
-    </div>
-    <h3>注册帐号</h3>
-    <div class="form-group">
-        <label class="control-label visible-ie8 visible-ie9">登录手机号</label>
-        <div class="input-icon">
-            <span class="glyphicon glyphicon-phone"></span>
-            <input class="form-control placeholder-no-fix" type="text" placeholder="登录手机号" id="uPhone" name="uPhone">
-        </div>
-        <span class="help-block">手机号或邮箱必填一个</span>
+        <label class="radio-inline">
+          <input type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1"> 我是老板
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2"> 我是雇员
+        </label>
+        <span id="helpBlock" class="help-block">选择我是老板，将同时创建您的店铺信息。如果您已经创建过店铺。</span>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">登录邮箱</label>
         <div class="input-icon">
-            <span class="glyphicon glyphicon-envelope"></span>
-            <input class="form-control placeholder-no-fix" type="email" placeholder="登录邮箱" id="uEmail" name="uEmail">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="text" placeholder="登录邮箱" id="uEmail" name="uEmail">
         </div>
         <span class="help-block">可以使用qq号@qq.com</span>
     </div>
-    
+    <div class="form-group">
+        <label class="control-label visible-ie8 visible-ie9">登录手机号</label>
+        <div class="input-icon">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="text" placeholder="登录手机号" id="uPhone" name="uPhone">
+        </div>
+    </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">姓名</label>
         <div class="input-icon">
-            <span class="glyphicon glyphicon-user"></span>
-            <input class="form-control placeholder-no-fix" type="text" required="required" placeholder="姓名" id="uName"  name="uName">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="姓名" id="uName"  name="uName">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">密码</label>
         <div class="input-icon">
-            <span class="glyphicon glyphicon-lock"></span>
-            <input class="form-control placeholder-no-fix" type="password" required="required"  id="uPassword" placeholder="密码" name="uPassword">
+            <span class="glyphicon glyphicon-edit"></span>
+            <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="uPassword" placeholder="密码" name="uPassword">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">重输密码</label>
         <div class="controls">
             <div class="input-icon">
-                <span class="glyphicon glyphicon-lock"></span>
-                <input class="form-control placeholder-no-fix" type="password" required="required"  placeholder="重输密码" id="uPassword2" name="uPassword2">
+                <span class="glyphicon glyphicon-edit"></span>
+                <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="重输密码" id="uPassword2" name="uPassword2">
             </div>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label visible-ie8 visible-ie9">邀请码</label>
-        <div class="input-icon">
-            <span class="glyphicon glyphicon-thumbs-up"></span>
-            <input class="form-control placeholder-no-fix" type="text" placeholder="如果您有邀请码，请输入" id="uPhone" name="uPhone">
         </div>
     </div>
     <div class="form-group">
@@ -102,13 +91,8 @@ function req_reg(){
     var uPassword = $("#uPassword").val();
     var uInvite = $("#uInvite").val();
     var uName = $("#uName").val();
-    var uPhone = $("#uPhone").val();
-    if (uPhone=="" && uEmail==""){
-        alert("手机号或邮箱必填一个");
-        return;
-    }
 
-    ajax_post({m:'index',a:'doReg',data:{uPhone:uPhone,uEmail:uEmail,uPassword:uPassword,uInvite:uInvite,uName:uName},callback:function(json){
+    ajax_post({m:'index',a:'doReg',data:{uEmail:uEmail,uPassword:uPassword,uInvite:uInvite,uName:uName},callback:function(json){
             if (json.rstno>0){
                 window.location.href=json.data.goto_url; 
             } else {

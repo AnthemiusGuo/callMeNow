@@ -16,13 +16,8 @@ class Index extends P_Controller {
 		}
 		
 		$this->needInputOrgInfo = false;
+		$this->load_menus();
 		
-		
-		
-        $this->load->model('lists/Project_list',"project_list");
-        $this->project_list->load_now_with_uid($this->uid);
-        $this->project_list->list_titles = array('id','name');
-
         $this->load->model('lists/Schedule_list',"schedule_list");
         $this->schedule_list->load_dated_data_with_uid($this->uid);
 
@@ -30,7 +25,7 @@ class Index extends P_Controller {
         $this->task_list->load_dated_data_with_uid($this->uid);
 
         
-		$this->template->load('default_npo', 'index/dashboard');
+		$this->template->load('default_page', 'index/dashboard');
 	}
 	function doTest(){
 			$content = "亲爱的{username}，您好！<br/>
@@ -292,14 +287,17 @@ http://www.npone.cn<br/>
 	}
 
 	function doReg(){
-		$email = $this->input->post('uEmail');
-		$pwd = $this->input->post('uPassword');
-		$inviteCode = $this->input->post('uInvite');
-		$uName = $this->input->post('uName');
+		$input_data = array();
+		$input_data['email'] = $this->input->post('uEmail');
+		$input_data['phone'] = $this->input->post('uPhone');
+		$input_data['pwd'] = $this->input->post('uPassword');
+		$input_data['invite'] = $this->input->post('uInvite');
+		$input_data['uName'] = $this->input->post('uName');
+		//这块需要做输入过滤，防XSS等，暂时省略
 
 		$this->load->model('records/user_model',"userModel");
 
-		$ret = $this->userModel->reg_user($email,$pwd,$uName,$inviteCode);
+		$ret = $this->userModel->reg_user($input_data);
 		if ($ret>0){
 // 			$content = "{username}，您好，<br/>
 // <br/>
@@ -323,14 +321,16 @@ http://www.npone.cn<br/>
 // 			$this->sendMail($email,$content,"感谢您注册npone.cn");
 // 			$this->sendMsg($uid,0,0,$content);
 			$uid = $this->userModel->uid;
-			$this->login->process_login($email,$uid,true);
+			$this->login->process_login($input_data['email'],$uid,true);
 			$data = array();
 			$data['goto_url'] = site_url('index/index');
 			echo $this->exportData($data,$uid);
 		} else {
 			$err_codes = array(-1=>array('id'=>'uEmail','msg'=>'用户已存在'),
-								-2=>array('id'=>'uInvite','msg'=>'已有组织录入您的数据，请咨询组织获得邀请码'),
-								-3=>array('id'=>'uInvite','msg'=>'您的邀请码输入有误!请咨询组织获得正确的邀请码'));
+								-2=>array('id'=>'uPhone','msg'=>'用户已存在'),
+								-3=>array('id'=>'uPhone','msg'=>'手机号或邮箱必填一个'),
+								-999=>array('id'=>'uPhone','msg'=>'服务器故障，请稍后重试'),
+								);
 			$err_code = isset($err_codes[$ret])? $err_codes[$ret]:array('id'=>'uEmail','msg'=>'未知错误');
 			;
 
@@ -342,11 +342,11 @@ http://www.npone.cn<br/>
 		$email = $this->input->post('uEmail');
 		$pwd = $this->input->post('uPassword');
 		$rememberMe = $this->input->post('uRememberMe');
-		
+
 		$this->load->model('records/user_model',"userModel");
         $login_rst = $this->userModel->verify_login($email,$pwd);
 		if ($login_rst > 0) {
-			$this->login->process_login($email,$this->userModel->uid,$rememberMe);
+			$this->login->process_login($email,$this->userModel->uid,$rememberMe,false);
 			$data = array();
 			$data['goto_url'] = site_url('index/index');
 			echo $this->exportData($data,$login_rst);

@@ -70,6 +70,9 @@ class Fields {
             return $str;
         }
     }
+    public function gen_show_value(){
+        return $this->value;
+    }
 
     public function gen_show_html(){
         return $this->value;

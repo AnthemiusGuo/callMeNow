@@ -6,13 +6,18 @@ class List_model extends CI_Model {
     public $quickSearchWhere;
     public $orderKey = "id";
 
+
     public function __construct($tableName = '') {
         parent::__construct();
+        $CI =& get_instance();
+        $this->db = $CI->cimongo;
+
         $this->tableName = $tableName;
         $this->record_list = array();
         $this->whereData = array();
         $this->whereOrgId = 0;
-        $this->quickSearchWhere = "(`name` LIKE '%{search}%')";
+        $this->quickSearchWhere = array("name");
+
     }
 
     public function setOrgId($orgId) {
@@ -140,22 +145,6 @@ class List_model extends CI_Model {
 
     }
 
-    public function get_pids_by_uid($uid){
-        $pids = array();
-        $this->db->select('id')
-                    ->from("pPeaple")
-                    ->where("uid",$uid);
-
-        $query = $this->db->get();
-        if ($query->num_rows() > 0)
-        {
-            foreach ($query->result_array() as $row)
-            {
-                $pids[] = $row['id'];
-            }
-        } 
-        return $pids;
-    }
     public function load_data(){
         $this->purge_where();
         $this->load_data_with_where();
