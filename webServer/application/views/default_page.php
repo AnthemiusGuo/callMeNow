@@ -1,8 +1,8 @@
 <?php include_once('common/header.php');
 ?>
-<body class="page-header-fixed page-quick-sidebar-over-content">
+<body class="page-header">
     <!-- BEGIN HEADER -->
-    <div class="page-header navbar navbar-fixed-top">
+    <div class="page-header navbar">
         <!-- BEGIN HEADER INNER -->
         <div class="page-header-inner">
             <!-- BEGIN LOGO -->
@@ -145,10 +145,12 @@
                             <li>
                                 <a href="extra_lock.html">
                                 <span class="glyphicon glyphicon-lock"></span>锁屏
+                                </a>
                             </li>
                             <li>
                                 <a href="login.html">
                                 <span class="glyphicon glyphicon-log-out"></span>退出
+                                </a>
                             </li>
                         </ul>
                     </li>

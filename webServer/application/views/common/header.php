@@ -10,8 +10,10 @@
 	<?php echo link_tag(static_url('css/components.css')); ?>
     <?php echo link_tag(static_url('css/bootstrap-datetimepicker.min.css')); ?>
     <?php echo link_tag(static_url('css/main.css')); ?>
+    <?php echo link_tag(static_url('css/jquery.fancybox.css')); ?>
 
     
+
 	<script type="text/javascript" src="<?php echo static_url('js/jquery-1.11.1.min.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/bootstrap.min.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/bootstrap-datetimepicker.js'); ?>"></script>
@@ -26,6 +28,8 @@
     <script type="text/javascript" src="<?php echo static_url('js/lib.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo static_url('js/main.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo static_url('js/ajaxfileupload.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo static_url('js/jquery.fancybox.js'); ?>"></script>
+    
     <script type="text/javascript">
     	var base_url = "<?php print base_url(); ?>";
     	var req_url_template = "<?php echo site_url('{ctrller}/{action}') ?>";

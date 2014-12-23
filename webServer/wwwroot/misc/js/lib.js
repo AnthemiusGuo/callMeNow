@@ -456,7 +456,16 @@ function lightbox(opts) {
         size:'m',
         url:''
     };
+    
+    var width = 720;
+    if (opts.size=="l"){
+        width = 960;
+    } else if (opts.size=="s"){
+        width=600;
+    }
     opts = $.extend(default_opts,opts);
+    $.fancybox.open({href : opts.url,type:'ajax',autoSize:false,width:width,height:500});
+    return;
     if ($("#lightbox").data('bs.modal')){
         $("#lightbox").modal('hide').one('hidden.bs.modal', function (e) {
             $("#lightbox").removeClass("lightbox_l lightbox_m lightbox_s").addClass("lightbox_"+opts.size).modal({remote:opts.url}).on('hidden.bs.modal', function (e) {

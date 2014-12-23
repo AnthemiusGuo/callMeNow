@@ -8,24 +8,30 @@ class Index extends P_Controller {
 
 	function index() {
 		$this->login_verify();
-		
-		if ($this->userInfo->field_list['everEdit']->value==0) {
+		$this->load_menus();
+
+		if ($this->userInfo->field_list['everEdit']->value=='') {
 			$this->needInputUserInfo = true;
 		} else {
 			$this->needInputUserInfo = false;
 		}
-		
-		$this->needInputOrgInfo = false;
-		$this->load_menus();
-		
-        $this->load->model('lists/Schedule_list',"schedule_list");
-        $this->schedule_list->load_dated_data_with_uid($this->uid);
 
-        $this->load->model('lists/Task_list',"task_list");
-        $this->task_list->load_dated_data_with_uid($this->uid);
+		if ($this->userInfo->field_list['orgId']->value==0) {
+			$this->template->load('default_page', 'index/bindOrg');
+		} else {
+			$this->needInputOrgInfo = false;
+		
+	        $this->load->model('lists/Schedule_list',"schedule_list");
+	        $this->schedule_list->load_dated_data_with_uid($this->uid);
 
-        
-		$this->template->load('default_page', 'index/dashboard');
+	        $this->load->model('lists/Task_list',"task_list");
+	        $this->task_list->load_dated_data_with_uid($this->uid);
+
+	        
+			$this->template->load('default_page', 'index/dashboard');
+		}
+		
+
 	}
 	function doTest(){
 			$content = "亲爱的{username}，您好！<br/>

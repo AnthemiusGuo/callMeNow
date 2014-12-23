@@ -10,6 +10,8 @@
 
     public function __construct($tableName='') {
         parent::__construct();
+        $CI =& get_instance();
+        $this->db = $CI->cimongo;
         $this->tableName = $tableName;
         $this->field_list = array();
         $this->orgId = 0;

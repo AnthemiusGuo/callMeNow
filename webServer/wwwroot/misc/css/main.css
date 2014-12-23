@@ -913,3 +913,45 @@ body {
 .block-spinner-bar > div {
   background: #da594a;
 }
+
+
+/****
+ Myself
+****/
+
+.modal-body{
+  height: 400px;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+
+
+td.td_title {
+  width:15%;
+  font-weight: bold;
+  
+}
+.table > tbody > tr > td.td_title {
+  vertical-align:middle;
+}
+td.td_data {
+  width:35%;
+}
+
+td.td_data_width {
+  width:85%;
+}
+
+
+.progress.in_table{
+  margin-bottom: 0px;
+}
+
+.field_name_must,.field_name {
+  font-weight: bold;
+  color: #444;
+}
+.field_name_must {
+  color:#333;
+}
+.field_name_must em{font-weight: normal;color:red;}

@@ -5,22 +5,16 @@ class Org_model extends Record_model {
         parent::__construct('oOrg');
         $this->field_list['id'] = $this->load->field('Field_int',"机构代码","id");
         $this->field_list['name'] = $this->load->field('Field_title',"组织名称","name",true);
-        $this->field_list['everEdit'] = $this->load->field('Field_bool',"已输入","everEdit");
         $this->field_list['provinceId'] = $this->load->field('Field_provinceid',"省份","provinceId");
         $this->field_list['status'] = $this->load->field('Field_enum',"状态","status");
         $this->field_list['status']->setEnum(array('正常','冻结'));
-        $this->field_list['typ'] = $this->load->field('Field_enum',"公开","typ");
-        $this->field_list['typ']->setEnum(array('私密','半公开','公开'));
         $this->field_list['beginTS'] = $this->load->field('Field_date',"成立时间","beginTS");
         $this->field_list['addresses'] = $this->load->field('Field_string',"通讯地址","addresses");
         $this->field_list['zipCode'] = $this->load->field('Field_string',"邮编","zipCode");
         $this->field_list['desc'] = $this->load->field('Field_text',"组织介绍","desc");
         $this->field_list['supperUid'] = $this->load->field('Field_userid',"超级管理员","supperUid");
-        $this->field_list['needInput'] = $this->load->field('Field_bool',"需要编辑","needInput");
         $this->field_list['commonInviteCode'] = $this->load->field('Field_string',"通用邀请码","commonInviteCode");
         $this->field_list['supperInviteCode'] = $this->load->field('Field_string',"管理员邀请码","supperInviteCode");
-        $this->field_list['balance'] = $this->load->field("Field_int","余额",'balance');
-        $this->field_list['now_balance'] = $this->load->field("Field_int","余额",'now_balance');
         
         
         $this->field_list['createUid'] = $this->load->field('Field_userid',"创建人","createUid");
@@ -55,6 +49,27 @@ H5N1和H7N9是近年来对人类威胁最大的两种禽流感病毒，H5N1病�
     public function buildInfoTitle(){
         return '组织 :'.$this->field_list['name']->gen_show_html().'&nbsp;&nbsp; <small> ID:'.$this->field_list['id']->gen_show_html().'</small>';
     }
+
+    public function buildChangeNeedFields(){
+        return array('name','provinceId','desc','addresses');
+    }
+
+    public function buildChangeShowFields(){
+            return array(
+                 array('name'),
+                 array('provinceId','null'),
+                 array('desc'),
+                 array('addresses','null'));
+    }
+
+    public function buildDetailShowFields(){
+        return array(array('id'),
+                array('name'),
+                 array('provinceId','null'),
+                 array('desc'),
+                 array('addresses','null'));
+    }
+
     public function create_org($data){
         $newId = $this->insert_db($data);
         $mdata = array('orgId'=>$newId);

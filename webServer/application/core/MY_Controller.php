@@ -209,7 +209,85 @@ class P_Controller extends CI_Controller {
                 "name"=>'个人面板',
                 "icon"=>'glyphicon-th',
             );
-       
+        $this->all_menus["crm"] = array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/index'),
+                        "name"=>"客户管理",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建客户资料",
+                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
+                    ),
+                    "analytics"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/analytics'),
+                        "name"=>"客户统计",
+                        "onclick"=>''
+                    )
+                    
+                ),
+                "default_menu"=>"index",
+                "name"=>'客户管理',
+                "icon"=>'glyphicon-phone-alt',
+            );
+        $this->all_menus["store"] = array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('store/index'),
+                        "name"=>"库存管理",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建客户资料",
+                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
+                    ),
+                    "analytics"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('store/analytics'),
+                        "name"=>"客户统计",
+                        "onclick"=>''
+                    )
+                    
+                ),
+                "default_menu"=>"index",
+                "name"=>'库存管理',
+                "icon"=>'glyphicon-phone-alt',
+            );
+        $this->all_menus["order"] = array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('order/index'),
+                        "name"=>"订单管理",
+                        "onclick"=>''
+                    ),
+                    "create"=>array(
+                        "method"=>"onclick",
+                        "href"=>'',
+                        "name"=>"新建订单",
+                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
+                    ),
+                    "analytics"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('order/analytics'),
+                        "name"=>"订单统计",
+                        "onclick"=>''
+                    )
+                    
+                ),
+                "default_menu"=>"index",
+                "name"=>'订单管理',
+                "icon"=>'glyphicon-phone-alt',
+            );
+
         $this->all_menus["schedule"]=array(
                 "menu_array"=>array(
                     "index"=>array(
@@ -250,32 +328,7 @@ class P_Controller extends CI_Controller {
             );
 
         
-        $this->all_menus["crm"] = array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/index'),
-                        "name"=>"社会关系查询",
-                        "onclick"=>''
-                    ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建社会关系",
-                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
-                    ),
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/analytics'),
-                        "name"=>"社会关系统计",
-                        "onclick"=>''
-                    )
-                    
-                ),
-                "default_menu"=>"index",
-                "name"=>'客户管理',
-                "icon"=>'glyphicon-phone-alt',
-            );
+        
         $this->all_menus["finance"] = array(
                 "menu_array"=>array(
                     "cashflow"=>array(
