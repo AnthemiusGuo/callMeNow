@@ -29,8 +29,9 @@ class P_Controller extends CI_Controller {
 
 		$this->is_login = false;
 		$this->load->helper('url');
-        $this->controller_name = $this->uri->segment(1);
-        $this->method_name = $this->uri->segment(2);
+        $this->controller_name = ($this->uri->segment(1)=="")?'index':$this->uri->segment(1);
+        $this->method_name = ($this->uri->segment(2)=="")?'index':$this->uri->segment(2);
+
 
         if($login_verify) {
 			$this->login_verify();
@@ -207,7 +208,38 @@ class P_Controller extends CI_Controller {
                 ),
                 "default_menu"=>"index",
                 "name"=>'个人面板',
-                "icon"=>'glyphicon-th',
+                "icon"=>'glyphicon-user',
+            );
+            $this->all_menus["management"]=array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/index'),
+                        "name"=>"商户概况",
+                        "onclick"=>''
+                    ),
+                    "orgInfo"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/orgInfo'),
+                        "name"=>"商户信息",
+                        "onclick"=>''
+                    ),
+                    "hr"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/hr'),
+                        "name"=>"人员管理",
+                        "onclick"=>''
+                    ),
+                    "import"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('management/import'),
+                        "name"=>"数据导入",
+                        "onclick"=>''
+                    ),
+                ),
+                "default_menu"=>"index",
+                "name"=>'商户管理',
+                "icon"=>'glyphicon-home',
             );
         $this->all_menus["crm"] = array(
                 "menu_array"=>array(
@@ -217,16 +249,23 @@ class P_Controller extends CI_Controller {
                         "name"=>"客户管理",
                         "onclick"=>''
                     ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建客户资料",
-                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
-                    ),
+                    
                     "analytics"=>array(
                         "method"=>"href",
                         "href"=>site_url('crm/analytics'),
                         "name"=>"客户统计",
+                        "onclick"=>''
+                    ),
+                    "order"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/order'),
+                        "name"=>"订单管理",
+                        "onclick"=>''
+                    ),
+                    "order_ana"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/order_ana'),
+                        "name"=>"订单统计",
                         "onclick"=>''
                     )
                     
@@ -243,49 +282,17 @@ class P_Controller extends CI_Controller {
                         "name"=>"库存管理",
                         "onclick"=>''
                     ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建客户资料",
-                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
-                    ),
                     "analytics"=>array(
                         "method"=>"href",
                         "href"=>site_url('store/analytics'),
-                        "name"=>"客户统计",
+                        "name"=>"库存统计",
                         "onclick"=>''
                     )
                     
                 ),
                 "default_menu"=>"index",
                 "name"=>'库存管理',
-                "icon"=>'glyphicon-phone-alt',
-            );
-        $this->all_menus["order"] = array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('order/index'),
-                        "name"=>"订单管理",
-                        "onclick"=>''
-                    ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建订单",
-                        "onclick"=>"lightbox({url:'".site_url('crm/create')."'})",
-                    ),
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('order/analytics'),
-                        "name"=>"订单统计",
-                        "onclick"=>''
-                    )
-                    
-                ),
-                "default_menu"=>"index",
-                "name"=>'订单管理',
-                "icon"=>'glyphicon-phone-alt',
+                "icon"=>'glyphicon-th',
             );
 
         $this->all_menus["schedule"]=array(
@@ -324,7 +331,7 @@ class P_Controller extends CI_Controller {
                 ),
                 "default_menu"=>"index",
                 "name"=>'任务',
-                "icon"=>'glyphicon-list-alt',
+                "icon"=>'glyphicon-tasks',
             );
 
         
@@ -356,56 +363,6 @@ class P_Controller extends CI_Controller {
                 "icon"=>'glyphicon-usd',
             );
         
-        $this->all_menus["hr"] = array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('hr/index'),
-                        "name"=>"人事资料查询",
-                        "onclick"=>''
-                    ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建人事资料",
-                        "onclick"=>"lightbox({url:'".site_url('hr/new_peaple')."'})",
-                    ),
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('hr/analytics'),
-                        "name"=>"人事资料统计",
-                        "onclick"=>''
-                    ),
-                    "departments"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('hr/departments'),
-                        "name"=>"部门查询",
-                        "onclick"=>''
-                    ),
-                    "new_department"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建部门",
-                        "onclick"=>"lightbox({url:'".site_url('hr/new_department')."'})",
-                    ),
-                    "titles"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('hr/titles'),
-                        "name"=>"职位查询",
-                        "onclick"=>''
-                    ),
-                    "new_title"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建职位",
-                        "onclick"=>"lightbox({url:'".site_url('hr/new_title')."'})",
-                    ),
-                   
-                ),
-                "default_menu"=>"index",
-                "name"=>'人事',
-                "icon"=>'glyphicon-tree-deciduous',
-            );
         
         $this->all_menus["document"]= array(
                 "menu_array"=>array(
@@ -426,43 +383,7 @@ class P_Controller extends CI_Controller {
                 "name"=>'文  档',
                 "icon"=>'glyphicon-paperclip',
             );
-        $this->all_menus["management"]=array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/index'),
-                        "name"=>"组织概况",
-                        "onclick"=>''
-                    ),
-                    "orgInfo"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/orgInfo'),
-                        "name"=>"组织信息",
-                        "onclick"=>''
-                    ),
-                    "applies"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/applies'),
-                        "name"=>"用户申请",
-                        "onclick"=>''
-                    ),
-                    "role"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/role'),
-                        "name"=>"角色设置",
-                        "onclick"=>''
-                    ),
-                    "import"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/import'),
-                        "name"=>"数据导入",
-                        "onclick"=>''
-                    ),
-                ),
-                "default_menu"=>"index",
-                "name"=>'组织管理',
-                "icon"=>'glyphicon-wrench',
-            );
+        
         $this->all_menus["admin"]=array(
                 "menu_array"=>array(
                     "orgs"=>array(

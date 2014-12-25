@@ -20,7 +20,6 @@ class Login {
 		$loginUser = $this->decode_cookie_data($logininfo);
 		
 		if (substr(md5($loginUser['uuid'].$loginUser['login_ts'].'Sa34KJ9'), 10,8)!=$loginUser['auth']){
-			$this->CI->session->unset_userdata('user');
 			return false;
 		}
 		$rememberme = false;
