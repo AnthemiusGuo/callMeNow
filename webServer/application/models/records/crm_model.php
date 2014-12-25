@@ -7,14 +7,16 @@ class Crm_model extends Record_model {
         $this->deleteMethod = 'doDeleteCrm';
         $this->edit_link = 'crm/editCrm';
 
-        $this->field_list['id'] = $this->load->field('Field_int',"id","id");
+        $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['name'] = $this->load->field('Field_title',"名称","name",true);
-        $this->field_list['orgId'] = $this->load->field('Field_int',"组织","orgId");
+        $this->field_list['orgId'] = $this->load->field('Field_relate_org',"组织","orgId");
+
         $this->field_list['typ'] = $this->load->field('Field_enum',"类型","typ",true);
-        $this->field_list['typ']->setEnum(array("未设置","被资助方-个人","被资助方-学校","被资助方-其他","资助方-个人","资助方-企业","资助方-事业单位/政府机关","资助方-社会团体"));
+        $this->field_list['typ']->setEnum(array("未设置","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他","其他"));
+
         $this->field_list['status'] = $this->load->field('Field_enum',"状态","status",true);
-        $this->field_list['status']->setEnum(array("未设置","保持联系","结束合作"));
-        $this->field_list['projectIds'] = $this->load->field('Field_string',"关联项目","projectIds");
+        $this->field_list['status']->setEnum(array("未设置","保持联系","很少联系/结束合作"));
+        
         $this->field_list['province'] = $this->load->field('Field_provinceid',"省份","province",true);
         $this->field_list['updateTS'] = $this->load->field('Field_ts',"更新时间","updateTS");
         
@@ -22,7 +24,6 @@ class Crm_model extends Record_model {
         $this->field_list['createTS'] = $this->load->field('Field_ts',"创建时间","createTS");
         $this->field_list['lastModifyUid'] = $this->load->field('Field_userid',"最终编辑人","lastModifyUid");
         $this->field_list['lastModifyTS'] = $this->load->field('Field_ts',"最后更新","lastModifyTS");
-        $this->field_list['directId'] = $this->load->field('Field_int','directId','directId');
     }
     public function init($id){
         parent::init($id);
@@ -50,6 +51,8 @@ class Crm_model extends Record_model {
     public function buildInfoTitle(){
         return $this->field_list['name']->gen_show_html().' <small> '.$this->field_list['typ']->gen_show_html().' </small>';
     }
+
+
     public function checkImportDataP($data){
         $cfg_field_lists = array(
             0=>"name",3=>"province",4=>'status'
@@ -88,6 +91,31 @@ class Crm_model extends Record_model {
             $data[$field_name] = $this->field_list[$field_name]->importData($value);
         }
         return $data;
+    }
+
+
+    public function buildChangeNeedFields(){
+        return array('name','typ','status','province');
+    }
+
+    public function buildChangeShowFields(){
+            return array(
+                    array('name'),
+                    array('typ'),
+                    array('status'),
+                    array('province'),
+
+                );
+    }
+
+    public function buildDetailShowFields(){
+        return array(
+                    array('name'),
+                    array('typ'),
+                    array('status'),
+                    array('province'),
+                    
+                );
     }
     
 }

@@ -1,6 +1,11 @@
 <?php
 include_once(APPPATH."views/common/bread_and_search.php");
 ?>
+<?
+if ($this->need_plus!=""){
+    include_once(APPPATH."views/".$this->need_plus.".php");
+}
+?>
 <div class="row">
     <?php
     if ($this->canEdit):
@@ -63,7 +68,7 @@ include_once(APPPATH."views/common/bread_and_search.php");
                 foreach($this->listInfo->record_list as  $this_record): ?>
                     <tr>
                         <td>
-                            <input type="checkbox" name="check_target[]" value="<?=$this_record->field_list['id']->gen_list_html()?>">
+                            <input type="checkbox" name="check_target[]" value="<?=$this_record->field_list['_id']->gen_list_html()?>">
                         </td>
                         <?
                         foreach ($this->listInfo->build_list_titles() as $key_names):

@@ -989,3 +989,82 @@ td.td_data_width {
 .shopInfoCard .shopDesc{
   height:80px;
 }
+
+.portlet-title a{
+  color:#FEFEFE;
+}
+.main-nav.active .nav.sub-nav a{
+  color:#FFFFFF;
+  font-weight: bold;
+}
+.main-nav .nav.sub-nav a{
+  color:#E0E0E0;
+}
+.main-nav .nav.sub-nav li.active > a{
+  color:#d64635;
+  font-weight: bold;
+}
+
+.search-aera{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 1000;
+}
+.breadcrumb-with-search{
+  position: relative;
+}
+.search-aera-inline{
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  z-index: 1000;
+  width: 40%;
+  height: 30px;
+  text-align: right;
+  font-size: 12px;
+}
+.breadcrumb > li.search-aera-inline:before {
+  content: "";
+  padding:0px;
+}
+.search-box{
+  width:100%;
+  padding-top: 10px;
+}
+.alert.editor-related-inputed{
+  padding: 6px 12px;
+  line-height: 20px;
+  margin-bottom: 0px;
+}
+.list-title-op .panel-body{
+  padding: 5px;
+}
+.list-title-op {
+  position: relative;
+  margin-bottom: 10px;
+}
+.holder-editor-related-id{
+  position: relative;
+}
+.search_tips{
+  color: #666;
+  margin-bottom: 10px;
+  padding:5px 25px;
+}
+.search-table{
+  background: #FFF;
+  border: 1px solid #DDD;
+}
+.table.search-table td{
+  vertical-align: middle;
+}
+.form-inline .mini_search_ele select.form-control{
+  width:100%;
+}
+.mini_search_ele select {
+  width:100%;
+}
+.mini_search_ele {
+  text-align: center;
+}

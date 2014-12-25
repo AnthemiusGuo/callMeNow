@@ -100,10 +100,10 @@
         if ($query->num_rows() > 0)
         {
             $result = $query->row_array(); 
-            $this->init_with_data($result['id'],$result);
-            return 1;
+            $this->init_with_data($result['_id'],$result);
+            return true;
         } else {
-            return -1;
+            return false;
         }        
     }
 

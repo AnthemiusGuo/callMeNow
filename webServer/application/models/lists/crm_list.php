@@ -85,45 +85,7 @@ GROUP BY pProjectTypRel.typId
             return $exportData;
         }
     }
-    public function load_by_direct_donor($bedonoredCrmId){
-        $this->db->select('cCrm.*,cDirectDonor.id as directId')
-                    ->from("cDirectDonor")
-                    ->join('cCrm', 'cCrm.id = cDirectDonor.donorCrmId', 'left')
-                    ->where("beDonoredCrmId", $bedonoredCrmId);
-        $query = $this->db->get();
-        if ($query->num_rows() > 0)
-        {
-            foreach ($query->result_array() as $row)
-            {
-                $this->record_list[$row['id']] = new Crm_model();
-                $this->record_list[$row['id']]->init_with_data($row['id'],$row);
-            }
-        }
-    }
-
-    public function load_by_direct_bedonored($donorCrmId){
-        $this->db->select('cCrm.*,cDirectDonor.id as directId')
-                    ->from("cDirectDonor")
-                    ->join('cCrm', 'cCrm.id = cDirectDonor.beDonoredCrmId', 'left')
-                    ->where("donorCrmId", $donorCrmId);
-        $query = $this->db->get();
-        if ($query->num_rows() > 0)
-        {
-            foreach ($query->result_array() as $row)
-            {
-                $this->record_list[$row['id']] = new Crm_model();
-                $this->record_list[$row['id']]->init_with_data($row['id'],$row);
-            }
-        }
-    }
-
-    public function init_by_types(){
-        parent::init("Crm_list","Crm_model");
-        for ($i=0;$i<10;$i++){
-            $this->record_list[$i] = new Crm_model();
-            $this->record_list[$i]->init($i);
-        }
-    }
+    
     
     public function build_search_infos(){
         return array('name','typ','status','province','updateTS');

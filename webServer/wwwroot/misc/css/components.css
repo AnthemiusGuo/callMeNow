@@ -4093,9 +4093,9 @@ Dashboard Stats
   line-height: 35px;
 }
 .dashboard-stat .visual > span.glyphicon {
-  margin-left: -35px;
-  font-size: 110px;
-  line-height: 110px;
+  margin-left: -20px;
+  font-size: 90px;
+  line-height: 90px;
 }
 .dashboard-stat .details {
   position: absolute;

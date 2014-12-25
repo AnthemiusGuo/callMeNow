@@ -1,7 +1,7 @@
 <ul class='breadcrumb breadcrumb-with-search'>
     <li><a href='#'><span class='glyphicon glyphicon-home'></span> Home</a></li>
-    <li><a href='#'><span class='glyphicon <?=$this->Menus->show_menus[$this->controller_name]['icon']?>'></span> <?=$this->Menus->show_menus[$this->controller_name]['name']?></a></li>
-    <li class='active'><a href='<?=site_url($this->controller_name.'/'.$this->method_name)?>'><span class='glyphicon glyphicon-circle-arrow-right'></span> <?=$this->Menus->show_menus[$this->controller_name]['menu_array'][$this->method_name]['name']?></a></li>
+    <li><a href='#'><span class='glyphicon <?=$this->menus[$this->controller_name]['icon']?>'></span> <?=$this->menus[$this->controller_name]['name']?></a></li>
+    <li class='active'><a href='<?=site_url($this->controller_name.'/'.$this->method_name)?>'><span class='glyphicon glyphicon-circle-arrow-right'></span> <?=$this->menus[$this->controller_name]['menu_array'][$this->method_name]['name']?></a></li>
     <?=(isset($this->searchInfo) && $this->searchInfo['t']=="quick")?'<li class="avtive"><span class="glyphicon glyphicon-search"></span> 快捷搜索</li>':'';?>
     <?=(isset($this->searchInfo) && $this->searchInfo['t']=="full")?'<li class="avtive"><span class="glyphicon glyphicon-search"></span> 高级搜索</li>':'';?>
     <li class="pull-right search-aera-inline">

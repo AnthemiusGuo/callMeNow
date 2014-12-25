@@ -71,35 +71,35 @@ class Field_relate_simple_id extends Field_mongoid {
         $where_array = $this->whereData;
         foreach ($where_array as $key => $value) {
             if ($value['typ'] == WHERE_TYPE_WHERE){
-                $this->CI->db->where($key, $value['data']);
+                $this->db->where($key, $value['data']);
             } elseif ($value['typ'] == WHERE_TYPE_IN) {
-                $this->CI->db->where_in($key, $value['data']);
+                $this->db->where_in($key, $value['data']);
             } elseif (($value['typ'] == WHERE_TYPE_LIKE)) {
-                $this->CI->db->like($key, $value['data']);
+                $this->db->like($key, $value['data']);
             } elseif ($value['typ'] == WHERE_TYPE_OR_WHERE){
-                $this->CI->db->or_where($key, $value['data']);
+                $this->db->or_where($key, $value['data']);
             } elseif ($value['typ'] == WHERE_TYPE_OR_IN) {
-                $this->CI->db->or_where_in($key, $value['data']);
+                $this->db->or_where_in($key, $value['data']);
             } elseif (($value['typ'] == WHERE_TYPE_OR_LIKE)) {
-                $this->CI->db->or_like($key, $value['data']);
+                $this->db->or_like($key, $value['data']);
             } elseif (($value['typ'] == WHERE_TXT)) {
-                $this->CI->db->where($value['data']);
+                $this->db->where($value['data']);
             }
         }
         
         if ($this->whereOrgId>0 && $this->needOrgId==1){
-            $this->CI->db->where('orgId', $this->whereOrgId);
+            $this->db->where('orgId', $this->whereOrgId);
         } elseif ($this->whereOrgId>0 && $this->needOrgId==2){
-            $this->CI->db->where_in('orgId',array($this->whereOrgId,0));
+            $this->db->where_in('orgId',array($this->whereOrgId,0));
         } 
     }
     private function setEnum(){
-        $this->CI->db->select("{$this->valueField},{$this->showField}")
+        $this->db->select("{$this->valueField},{$this->showField}")
             ->from($this->tableName);
         $this->checkWhere();
 
-        $this->CI->db->order_by('id','asc');
-        $query = $this->CI->db->get();
+        $this->db->order_by('id','asc');
+        $query = $this->db->get();
 
         $this->enum[0] = ' - ';
         if ($query->num_rows() > 0)

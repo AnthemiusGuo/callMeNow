@@ -22,6 +22,7 @@ class P_Controller extends CI_Controller {
 	public $viewType;
 	public $pageClass = 'normal';
 	public $menus = array();
+    public $need_plus = '';
 
 	function __construct($login_verify = true) {
 		parent::__construct();
@@ -32,9 +33,11 @@ class P_Controller extends CI_Controller {
         $this->controller_name = ($this->uri->segment(1)=="")?'index':$this->uri->segment(1);
         $this->method_name = ($this->uri->segment(2)=="")?'index':$this->uri->segment(2);
 
-
+        $this->searchInfo = array('t'=>'no');
+        
         if($login_verify) {
 			$this->login_verify();
+            $this->canEdit = $this->checkEditRule();
 		} else {
 
 		}
@@ -218,10 +221,10 @@ class P_Controller extends CI_Controller {
                         "name"=>"商户概况",
                         "onclick"=>''
                     ),
-                    "orgInfo"=>array(
+                    "analytics"=>array(
                         "method"=>"href",
-                        "href"=>site_url('management/orgInfo'),
-                        "name"=>"商户信息",
+                        "href"=>site_url('management/analytics'),
+                        "name"=>"商户统计",
                         "onclick"=>''
                     ),
                     "hr"=>array(
@@ -256,6 +259,12 @@ class P_Controller extends CI_Controller {
                         "name"=>"客户统计",
                         "onclick"=>''
                     ),
+                    "contactList"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/contactList'),
+                        "name"=>"联系记录",
+                        "onclick"=>''
+                    ),
                     "order"=>array(
                         "method"=>"href",
                         "href"=>site_url('crm/order'),
@@ -280,6 +289,18 @@ class P_Controller extends CI_Controller {
                         "method"=>"href",
                         "href"=>site_url('store/index'),
                         "name"=>"库存管理",
+                        "onclick"=>''
+                    ),
+                    "item"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('store/index'),
+                        "name"=>"商品管理",
+                        "onclick"=>''
+                    ),
+                    "category"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('store/category'),
+                        "name"=>"商品分类管理",
                         "onclick"=>''
                     ),
                     "analytics"=>array(
@@ -446,8 +467,8 @@ class P_Controller extends CI_Controller {
 		$this->viewType =$viewType;
 	}
 	function checkEditRule(){
-		if ($this->controller_name=="hr"){
-			return $this->checkActionRule("Hr","Edit");
+		if ($this->controller_name=="crm"){
+			return $this->checkActionRule("Crm","Edit");
 		} else {
 			return $this->checkActionRule("Project","Edit");
 		}
@@ -464,6 +485,7 @@ class P_Controller extends CI_Controller {
 	}
 
 	function checkActionRule($module,$action){
+        return true;
 		if ($this->accessRule[$module]!=null){
 			if (!in_array($action, $this->accessRule[$module])){
 				return false;
@@ -533,6 +555,7 @@ class P_Controller extends CI_Controller {
         $this->load->model('records/org_model',"myOrgInfo");
             
         $this->myOrgInfo->init_with_id($this->userInfo->field_list['orgId']->value);
+        
 
     }
 	function login_verify() {
@@ -548,6 +571,7 @@ class P_Controller extends CI_Controller {
 				header("Location:".site_url('index/login'));
 				exit;
 			} else {
+                $this->myOrgId = $this->userInfo->field_list['orgId']->value;
 				
 			};
 		} else {

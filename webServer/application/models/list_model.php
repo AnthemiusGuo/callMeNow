@@ -4,7 +4,7 @@ class List_model extends CI_Model {
     public $name;
     public $record_list;
     public $quickSearchWhere;
-    public $orderKey = "id";
+    public $orderKey = array("_id"=>"desc");
 
 
     public function __construct($tableName = '') {
@@ -97,51 +97,52 @@ class List_model extends CI_Model {
         if ($where_array==0){
             $where_array = $this->whereData;
         }
-        foreach ($where_array as $key => $value) {
-            if ($value['typ'] == WHERE_TYPE_WHERE){
-                $this->db->where($key, $value['data']);
-            } elseif ($value['typ'] == WHERE_TYPE_IN) {
-                $this->db->where_in($key, $value['data']);
-            } elseif (($value['typ'] == WHERE_TYPE_LIKE)) {
-                $this->db->like($key, $value['data']);
-            } elseif ($value['typ'] == WHERE_TYPE_OR_WHERE){
-                $this->db->or_where($key, $value['data']);
-            } elseif ($value['typ'] == WHERE_TYPE_OR_IN) {
-                $this->db->or_where_in($key, $value['data']);
-            } elseif (($value['typ'] == WHERE_TYPE_OR_LIKE)) {
-                $this->db->or_like($key, $value['data']);
-            } elseif (($value['typ'] == WHERE_TXT)) {
-                $this->db->where($value['data']);
-            }
-        }
-        if ($this->whereOrgId>0 && isset($this->dataModel['orgId'])){
-            $this->db->where('orgId', $this->whereOrgId);
-        }
+        // foreach ($where_array as $key => $value) {
+        //     if ($value['typ'] == WHERE_TYPE_WHERE){
+        //         $this->db->where($key, $value['data']);
+        //     } elseif ($value['typ'] == WHERE_TYPE_IN) {
+        //         $this->db->where_in($key, $value['data']);
+        //     } elseif (($value['typ'] == WHERE_TYPE_LIKE)) {
+        //         $this->db->like($key, $value['data']);
+        //     } elseif ($value['typ'] == WHERE_TYPE_OR_WHERE){
+        //         $this->db->or_where($key, $value['data']);
+        //     } elseif ($value['typ'] == WHERE_TYPE_OR_IN) {
+        //         $this->db->or_where_in($key, $value['data']);
+        //     } elseif (($value['typ'] == WHERE_TYPE_OR_LIKE)) {
+        //         $this->db->or_like($key, $value['data']);
+        //     } elseif (($value['typ'] == WHERE_TXT)) {
+        //         $this->db->where($value['data']);
+        //     }
+        // }
+        // if ($this->whereOrgId>0 && isset($this->dataModel['orgId'])){
+        //     $this->db->where('orgId', $this->whereOrgId);
+        // }
 
-        $this->db->select('*')
-                    ->from($this->tableName)
-                    ->order_by($this->orderKey,'desc');
+        $this->db->order_by($this->orderKey);
                     
-        $query = $this->db->get();
+        $query = $this->db->get($this->tableName);
         // print $this->db->last_query();
          //exit;
+       
         if ($query->num_rows() > 0)
         {
             foreach ($query->result_array() as $row)
             {
-
-                if (!isset($row['id']) && isset($row['uid'])) {
-                    $row['id'] = $row['uid'];
+                if (is_object($row['_id'])){
+                    $id = (string)$row['_id'];
+                } else {
+                    $id = $row['_id'];
                 }
-
-                $this->record_list[$row['id']] = new $this->dataModelName();
-                $this->record_list[$row['id']]->orgId = $this->whereOrgId;
-                $this->record_list[$row['id']]->init_with_data($row['id'],$row);
+                
+                $this->record_list[$id] = new $this->dataModelName();
+                $this->record_list[$id]->orgId = $this->whereOrgId;
+                $this->record_list[$id]->init_with_data($row['_id'],$row);
             }
             return $query->num_rows();
         } else {
             return 0;
         }
+
 
     }
 
