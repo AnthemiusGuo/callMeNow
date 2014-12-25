@@ -25,7 +25,7 @@ class Org extends P_Controller {
         $this->title_create = $this->dataInfo->title_create;
 
         $this->createUrlC = 'org';
-        $this->createUrlF = 'doCreateCommon';
+        $this->createUrlF = 'doCreateOrg';
 
         $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
         $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
@@ -43,11 +43,18 @@ class Org extends P_Controller {
 		$this->template->load('default_lightbox_info', 'org/info');
 	}
 
-	function doCreateCommon(){
+	function doCreateOrg(){
 		$modelName = 'records/Org_model';
         $jsonRst = 1;
         $zeit = time();
-        
+
+        if ($this->userInfo->field_list['orgId']->value!==0){
+            $jsonRst = -1;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='您已经创建了商户，不可重复创建!';
+            echo $this->exportData($jsonData,$jsonRst);
+            return;
+        }
         $this->load->model($modelName,"dataInfo");
         $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
         $data = array();
@@ -70,11 +77,15 @@ class Org extends P_Controller {
         }
         $newId = $this->dataInfo->insert_db($data);
 
+        $userData = array('orgId'=>$newId);
+
+        $this->userInfo->update_db($userData,$this->userInfo->uid);
+
         $jsonData = array();
 
         $jsonData['goto_url'] = site_url('index/index');
 
-        $jsonData['newId'] = $newId;
+        $jsonData['newId'] = (string)$newId;
         echo $this->exportData($jsonData,$jsonRst);
 	}
 

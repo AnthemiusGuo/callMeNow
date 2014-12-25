@@ -10,16 +10,18 @@ class Index extends P_Controller {
 		$this->login_verify();
 		$this->load_menus();
 
-		if ($this->userInfo->field_list['everEdit']->value=='') {
+		if ($this->userInfo->field_list['everEdit']->value==0) {
 			$this->needInputUserInfo = true;
 		} else {
 			$this->needInputUserInfo = false;
 		}
+		//TODO
+		$this->needInputUserInfo = false;
 
-		if ($this->userInfo->field_list['orgId']->value==0) {
+		if ($this->userInfo->field_list['orgId']->value==0 || $this->userInfo->field_list['orgId']->value_checked<=0) {
 			$this->template->load('default_page', 'index/bindOrg');
 		} else {
-			$this->needInputOrgInfo = false;
+			$this->load_org_info();
 		
 	        $this->load->model('lists/Schedule_list',"schedule_list");
 	        $this->schedule_list->load_dated_data_with_uid($this->uid);

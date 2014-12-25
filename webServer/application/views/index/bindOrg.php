@@ -44,7 +44,7 @@ include_once(APPPATH."views/common/bread.php");
                         </p>
                         
                     </div>
-                <form id="loginForm" class="login-form" action="<?=site_url("index/doLogin")?>" method="post">
+                <form role="form" action="<?=site_url("index/doLogin")?>" method="post">
 
                     <h3 class="form-title">请输入商户加入密码</h3>
                     <div class="form-group">

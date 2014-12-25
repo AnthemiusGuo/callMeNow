@@ -920,7 +920,7 @@ body {
 ****/
 
 .modal-body{
-  height: 400px;
+  height: 360px;
   overflow-x:hidden;
   overflow-y:auto;
 }
@@ -955,3 +955,37 @@ td.td_data_width {
   color:#333;
 }
 .field_name_must em{font-weight: normal;color:red;}
+
+.shopInfoCard{
+   border: 1px solid #EEE;
+   background: #FEFEFE;
+   padding: 10px;
+}
+.shopInfoCard h4{
+  font-weight: bold;
+  color:#222;
+  font-size:24px;
+}
+.shopInfoCard .shopDesc{
+  color:#444;
+}
+
+.shopInfoCard dt{
+  width:15%; float:left;display: block;
+  height: 20px;line-height: 20px;
+  color:#444;
+}
+.shopInfoCard dd{
+  width:35%; float:left;display: block;
+  height: 20px;line-height: 20px;
+  font-weight: bold;
+  color:#222;
+}
+.shopInfoCard dd.dd_wide{
+  width:85%; 
+
+}
+
+.shopInfoCard .shopDesc{
+  height:80px;
+}

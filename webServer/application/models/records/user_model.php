@@ -13,11 +13,14 @@ class User_model extends Record_model {
         
         $this->field_list['regTS'] = $this->load->field('Field_date',"注册时间","regTS");
         $this->field_list['pwd'] = $this->load->field('Field_string',"密码","pwd");
-        $this->field_list['orgId'] = $this->load->field('Field_string',"组织","orgId");
+        $this->field_list['orgId'] = $this->load->field('Field_relate_org',"商户","orgId");
 
         $this->field_list['name'] = $this->load->field('Field_title',"姓名","name");
         $this->field_list['sign'] = $this->load->field('Field_string',"签名","sign");
         $this->field_list['intro'] = $this->load->field('Field_text',"个人介绍","intro");
+
+        $this->field_list['everEdit'] = $this->load->field('Field_int',"曾修改","everEdit");
+        
     }
     public function init($id){
         
@@ -77,6 +80,7 @@ class User_model extends Record_model {
 
     public function init_with_data($id,$data){
         parent::init_with_data($id,$data);
+
         $this->uid = $id->{'$id'};
         $this->uname = $data['name'];
     }
@@ -171,6 +175,7 @@ class User_model extends Record_model {
            'isAdmin' =>0,
            'sign'=>'',
            'intro'=>'',
+           'everEdit'=>0,
         );
 
         $this->cimongo->insert($this->tableName, $data); 
@@ -242,12 +247,7 @@ class User_model extends Record_model {
     public function buildInfoTitle(){
         return '人事关系:'.$this->field_list['name']->gen_show_html().'<small>'.$this->field_list['nickname']->gen_show_html().'</small>';
     }
-    public function update_db($data,$id){
-        $this->db->where('uid', $id)->update($this->tableName,$data);
-        // echo $this->db->last_query();
-        // exit;
-        return $this->db->affected_rows();
-    }
+   
     
 }
 ?>

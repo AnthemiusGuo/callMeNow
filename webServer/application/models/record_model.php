@@ -7,6 +7,7 @@
     public $deleteCtrl = '';
     public $deleteMethod = '';
     public $edit_link = '';
+    public $id_is_id = true;//id字段是mongoid对象还是字符串
 
     public function __construct($tableName='') {
         parent::__construct();
@@ -87,29 +88,35 @@
     }
 
     public function init_with_id($id){
-        $this->db->select('*')
-                    ->from($this->tableName)
-                    ->where('id', $id);
-
-        $query = $this->db->get();
-
+        if (!is_object($id) && $this->id_is_id){
+            $real_id = new MongoId($id);
+        } else {
+            $real_id = $id;
+        }
+        $this->db->where(array('_id' => $real_id));
+        $this->checkWhere();
+        
+        $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
             $result = $query->row_array(); 
             $this->init_with_data($result['id'],$result);
             return 1;
-        }
-        else
-        {
+        } else {
             return -1;
-        }
+        }        
     }
 
-    public function init_with_data($id,$data){
+    public function init_with_data($id,$data,$isFullInit=true){
         $this->id = $id->{'$id'};
         foreach ($data as $key => $value) {
             if (isset($this->field_list[$key])){
-                $this->field_list[$key]->init($value);
+                if ($isFullInit) {
+                    $this->field_list[$key]->init($value);
+                } else {
+                    $this->field_list[$key]->baseInit($value);
+                }
+                
             }
         }
     }
@@ -193,11 +200,15 @@
         return $effect;
     }
 
-    public function update_db($data,$id){
-        $this->db->where('id', $id)->update($this->tableName,$data);
-        // echo $this->db->last_query();
-        // exit;
-        return $this->db->affected_rows();
+     public function update_db($data,$id){
+        if (!is_object($id) && $this->id_is_id){
+            $real_id = new MongoId($id);
+        } else {
+            $real_id = $id;
+        }
+
+        $this->db->where(array('_id'=>$real_id))->update($this->tableName,$data);
+        return true;
     }
 
     public function genShowId($orgId,$typ){

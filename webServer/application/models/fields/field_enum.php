@@ -22,6 +22,9 @@ class Field_enum extends Field_int {
     public function gen_list_html(){
         return $this->enum[$this->value];
     }
+    public function gen_show_value(){
+        return $this->enum[$this->value];
+    }
     public function gen_show_html(){
         return '<span class="label label-primary">'.$this->enum[$this->value].'</span>';
     }

@@ -464,7 +464,7 @@ function lightbox(opts) {
         width=600;
     }
     opts = $.extend(default_opts,opts);
-    $.fancybox.open({href : opts.url,type:'ajax',autoSize:false,width:width,height:500});
+    $.fancybox.open({href : opts.url,type:'ajax',autoSize:false,autoHeight:false,autoWidth:false,width:width,height:500});
     return;
     if ($("#lightbox").data('bs.modal')){
         $("#lightbox").modal('hide').one('hidden.bs.modal', function (e) {
@@ -734,9 +734,10 @@ function reqCreate(url_m,url_a,fields,validator){
                     var showErr = {};
                     showErr[json.data.err.id] = json.data.err.msg ;
                     validator.showErrors(showErr);
+                    alert(json.data.err.msg);
+                } else {
+                    alert(json.data.err.msg);
                 }
-                
-                alert(json.data.err.msg);
             }
         }
     });

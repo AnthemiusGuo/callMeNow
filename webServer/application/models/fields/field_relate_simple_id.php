@@ -1,6 +1,6 @@
 <?php
-include_once(APPPATH."models/fields/field_int.php");
-class Field_relate_simple_id extends Field_int {
+include_once(APPPATH."models/fields/field_mongoid.php");
+class Field_relate_simple_id extends Field_mongoid {
     public $where = array();
     
     public function __construct($show_name,$name,$is_must_input=false) {
@@ -14,28 +14,41 @@ class Field_relate_simple_id extends Field_int {
         $this->showValue = ' - ';
         $this->enum = array();
         $this->needOrgId = 1;
+        $this->relate_id_is_id = true;
+        $this->value_checked = 0;
     }
 
+    public function baseInit($value){
+        parent::init($value);
 
+    }
     public function init($value){
         parent::init($value);
-        if ($value<=0){
+        if ($value===0){
             $this->showValue = ' - ';
+
             return;
         }
         $this->valueSetted = true;
-        $this->CI->db->select("{$this->valueField},{$this->showField}")
-            ->from($this->tableName)
-            ->where($this->valueField, $value);
+
+        if (!is_object($value) && $this->relate_id_is_id){
+            $real_value = new MongoId($value);
+        } else {
+            $real_value = $value;
+        }
+        $this->db->select(array($this->valueField,$this->showField))
+            ->where(array($this->valueField => $real_value));
         $this->checkWhere();
         
-        $query = $this->CI->db->get();
+        $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
             $result = $query->row_array(); 
             $this->showValue = $result[$this->showField];
+            $this->value_checked = 1;
         } else {
             $this->showValue = '[未知(id:'.$value.')]';
+            $this->value_checked = -1;
         }
     }
     public function gen_list_html(){

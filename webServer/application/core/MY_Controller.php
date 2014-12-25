@@ -601,7 +601,19 @@ class P_Controller extends CI_Controller {
 		}
 	}
 
+    function load_org_info() {
+        if (!$this->is_login) {
+            return;
+        }
+        if ($this->userInfo->field_list['orgId']->value==0 || $this->userInfo->field_list['orgId']->value_checked<=0) {
+            return;
+        }
 
+        $this->load->model('records/org_model',"myOrgInfo");
+            
+        $this->myOrgInfo->init_with_id($this->userInfo->field_list['orgId']->value);
+
+    }
 	function login_verify() {
 		if($this->login->is_login() === true) {
 			$this->is_login = true;

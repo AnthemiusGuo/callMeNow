@@ -7,98 +7,50 @@ include_once(APPPATH."views/common/bread.php");
 include_once("dashboardHelper.php");
 ?>
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="panel panel-data">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-phone-alt"></span>
+                    来电快捷输入</h3>
+            </div>
+            <div class="panel-body dashboard-panel">
+                <form role="form" action="<?=site_url("index/doLogin")?>" method="post">
+
+                    <h3 class="form-title">请输入来电号码</h3>
+                    <div class="form-group">
+                        <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                        <label class="control-label visible-ie8 visible-ie9">来电号码</label>
+                        <div class="input-icon">
+                            <span class="glyphicon glyphicon-ok-circle"></span>
+                            <input class="form-control placeholder-no-fix" type="text" placeholder="来电号码" id="enterCode" name="enterCode">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        
+                            <button type="button" class="btn green-meadow pull-right" onclick="req_login()">
+                            查询 <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
         <div class="panel panel-data">
             <div class="panel-heading">
                 <h3 class="panel-title">
                     <span class="glyphicon glyphicon-globe"></span>
-                    已加入的组织</h3>
+                    您的商户信息</h3>
             </div>
             <div class="panel-body dashboard-panel">
-                <table class="table table-striped  simplePagerContainer">
-                    <thead>
-                        <tr>
-                            <?
-                            foreach ($this->listAttendInfo->list_titles as $key_names):
-                            ?>
-                                <th>
-                                    <?php
-                                    echo $this->listAttendInfo->dataModel[$key_names]->gen_show_name();;
-                                    ?>
-                                </th>
-                            <?
-                            endforeach;
-                            ?>
-                        </tr>
-                    </thead>
-                    <tbody id="org-table-paged" class="table-paged">
-                        <?php 
-                        $i = 1;
-                        foreach($this->listAttendInfo->record_list as  $this_record): ?>
-                            <tr>
-                                <?
-                                foreach ($this->listAttendInfo->list_titles as $key_names):
-                                ?>
-                                    <td>
-                                        <?php
-                                        if ($this_record->field_list[$key_names]->typ=="Field_title"):
-                                        
-                                            echo '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($this->org_info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
-                                        elseif ($this_record->field_list[$key_names]->typ=="Field_text"):
-                                            echo $this_record->field_list[$key_names]->gen_list_html(8);
-                                        else :                         
-                                            echo $this_record->field_list[$key_names]->gen_list_html();
-
-                                        endif;
-                                        ?>
-                                    </td>
-                                <?
-                                endforeach;
-                                ?>
-                            </tr>        
-                        <?php $i++;
-                        endforeach; ?>
-                        
-                    </tbody>
-                </table>
-                <div id="org_pager">
-
-                </div>
+                <?=$this->myOrgInfo->buildCardShowFields()?>                
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
-        <div class="panel panel-data">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <span class="glyphicon glyphicon-th-list"></span>
-                    我正参与的项目</h3>
-            </div>
-            <div class="panel-body dashboard-panel">
-                <dl>
-                    <?php 
-                    foreach($this->project_list->record_list as  $orgId=>$this_org): 
-                    ?>
-                    <dt><?=$this->orgList[$orgId]['name']?></dt>
-                    <dd>
-                        <ul>
-                        <?php 
-                        foreach($this_org as  $this_record):
-                            echo '<li><a href="'.site_url('project/info/'.$this_record->field_list['id']->value).'">';
-                            echo $this_record->field_list['name']->gen_show_html();
-                            echo '</a></li>';
-                        endforeach;
-                        ?>
-                        </ul>
-                    </dd>
-                    <?
-                    endforeach;
-                    ?>
-                </dl>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
+    <div class="clearfix"></div>
+    <div class="col-lg-6 col-md-6 col-sm-12">
         <div class="panel panel-data">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -133,7 +85,7 @@ include_once("dashboardHelper.php");
             </div>
         </div>
     </div>
-    <div class="col-lg-6">
+    <div class="col-lg-6 col-md-6 col-sm-12">
         <div class="panel panel-data">
             <div class="panel-heading">
                 <h3 class="panel-title">

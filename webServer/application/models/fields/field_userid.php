@@ -1,37 +1,19 @@
 <?php
-include_once(APPPATH."models/fields/field_int.php");
+include_once(APPPATH."models/fields/field_relate_simple_id.php");
 
-class Field_userid extends Field_int {
+class Field_userid extends Field_relate_simple_id {
     
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
-        $this->typ = "Field_string";
+        $this->typ = "Field_userid";
+        $this->set_relate_db('uUser','_id','name');
     }
     public function init($value){
-        parent::init($value);
-        if ($value<=0){
+        
+        if (is_numeric($value) && $value<=0){
             $this->userName = '[系统]';
         } else {
-            $this->CI->db->select('username,name,nickname,usenick')
-                    ->from('uUser')
-                    ->where('uid', $value);
-
-            $query = $this->CI->db->get();
-            if ($query->num_rows() > 0)
-            {
-                $result = $query->row_array(); 
-                if ($result['usenick']==1){
-                    $this->userName = $result['nickname'];
-                } else {
-                    $this->userName = $result['name'];
-                } 
-                if ($this->userName==''){
-                    $this->userName = $result['username'];
-                }
-                
-            } else {
-                $this->userName = '[未知(id:'.$value.')]';
-            }
+            parent::init($value);
         }
     }
     public function gen_list_html(){

@@ -11,6 +11,7 @@ class Fields {
     
     public function __construct($show_name,$name,$is_must_input=false) {
         $this->CI =& get_instance();
+        $this->db = $this->CI->cimongo;
         $this->show_name = $show_name;
         $this->name = $name;
         $this->default = "";
@@ -22,9 +23,10 @@ class Fields {
         $this->is_title = false;
     }
     public function init($value){
-        
         $this->value = $value;
-       
+    }
+    public function baseInit($value){
+        $this->value = $value;
     }
 
     public function setOrgId($orgId){
@@ -72,6 +74,9 @@ class Fields {
     }
     public function gen_show_value(){
         return $this->value;
+    }
+    public function toString(){
+        return (string)$this->value;
     }
 
     public function gen_show_html(){
