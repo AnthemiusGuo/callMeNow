@@ -43,6 +43,7 @@ class Field_relate_simple_id extends Field_mongoid {
         $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
+
             $result = $query->row_array(); 
             $this->showValue = $result[$this->showField];
             $this->value_checked = 1;
@@ -94,12 +95,11 @@ class Field_relate_simple_id extends Field_mongoid {
         } 
     }
     private function setEnum(){
-        $this->db->select("{$this->valueField},{$this->showField}")
-            ->from($this->tableName);
+        $this->db->select("{$this->valueField},{$this->showField}");
         $this->checkWhere();
 
         $this->db->order_by('id','asc');
-        $query = $this->db->get();
+        $query = $this->db->get($this->tableName);
 
         $this->enum[0] = ' - ';
         if ($query->num_rows() > 0)

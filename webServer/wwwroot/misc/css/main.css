@@ -924,7 +924,17 @@ body {
   overflow-x:hidden;
   overflow-y:auto;
 }
+.note h1,
+.note h2,
+.note h3,
+.note h4,
+.note h5 {
+  font-weight: bold;
+}
 
+.editor_info dt,.editor_info dd {
+  width:25%;float: left;
+}
 
 td.td_title {
   width:15%;

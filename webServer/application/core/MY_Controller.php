@@ -29,6 +29,7 @@ class P_Controller extends CI_Controller {
 		date_default_timezone_set("Asia/Shanghai");
 
 		$this->is_login = false;
+        $this->force_lightbox = false;
 		$this->load->helper('url');
         $this->controller_name = ($this->uri->segment(1)=="")?'index':$this->uri->segment(1);
         $this->method_name = ($this->uri->segment(2)=="")?'index':$this->uri->segment(2);
@@ -335,28 +336,6 @@ class P_Controller extends CI_Controller {
                 "name"=>'日程',
                 "icon"=>'glyphicon-calendar',
             );
-        $this->all_menus["task"]=array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('task/index'),
-                        "name"=>"任务查询",
-                        "onclick"=>''
-                    ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建任务",
-                        "onclick"=>"lightbox({url:'".site_url('task/create')."'})",
-                    )
-                ),
-                "default_menu"=>"index",
-                "name"=>'任务',
-                "icon"=>'glyphicon-tasks',
-            );
-
-        
-        
         $this->all_menus["finance"] = array(
                 "menu_array"=>array(
                     "cashflow"=>array(

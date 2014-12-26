@@ -7,6 +7,7 @@
     public $deleteCtrl = '';
     public $deleteMethod = '';
     public $edit_link = '';
+    public $info_link = '';
     public $id_is_id = true;//id字段是mongoid对象还是字符串
 
     public function __construct($tableName='') {
@@ -17,11 +18,29 @@
         $this->field_list = array();
         $this->orgId = 0;
         $this->errData = '';
+        $this->default_is_lightbox_or_page = true;
     }
     public function init($id){
         $this->id = $id;
         
     }
+
+    public function gen_url($key_names,$force_lightbox=false,$info_link=''){
+        if ($info_link=='') {
+            $info_link = $this->info_link;
+        } 
+
+        if ($info_link==''){
+            //报错
+        }
+        if ($this->default_is_lightbox_or_page) {
+            return '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($info_link.'/'.$this->id).'\'})">'.$this->field_list[$key_names]->gen_list_html().'</a>';
+        } else {
+            return '<a href="'. site_url($info_link.'/'.$this->id).'">'.$this->field_list[$key_names]->gen_list_html().'</a>';
+        }
+    }
+        
+        
 
     public function fetchArray(){
         $arrayRst = array();

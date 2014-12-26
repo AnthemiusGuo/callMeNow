@@ -77,14 +77,24 @@ class List_model extends CI_Model {
     }
 
     public function add_quick_search_where($info) {
-        $this->db->like('name', $info,'iu');
+        $regex = new MongoRegex("/$info/iu");
+
+        $array = array();
+        if (count($this->quickSearchWhere)<=0){
+            return;
+        }
+        foreach ($this->quickSearchWhere as $value) {
+            $array[] = array($value=>$regex);
+        }
+
+        $this->db->where(array('$or'=>$array),true);
     }
 
     public function load_data_with_search($searchInfo){
         if ($searchInfo['t']=="no") {
             $this->load_data_with_where();
         } elseif ($searchInfo['t']=="quick"){
-            
+
             $this->add_quick_search_where($searchInfo['i']);
             
             $this->load_data_with_where();
@@ -126,8 +136,7 @@ class List_model extends CI_Model {
         $this->db->order_by($this->orderKey);
                     
         $query = $this->db->get($this->tableName);
-        // print $this->db->last_query();
-         //exit;
+
         $num = $query->num_rows();
         if ($num > 0)
         {
@@ -160,6 +169,21 @@ class List_model extends CI_Model {
         $this->purge_where();
         $this->add_where(WHERE_TYPE_WHERE,$keyName,$keyValue);
         $this->load_data_with_where();
+    }
+
+    public function load_data_with_data($data,$dataModelName){
+        foreach ($data as $row)
+        {
+            if (is_object($row['_id'])){
+                $id = (string)$row['_id'];
+            } else {
+                $id = $row['_id'];
+            }
+            
+            $this->record_list[$id] = new $dataModelName();
+            $this->record_list[$id]->orgId = $this->whereOrgId;
+            $this->record_list[$id]->init_with_data($row['_id'],$row);
+        }
     }
 }
 ?>
