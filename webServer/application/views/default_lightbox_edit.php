@@ -1,8 +1,5 @@
 <!-- Modal -->
-<div class="modal-dialog">
-    <div class="modal-content">
         <div class="modal-header logo-small">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title" id="myModalLabel"><?php echo $this->title_create ?></h4>
         </div>
         <div class="modal-body">
@@ -12,11 +9,9 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-default" onclick="$.fancybox.close();">取消</button>
             <button type="button" class="btn btn-primary" onclick="reqEdit('<?=$this->createUrlC?>','<?=$this->createUrlF?>',reqEditFields,editFormValidator)">保存</button>
         </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
 <script>
 var editFormValidator = $("#editForm").validate();
 var reqEditFields = [];

@@ -5,7 +5,7 @@ class Field_relate_crm extends Field_related_id {
     
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
-        $this->set_relate_db('cCrm','id','name');
+        $this->set_relate_db('cCrm','_id','name');
         $this->setEditor('crm/searchCrm/');
         $this->setPlusCreateData(array('typ'=>0));
     }

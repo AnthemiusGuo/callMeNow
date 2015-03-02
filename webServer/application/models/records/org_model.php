@@ -81,12 +81,12 @@ class Org_model extends Record_model {
 
     public function buildShowCardAdmin(){
         $_html = '<div class="shopInfoCard">';
-        $_html .= '<h4>['.$this->field_list['provinceId']->gen_show_value().']'.$this->field_list['name']->gen_show_html().'</h4>';
+        $url = $this->gen_front_url();
+        $_html .= '<h4>['.$this->field_list['provinceId']->gen_show_value().']'.'<a href="'.$url.'" target="_blank">'.$this->field_list['name']->gen_show_html().'</a></h4>';
         if ($this->field_list['beginTS']->value>86400){
             $_html .= '<span class="shopBegin">始于 '.date("Y",$this->field_list['beginTS']->value).' 年</span>';
         }
-        $url = $this->gen_front_url();
-        $_html .= '<p class="url"><a href="'.$url.'" target="_blank">'.$url.'</a></p>';
+        
         
         $_html .= '<p class="shopDesc">'.$this->field_list['desc']->gen_show_html().'</p>';
 

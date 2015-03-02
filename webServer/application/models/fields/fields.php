@@ -128,9 +128,9 @@ class Fields {
         $value = urlencode($this->default);
         return "<input id=\"$inputName\"  name=\"$inputName\" type=\"hidden\" value=\"{$value}\"/>";
     }
-    public function build_validator(){
+    public function build_validator($need_require_validator=true){
         $validater = '';
-        if ($this->is_must_input){
+        if ($this->is_must_input && $need_require_validator){
             $validater .= ' required ';
         }
         return $validater;

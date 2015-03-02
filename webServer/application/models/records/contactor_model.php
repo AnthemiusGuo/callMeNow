@@ -8,31 +8,17 @@ class Contactor_model extends Record_model {
         $this->deleteMethod = 'doDeleteContactor';
         $this->edit_link = 'crm/editContactor';
         
-        $this->field_list['id'] = $this->load->field('Field_int',"id","id");
-
+        $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
+        $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
         $this->field_list['name'] = $this->load->field('Field_string',"姓名","name",true);
-        $this->field_list['isFirst'] = $this->load->field('Field_bool',"首选联系人","isFirst",true);
-        $this->field_list['typ'] = $this->load->field('Field_enum',"身份","typ",true);
-        $this->field_list['typ']->setEnum(array('其他','公益负责人','企业/单位负责人'));
-        $this->field_list['crmId'] = $this->load->field('Field_int',"crmId","crmId");
-
-        
-        $this->field_list['dianhua'] = $this->load->field('Field_string',"联系电话","dianhua");
-        $this->field_list['youxiang'] = $this->load->field('Field_email',"电子邮箱","youxiang");
+        $this->field_list['crmId'] = $this->load->field('Field_string',"crmId","crmId");
+        $this->field_list['dianhua'] = $this->load->field('Field_string',"电话","dianhua");
+        $this->field_list['qq'] = $this->load->field('Field_string',"QQ","qq");
         $this->field_list['qitafangshi'] = $this->load->field('Field_string',"其他联系方式","qitafangshi");
         
         
     }
-    public function init($id){
-        parent::init($id);
-        //取数据库，先跳过
-        $this->field_list['id']->init($id);
-        $this->field_list['dianhua']->init(rand(13910001000,13999999999));
-        $this->field_list['createUid']->init("1");
-        $this->field_list['createTS']->init("1");
-        $this->field_list['lastModifyUid']->init("1");
-        $this->field_list['lastModifyTS']->init("1");
-    }
+    
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
@@ -40,7 +26,37 @@ class Contactor_model extends Record_model {
         
     }
     public function buildInfoTitle(){
-        return $this->field_list['name']->gen_show_html().' <small> '.$this->field_list['typ']->gen_show_html().' </small>';
+        return $this->field_list['name']->gen_show_html().' <small> '.$this->field_list['dianhua']->gen_show_html().' </small>';
+    }
+
+    public function buildChangeShowFields(){
+            return array(
+                    array('name'),
+                    array('dianhua','qq'),
+                    array('qitafangshi'),
+
+                );
+    }
+
+    public function buildDetailShowFields(){
+        return array(
+                    array('name'),
+                    array('dianhua','qq'),
+                    array('qitafangshi'),
+                );
+    }
+    public function gen_brief_html(){
+        $_html = '<strong>'.$this->field_list['name']->gen_show_html().'</strong>';
+        if ($this->field_list['dianhua']->value!=''){
+            $_html .= '  <span>电话:'.$this->field_list['dianhua']->gen_show_html().';</span>';
+        }
+        if ($this->field_list['qq']->value!=''){
+            $_html .= '  <span>QQ:'.$this->field_list['qq']->gen_show_html().'</span>';
+        }
+        if ($this->field_list['qitafangshi']->value!=''){
+            $_html .= '  <span>其他:'.$this->field_list['qitafangshi']->gen_show_html().'</span>';
+        }
+        return $_html;
     }
     //0姓名*必填   1性别*必填   2出生日期*必填 3省份*必填   4状态*必填   5情况说明    6学校  7学校地址    8通讯地址    9邮编  10需赞助金额   11汇款账号    12联系人姓名   13联系电话    14电子邮箱    15其他联系方式
     public function checkImportDataP($data){

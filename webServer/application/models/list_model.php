@@ -17,7 +17,7 @@ class List_model extends CI_Model {
         $this->whereData = array();
         $this->whereOrgId = null;
         $this->quickSearchWhere = array("name");
-
+        $this->is_lightbox = true;
     }
 
     public function setOrgId($orgId) {

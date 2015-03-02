@@ -176,6 +176,5 @@ class Login {
 	
 	public function logout() {
 		delete_cookie('uinfo');
-		$this->CI->session->sess_destroy();
 	}
 }

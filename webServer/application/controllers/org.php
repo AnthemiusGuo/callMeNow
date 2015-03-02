@@ -61,7 +61,8 @@ class Org extends P_Controller {
         foreach ($this->createPostFields as $value) {
             $data[$value] = $this->dataInfo->field_list[$value]->gen_value($this->input->post($value));
         }
-
+        $data['supperUid'] = $this->userInfo->uid;
+        
         $data['createUid'] = $this->userInfo->uid;
         $data['createTS'] = $zeit;
         $data['lastModifyUid'] = $this->userInfo->uid;

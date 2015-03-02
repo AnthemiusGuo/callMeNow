@@ -11,16 +11,17 @@ class Field_userid extends Field_relate_simple_id {
     public function init($value){
         
         if (is_numeric($value) && $value<=0){
-            $this->userName = '[系统]';
+            $this->showValue = '[系统]';
         } else {
             parent::init($value);
         }
+        
     }
     public function gen_list_html(){
-        return $this->userName;
+        return $this->showValue;
     }
     public function gen_show_html(){
-        return $this->userName;
+        return $this->showValue;
     }
     public function gen_search_element($default="="){
         $editor = "<input type=\"hidden\" id=\"searchEle_{$this->name}\" name=\"search_{$this->name}\" class=\"form-control input-sm\" value=\"=\">";

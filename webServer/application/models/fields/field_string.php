@@ -29,9 +29,9 @@ class Field_string extends fields {
         $editor .= "</select>";
         return $editor;
     }
-    public function gen_editor($typ=0){
+    public function gen_editor($typ=0,$need_require_validator=true){
         $inputName = $this->build_input_name($typ);
-        $validates = $this->build_validator();
+        $validates = $this->build_validator($need_require_validator);
         if ($typ==1){
             $this->default = $this->value;
         }

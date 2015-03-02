@@ -1,27 +1,15 @@
 <!-- Modal -->
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header logo-small">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="myModalLabel"><? echo $this->infoTitle; ?>
-            <!--<div class="btn-group pull-right margin-right-20">
-                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span>编辑</button>
-                <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>删除</button>
-            </div>-->
-            </h4>
-            
-        </div>
-        <div class="modal-body">
-            <?php echo $contents; ?>
-            <hr/>
-            <div id="light_comments">
-            </div>
-        </div>
-        <div class="modal-footer">
-            <?php
-            if (isset($this->dataInfo->field_list['createUid'])):
+<div class="modal-header logo-small">
+    <h4 class="modal-title" id="myModalLabel"><?php echo $this->infoTitle ?></h4>
+</div>
+<div class="modal-body">
+        <?php echo $contents; ?>
+</div>        
+<div class="modal-footer">
+    <?php
+        if (isset($this->dataInfo->field_list['createUid'])):
 
-            ?>
+    ?>
             <div class="note note-success text-left">
                 <h5>条目编辑历史</h5>
                 <dl class="editor_info">
@@ -39,9 +27,7 @@
             <?
             endif;
             ?>
-        </div>
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+</div>
 <script>
 $('.tooltips').powerTip({offset:20});
 <?

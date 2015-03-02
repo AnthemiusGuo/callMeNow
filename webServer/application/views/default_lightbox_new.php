@@ -8,7 +8,7 @@
             </form>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button type="button" class="btn btn-default" onclick="$.fancybox.close();">取消</button>
             <button type="button" class="btn btn-primary" onclick="reqCreate('<?=$this->createUrlC?>','<?=$this->createUrlF?>',reqCreateFields,createFormValidator)">保存</button>
         </div>
 <script>

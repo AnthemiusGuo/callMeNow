@@ -24,6 +24,7 @@ class Field_relate_simple_id extends Field_mongoid {
     }
     public function init($value){
         parent::init($value);
+        
         if ($value===0){
             $this->showValue = ' - ';
 
@@ -36,6 +37,7 @@ class Field_relate_simple_id extends Field_mongoid {
         } else {
             $real_value = $value;
         }
+
         $this->db->select(array($this->valueField,$this->showField))
             ->where(array($this->valueField => $real_value));
         $this->checkWhere();

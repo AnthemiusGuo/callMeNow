@@ -1,18 +1,10 @@
 <?php
 include_once(APPPATH."models/list_model.php");
-include_once(APPPATH."models/records/donation_model.php");
-class Donation_list extends List_model {
+include_once(APPPATH."models/records/book_model.php");
+class Book_list extends List_model {
     public function __construct() {
-        parent::__construct('dDonation');
-        parent::init("Donation_list","Donation_model");
-    }
-    
-    public function init($projectId = 0){
-        for ($i=0;$i<35;$i++){
-            $this->record_list[$i] = new Donation_model();
-            $this->record_list[$i]->init($i);
-        }
-       
+        parent::__construct('bBook');
+        parent::init("Book_list","Book_model");
     }
 
     public function genAnylytics($typ){
@@ -46,23 +38,17 @@ class Donation_list extends List_model {
         return $exportData;
     }
 
-    public function init_byCrmID($crmId){
-        for ($i=0;$i<35;$i++){
-            $this->record_list[$i] = new Donation_model();
-            $this->record_list[$i]->init($i);
-        }
-    }
     public function build_search_infos(){
-        return array('name','status','beginTS','endTS','userInCharge');
+        return array('status','payStatus','beginTS');
     }
     public function build_inline_list_titles(){
-        return array('showId','name','targetCrmId','status','totalGetting','beginTS','endTS','userInCharge');
+        return array('items','status','payStatus','totalGetting','beginTS');
     }
     public function build_short_list_titles(){
-        return array('name','status','totalGetting','userInCharge');
+        return array('crmId','items','status','payStatus','totalGetting','beginTS');
     }
     public function build_list_titles(){
-        return array('showId','name','status','totalGetting','projectId','beginTS','endTS','userInCharge');
+        return array('crmId','items','status','payStatus','totalGetting','beginTS');
     }
 }
 ?>

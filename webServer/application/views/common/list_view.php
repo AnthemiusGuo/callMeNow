@@ -75,9 +75,12 @@ if ($this->need_plus!=""){
                         ?>
                             <td>
                                 <?php
-                                if ($this_record->field_list[$key_names]->typ=="Field_title" || $this_record->field_list[$key_names]->is_title):
-                                
-                                    echo '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($this->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
+                                if ($this_record->field_list[$key_names]->is_title):
+                                    if ($this->listInfo->is_lightbox):
+                                        echo '<a href="javascript:void(0)" onclick="lightbox({size:\'m\',url:\''. site_url($this->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
+                                    else :
+                                        echo '<a href="'.site_url($this->info_link.$this_record->id).'">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
+                                    endif;
                                 elseif ($this_record->field_list[$key_names]->typ=="Field_text"):
                                     echo $this_record->field_list[$key_names]->gen_list_html(8);
                                 else :                         

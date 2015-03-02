@@ -14,17 +14,17 @@ class Field_int extends Fields {
     
         return $input;
     }
-    public function build_validator(){
+    public function build_validator($need_require_validator=true){
         $validater = ' digits ';
         if ($this->is_must_input){
             $validater .= ' min="1" ';
         }
-        $validater .= parent::build_validator();
+        $validater .= parent::build_validator($need_require_validator);
         return $validater;
     }
-    public function gen_editor($typ=0){
+    public function gen_editor($typ=0,$need_require_validator=true){
         $inputName = $this->build_input_name($typ);
-        $validates = $this->build_validator();
+        $validates = $this->build_validator($need_require_validator);
         if ($typ==1){
             $this->default = $this->value;
         }

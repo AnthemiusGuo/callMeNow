@@ -7,13 +7,8 @@ class Contact_list extends List_model {
         parent::init("Contact_list","Contact_model");
     }
     
-    public function init($crmId=0){
-        
-        for ($i=0;$i<35;$i++){
-            $this->record_list[$i] = new Contact_model();
-            $this->record_list[$i]->init($i);
-        }
-        
+    public function build_search_infos(){
+        return array('contactTS','typ');
     }
     
     public function build_list_titles(){

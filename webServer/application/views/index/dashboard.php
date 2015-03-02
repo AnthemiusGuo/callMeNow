@@ -45,78 +45,10 @@ include_once("dashboardHelper.php");
                     您的商户信息</h3>
             </div>
             <div class="panel-body dashboard-panel">
-                <?=$this->myOrgInfo->buildCardShowFields()?>                
+                <?=$this->myOrgInfo->buildShowCardAdmin()?>                
             </div>
         </div>
     </div>
     <div class="clearfix"></div>
-    <div class="col-lg-6 col-md-6 col-sm-12">
-        <div class="panel panel-data">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <span class="glyphicon glyphicon-list-alt"></span>
-                    任务</h3>
-            </div>
-            <div class="panel-body dashboard-panel">
-                <dl>
-                    <?php 
-                    $configNames = array('今日任务','本周任务','本月任务','未来任务');
-                    foreach($this->task_list->record_list as  $key=>$value): 
-                    ?>
-                    <dt><?=$configNames[$key]?></dt>
-                    <dd>
-                        <ul>
-                        <?php 
-                        if (count($value)==0) {
-                            echo "无任务";
-                        }
-                        foreach($value as  $this_record):
-                            echo '<li><a href="javascript:void(0)" onclick="lightbox({url:\''.site_url('task/info/'.$this_record->field_list['id']->value).'\'})">';
-                            echo $this_record->field_list['name']->gen_show_html();
-                            echo '</a></li>';
-                        endforeach;
-                        ?>
-                        </ul>
-                    </dd>
-                    <?
-                    endforeach;
-                    ?>
-                </dl>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12">
-        <div class="panel panel-data">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                    日程</h3>
-            </div>
-            <div class="panel-body dashboard-panel">
-                <dl>
-                    <?php 
-                    foreach($this->schedule_list->record_list as  $key=>$value): 
-                    ?>
-                    <dt><?=$key?></dt>
-                    <dd>
-                        <ul>
-                        <?php 
-                        foreach($value as  $this_record):
-                            echo '<li><a href="javascript:void(0)" onclick="lightbox({url:\''.site_url('schedule/info/'.$this_record->field_list['id']->value).'\'})">';
-                            echo $this_record->field_list['name']->gen_show_html();
-                            echo $this_record->field_list['name']->gen_show_html();
-                            echo ' , ';
-                            echo $this_record->field_list['place']->gen_show_html();
-                            echo '</a></li>';
-                        endforeach;
-                        ?>
-                        </ul>
-                    </dd>
-                    <?
-                    endforeach;
-                    ?>
-                </dl>
-            </div>
-        </div>
-    </div>
+    
 </div>

@@ -17,6 +17,7 @@
         $this->field_list = array();
         $this->orgId = 0;
         $this->errData = '';
+        
     }
     public function init($id){
         $this->id = $id;
@@ -186,6 +187,12 @@
     }
     
     public function insert_db($data){
+        if (isset($this->field_list['_id']) && $this->field_list['_id']->typ == "Field_mongoid") {
+            if (!isset($data['_id'])) {
+                //补充_id 字段
+                $data['_id'] = new MongoId();
+            }
+        }
         $this->db->insert($this->tableName, $data);
         return $this->db->insert_id();
     }
@@ -286,6 +293,18 @@
 
     function checkWhere(){
 
+    }
+    public function buildChangeNeedFields($arr_plus = array()){
+        $array = $arr_plus;
+        foreach ($this->buildChangeShowFields() as $value) {
+            foreach ($value as $v) {
+                if ($v=='null'){
+                    continue;
+                }
+                $array[] = $v;
+            }
+        }
+        return $array;
     }
     
      

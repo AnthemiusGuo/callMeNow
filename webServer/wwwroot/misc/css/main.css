@@ -1004,6 +1004,9 @@ td.td_data_width {
   color:#d64635;
   font-weight: bold;
 }
+.main-nav .nav.sub-nav a:hover{
+  background-color: #555;
+}
 
 .search-aera{
   position: absolute;
@@ -1067,4 +1070,8 @@ td.td_data_width {
 }
 .mini_search_ele {
   text-align: center;
+}
+
+.editor_info dt,.editor_info dd {
+  width:25%;float: left;
 }

@@ -9,15 +9,23 @@ class Crm_model extends Record_model {
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['name'] = $this->load->field('Field_title',"名称","name",true);
-        $this->field_list['orgId'] = $this->load->field('Field_relate_org',"组织","orgId");
+        $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
 
         $this->field_list['typ'] = $this->load->field('Field_enum',"类型","typ",true);
-        $this->field_list['typ']->setEnum(array("未设置","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他","其他"));
+        $this->field_list['typ']->setEnum(array("其他","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他"));
 
         $this->field_list['status'] = $this->load->field('Field_enum',"状态","status",true);
         $this->field_list['status']->setEnum(array("未设置","保持联系","很少联系/结束合作"));
         
         $this->field_list['province'] = $this->load->field('Field_provinceid',"省份","province",true);
+
+        $this->field_list['needPayIn'] = $this->load->field('Field_sum_money',"未收货款(￥)","needPayIn");
+        $this->field_list['needPayOut'] = $this->load->field('Field_sum_money',"未付货款(￥)","needPayOut");
+
+        // $this->field_list['contactors'] = $this->load->field('Field_array_hash',"联系人","contactors",true);
+        // $this->field_list['contactors']->hash_info = array('name'=>'姓名','phone'=>'联系电话','weixin'=>'微信','qq'=>'QQ');
+        $this->field_list['comments'] = $this->load->field('Field_text',"记事本","comments");
+
         $this->field_list['updateTS'] = $this->load->field('Field_ts',"更新时间","updateTS");
         
         $this->field_list['createUid'] = $this->load->field('Field_userid',"创建人","createUid");
@@ -25,23 +33,7 @@ class Crm_model extends Record_model {
         $this->field_list['lastModifyUid'] = $this->load->field('Field_userid',"最终编辑人","lastModifyUid");
         $this->field_list['lastModifyTS'] = $this->load->field('Field_ts',"最后更新","lastModifyTS");
     }
-    public function init($id){
-        parent::init($id);
-        //取数据库，先跳过
-        $this->field_list['id']->init($id);
-        $this->field_list['name']->init("中科院微生物所");
-        $this->field_list['orgId']->init("1");
-        
-        $this->field_list['typ']->init($id%8);
-        $this->field_list['status']->init(1);
-        $this->field_list['projectIds']->init("1");
-        $this->field_list['province']->init("新疆");
-        
-        $this->field_list['createUid']->init("1");
-        $this->field_list['createTS']->init("1");
-        $this->field_list['lastModifyUid']->init("1");
-        $this->field_list['lastModifyTS']->init("1");
-    }
+
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
@@ -93,17 +85,13 @@ class Crm_model extends Record_model {
         return $data;
     }
 
-
-    public function buildChangeNeedFields(){
-        return array('name','typ','status','province');
-    }
-
     public function buildChangeShowFields(){
             return array(
                     array('name'),
-                    array('typ'),
-                    array('status'),
+                    array('typ','status'),
+                    array('needPayIn','needPayOut'),
                     array('province'),
+                    array('comments'),
 
                 );
     }
@@ -111,12 +99,23 @@ class Crm_model extends Record_model {
     public function buildDetailShowFields(){
         return array(
                     array('name'),
-                    array('typ'),
-                    array('status'),
+                    array('typ','status'),
+                    array('needPayIn','needPayOut'),
                     array('province'),
-                    
+                    array('contactors'),
+                    array('comments'),
                 );
     }
     
+    public function getTyp(){
+        //array("其他","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他")
+        if (in_array($this->field_list['typ']->value,array(1,2))) {
+            return 1;
+        } else if (in_array($this->field_list['typ']->value,array(4,5,6))) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
 }
 ?>

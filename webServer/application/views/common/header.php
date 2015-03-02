@@ -11,10 +11,12 @@
     <?php echo link_tag(static_url('css/bootstrap-datetimepicker.min.css')); ?>
     <?php echo link_tag(static_url('css/main.css')); ?>
     <?php echo link_tag(static_url('css/jquery.fancybox.css')); ?>
+    <?php echo link_tag(static_url('css/jquery-ui.css')); ?>
 
     
 
 	<script type="text/javascript" src="<?php echo static_url('js/jquery-1.11.1.min.js'); ?>"></script>
+	<script type="text/javascript" src="<?php echo static_url('js/jquery-ui.min.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/bootstrap.min.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/bootstrap-datetimepicker.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/bootstrap-datetimepicker.zh-CN.js'); ?>"></script>

@@ -332,7 +332,8 @@ http://www.npone.cn<br/>
 			$this->login->process_login($input_data['email'],$uid,true);
 			$data = array();
 			$data['goto_url'] = site_url('index/index');
-			echo $this->exportData($data,$uid);
+			$data['newId'] = $uid;
+			echo $this->exportData($data,1);
 		} else {
 			$err_codes = array(-1=>array('id'=>'uEmail','msg'=>'用户已存在'),
 								-2=>array('id'=>'uPhone','msg'=>'用户已存在'),

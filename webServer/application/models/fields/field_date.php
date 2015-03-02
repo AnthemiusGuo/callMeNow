@@ -59,6 +59,7 @@ class Field_date extends Field_ts {
             }
 
         }
+
         $validates = $this->build_validator();
         $str = "<input id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"".($this->default)."\" $validates />
               <script type=\"text/javascript\">

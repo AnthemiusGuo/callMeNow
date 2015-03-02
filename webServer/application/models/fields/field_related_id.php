@@ -57,9 +57,13 @@ class Field_related_id extends Field_relate_simple_id {
     }
     public function gen_value($input){
         $value = json_decode($input,true);
+        if ($value==NULL){
+            //输入是 id 字符串本身
+            return $input;
+        }
 
         if (count($value)!=1){
-            return 0;
+            return $input;
         } else {
             if ($value[0]['id']==-1){
                 return $this->plusCreate($value[0]);

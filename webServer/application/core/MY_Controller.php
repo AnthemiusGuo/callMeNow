@@ -29,10 +29,13 @@ class P_Controller extends CI_Controller {
 		date_default_timezone_set("Asia/Shanghai");
 
 		$this->is_login = false;
+        $this->db = $this->cimongo;
 		$this->load->helper('url');
         $this->controller_name = ($this->uri->segment(1)=="")?'index':$this->uri->segment(1);
         $this->method_name = ($this->uri->segment(2)=="")?'index':$this->uri->segment(2);
-
+        if ($this->method_name =='info'){
+            $this->method_name = 'index';
+        }
         $this->searchInfo = array('t'=>'no');
         
         if($login_verify) {
@@ -190,30 +193,84 @@ class P_Controller extends CI_Controller {
                         "name"=>"我的信息",
                         "onclick"=>''
                     ),
-                    "notifies"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('index/notifies'),
-                        "name"=>"通知",
-                        "onclick"=>''
-                    ),
-                    "mails"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('index/mails'),
-                        "name"=>"邮件",
-                        "onclick"=>''
-                    ),
-                    "settings"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('index/settings'),
-                        "name"=>"设置",
-                        "onclick"=>''
-                    ),
+                    // "notifies"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('index/notifies'),
+                    //     "name"=>"通知",
+                    //     "onclick"=>''
+                    // ),
+                    // "mails"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('index/mails'),
+                    //     "name"=>"邮件",
+                    //     "onclick"=>''
+                    // ),
+                    // "settings"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('index/settings'),
+                    //     "name"=>"设置",
+                    //     "onclick"=>''
+                    // ),
                 ),
                 "default_menu"=>"index",
                 "name"=>'个人面板',
                 "icon"=>'glyphicon-user',
             );
-            $this->all_menus["management"]=array(
+            
+        $this->all_menus["crm"] = array(
+                "menu_array"=>array(
+                    "index"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/index'),
+                        "name"=>"客户管理",
+                        "onclick"=>''
+                    ),
+                    
+                    
+                    "contactList"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/contactList'),
+                        "name"=>"联系记录",
+                        "onclick"=>''
+                    ),
+                    "order"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/order'),
+                        "name"=>"订单管理",
+                        "onclick"=>''
+                    ),
+                    
+                    "send"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/send'),
+                        "name"=>"发货管理",
+                        "onclick"=>''
+                    ),
+                    "pay"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('crm/pay'),
+                        "name"=>"打款管理",
+                        "onclick"=>''
+                    ),
+                    // "analytics"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('crm/analytics'),
+                    //     "name"=>"客户统计",
+                    //     "onclick"=>''
+                    // ),
+                    // "order_ana"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('crm/order_ana'),
+                    //     "name"=>"订单统计",
+                    //     "onclick"=>''
+                    // ),
+                    
+                ),
+                "default_menu"=>"index",
+                "name"=>'客户管理',
+                "icon"=>'glyphicon-phone-alt',
+            );
+        $this->all_menus["management"]=array(
                 "menu_array"=>array(
                     "index"=>array(
                         "method"=>"href",
@@ -243,45 +300,6 @@ class P_Controller extends CI_Controller {
                 "default_menu"=>"index",
                 "name"=>'商户管理',
                 "icon"=>'glyphicon-home',
-            );
-        $this->all_menus["crm"] = array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/index'),
-                        "name"=>"客户管理",
-                        "onclick"=>''
-                    ),
-                    
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/analytics'),
-                        "name"=>"客户统计",
-                        "onclick"=>''
-                    ),
-                    "contactList"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/contactList'),
-                        "name"=>"联系记录",
-                        "onclick"=>''
-                    ),
-                    "order"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/order'),
-                        "name"=>"订单管理",
-                        "onclick"=>''
-                    ),
-                    "order_ana"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('crm/order_ana'),
-                        "name"=>"订单统计",
-                        "onclick"=>''
-                    )
-                    
-                ),
-                "default_menu"=>"index",
-                "name"=>'客户管理',
-                "icon"=>'glyphicon-phone-alt',
             );
         $this->all_menus["store"] = array(
                 "menu_array"=>array(
