@@ -29,6 +29,7 @@ class Crm extends P_Controller {
 		$this->template->load('default_page', 'common/list_view');
 	}
 
+
     function searchCrm($searchInfo=""){
         $this->title = "社会关系快捷查询";
         $this->quickSearchName = "姓名/名称";
@@ -47,12 +48,14 @@ class Crm extends P_Controller {
         $this->load_menus();
         $this->load_org_info();
 
+
         $this->id = $id;
         $this->load->library('user_agent');
         $this->refer = $this->agent->referrer();
 
         $this->load->model('records/Crm_model',"dataInfo");
         $this->dataInfo->init_with_id($id);
+
 
         $typ = $this->dataInfo->getTyp();
         //上游或其他
@@ -234,6 +237,75 @@ class Crm extends P_Controller {
 
         $this->editor_typ = 1;
         $this->title_create = "编辑客户信息";
+        $this->template->load('default_lightbox_new', 'crm/create');
+    }
+
+    function createContractor(){
+        $this->setViewType(VIEW_TYPE_HTML);
+        
+        $this->createUrlC = 'crm';
+        $this->createUrlF = 'doCreateContractor';
+
+        $this->load->model('records/Contactor_model',"dataInfo");
+        $this->dataInfo->setRelatedOrgId($this->myOrgId);
+
+        $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
+        $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
+
+        $this->editor_typ = 0;
+        $this->title_create = "新建客户信息";
+        $this->template->load('default_lightbox_new', 'crm/create');
+    }
+
+    function editContractor($id){
+        $this->setViewType(VIEW_TYPE_HTML);
+        
+        $this->createUrlC = 'crm';
+        $this->createUrlF = 'doUpdateContractor';
+
+        $this->load->model('records/Contactor_model',"dataInfo");
+        $this->dataInfo->setRelatedOrgId($this->myOrgId);
+        $this->dataInfo->init_with_id($id);
+
+        $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
+        $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
+
+        $this->editor_typ = 1;
+        $this->title_create = "编辑客户信息";
+        $this->template->load('default_lightbox_new', 'crm/create');
+    }
+    function createContract(){
+        $this->setViewType(VIEW_TYPE_HTML);
+        
+        $this->createUrlC = 'crm';
+        $this->createUrlF = 'doCreateContract';
+
+        $this->load->model('records/Contact_model',"dataInfo");
+        $this->dataInfo->setRelatedOrgId($this->myOrgId);
+
+        $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
+        $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
+
+        $this->editor_typ = 0;
+        $this->title_create = "新建客户信息";
+        $this->template->load('default_lightbox_new', 'crm/create');
+    }
+
+    function editContract($id){
+        $this->setViewType(VIEW_TYPE_HTML);
+        
+        $this->createUrlC = 'crm';
+        $this->createUrlF = 'doUpdateContract';
+
+        $this->load->model('records/Contact_model',"dataInfo");
+        $this->dataInfo->setRelatedOrgId($this->myOrgId);
+        $this->dataInfo->init_with_id($id);
+
+        $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
+        $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
+
+        $this->editor_typ = 1;
+        $this->title_create = "编辑客户信息";
         $this->template->load('default_lightbox_edit', 'common/create');
     }
 
@@ -252,7 +324,7 @@ class Crm extends P_Controller {
         }
 
         $data['orgId'] = $this->myOrgId;
-
+        $data['allContactors'] = array($this->dataInfo->gen_new_contactor($this->input->post('mainContactorName'),$this->input->post('mainContactorType'),$this->input->post('mainContactorNum')));
         $data['updateTS'] = $zeit;
         $data['createUid'] = $this->userInfo->uid;
         $data['createTS'] = $zeit;
@@ -275,6 +347,7 @@ class Crm extends P_Controller {
         $jsonData['goto_url'] = site_url('crm/index');
 
         $jsonData['newId'] = (string)$newId;
+        exit;
         echo $this->exportData($jsonData,$jsonRst);
     }
 

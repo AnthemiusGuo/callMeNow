@@ -14,6 +14,7 @@ class Field_userid extends Field_relate_simple_id {
             $this->showValue = '[系统]';
         } else {
             parent::init($value);
+            $this->userName = $this->showValue;
         }
         
     }

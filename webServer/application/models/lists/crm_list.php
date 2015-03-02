@@ -6,6 +6,8 @@ class Crm_list extends List_model {
         parent::__construct("cCrm");
         parent::init("Crm_list","Crm_model");
         $this->is_lightbox = false;
+        $this->quickSearchWhere = array("name",'mainContactorName','mainContactorNum','allContactors.num','allContactors.name');
+        $this->db->where($array,true);
     }
     
     public function init(){
@@ -94,9 +96,6 @@ GROUP BY pProjectTypRel.typId
     public function build_list_titles(){
         //姓名,类型,省份,状态,最后更新
         return array('name','typ','province','needPayIn','needPayOut','status','updateTS');
-    }
-    public function add_quick_search_where($info) {
-        $this->db->like('name', $info,'iu');
     }
 }
 ?>

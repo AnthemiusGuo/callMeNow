@@ -698,7 +698,7 @@ function reqCreate(url_m,url_a,fields,validator){
     };
     var data = {};
     $.each(fields,function( key, value,array){
-        console.log("type:"+value.type);
+        console.log("type:"+value.type+':'+value.name);
         if (value.type=="Field_tag") {
             data[value.name+'[]'] = new Array();
             $("input."+"creator_"+value.name+":checked").each(function() {
@@ -706,10 +706,12 @@ function reqCreate(url_m,url_a,fields,validator){
             });
         } else {
             data[value.name] = $("#creator_"+value.name).val();
+            console.log("value:"+$("#creator_"+value.name).val());
         }
         
 
     });
+
     if (typeof now_page != "undefined") {
         data['now_page'] = now_page;
     }

@@ -3,9 +3,11 @@ include_once(APPPATH."models/record_model.php");
 class Crm_model extends Record_model {
     public function __construct() {
         parent::__construct("cCrm");
+        $this->default_is_lightbox_or_page = false;
         $this->deleteCtrl = 'crm';
         $this->deleteMethod = 'doDeleteCrm';
-        $this->edit_link = 'crm/editCrm';
+        $this->edit_link = 'crm/editCrm/';
+        $this->info_link = 'crm/info/';
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['name'] = $this->load->field('Field_title',"名称","name",true);
@@ -14,9 +16,19 @@ class Crm_model extends Record_model {
         $this->field_list['typ'] = $this->load->field('Field_enum',"类型","typ",true);
         $this->field_list['typ']->setEnum(array("其他","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他"));
 
+        $this->field_list['mainContactorName'] = $this->load->field('Field_string',"主要联系人","mainContactorName",true);
+        $this->field_list['mainContactorName']->tips = '其他联系人及联系方式可以稍后创建';
+        $this->field_list['mainContactorType'] = $this->load->field('Field_enum',"主要联系方式","mainContactorType",true);
+        $this->field_list['mainContactorType']->setEnum(array("电话","qq","微信","其他"));
+        $this->field_list['mainContactorNum'] = $this->load->field('Field_string',"号码","mainContactorNum",true);
+
+
+        $this->field_list['allContactors'] = $this->load->field('Field_array',"联系人","allContacts");
+        $this->field_list['allContactors']->arrayModel = "contactor_model";
+
         $this->field_list['status'] = $this->load->field('Field_enum',"状态","status",true);
         $this->field_list['status']->setEnum(array("未设置","保持联系","很少联系/结束合作"));
-        
+
         $this->field_list['province'] = $this->load->field('Field_provinceid',"省份","province",true);
 
         $this->field_list['needPayIn'] = $this->load->field('Field_sum_money',"未收货款(￥)","needPayIn");
@@ -39,6 +51,9 @@ class Crm_model extends Record_model {
     }
     public function gen_editor(){
         
+    }
+    public function gen_new_contactor($name,$typ,$num){
+        return array('_id'=>new MongoId(),'name'=>$name,'typ'=>$typ,'num'=>$num);
     }
     public function buildInfoTitle(){
         return $this->field_list['name']->gen_show_html().' <small> '.$this->field_list['typ']->gen_show_html().' </small>';
@@ -85,6 +100,7 @@ class Crm_model extends Record_model {
         return $data;
     }
 
+
     public function buildChangeShowFields(){
             return array(
                     array('name'),
@@ -106,6 +122,7 @@ class Crm_model extends Record_model {
                     array('comments'),
                 );
     }
+
     
     public function getTyp(){
         //array("其他","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他")
