@@ -15,7 +15,8 @@ class Field_related_multi_ids extends Field_relate_simple_id {
         $this->plusCreateData = $data;
     }
     public function setEditor($editorUrl){
-        $this->editorUrl = $editorUrl;
+        $this->editorController = $controller;
+        $this->editorMethod = $method;
     }
     public function init($value){
         $this->value = $value;

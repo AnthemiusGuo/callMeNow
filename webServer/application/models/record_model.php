@@ -11,6 +11,7 @@
     public $id_is_id = true;//id字段是mongoid对象还是字符串
 
     public function __construct($tableName='') {
+
         parent::__construct();
         $CI =& get_instance();
         $this->db = $CI->cimongo;
@@ -147,7 +148,7 @@
 
     }
     public function gen_op_delete(){
-        return '<a class="list_op tooltips" onclick=\'reqDelete("'.$this->deleteCtrl.'","'.$this->deleteMethod.'",'.$this->id.')\' title="删除"><span class="glyphicon glyphicon-trash"></span></a>';
+        return '<a class="list_op tooltips" onclick=\'reqDelete("'.$this->deleteCtrl.'","'.$this->deleteMethod.'","'.$this->id.'")\' title="删除"><span class="glyphicon glyphicon-trash"></span></a>';
 
     }
 
@@ -221,8 +222,8 @@
         $effect = 0;
         $idArray = explode('-',$ids);
         foreach ($idArray as $id) {
-            $this->db->where('id', $id)->delete($this->tableName);
-            $effect += $this->db->affected_rows();
+            $this->db->where(array('_id'=> new MongoId($id)))->delete($this->tableName);
+            $effect += 1;
         }
         return $effect;
     }

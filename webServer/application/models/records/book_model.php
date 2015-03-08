@@ -4,22 +4,24 @@ class Book_model extends Record_model {
     public function __construct() {
         parent::__construct('bBook');
         $this->deleteCtrl = 'crm';
-        $this->deleteMethod = 'doDeleteCrm/book';
-        $this->edit_link = 'crm/editBook';
-        
+        $this->deleteMethod = 'doSubDel/book';
+        $this->edit_link = 'crm/subEdit/book/';
+        $this->info_link = 'crm/subinfo/book/';
+
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['desc'] = $this->load->field('Field_text',"备注","desc");
         $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
 
         $this->field_list['crmId'] = $this->load->field('Field_relate_crm',"订货方","crmId",true);
+        $this->field_list['crmId']->setTyp('book');
 
         $this->field_list['status'] = $this->load->field('Field_enum',"发货状态","status");
         $this->field_list['status']->setEnum(array('未确定','现货备货','订单生产','打包','发货','收货'));
 
         $this->field_list['payStatus'] = $this->load->field('Field_enum',"付款状态","payStatus");
         $this->field_list['payStatus']->setEnum(array('已付款','查账中','未付款'));
-
-        $this->field_list['items'] = $this->load->field('Field_array_items',"订货单","items");
+        $this->field_list['items'] = $this->load->field('Field_array_items',"订货单","items",true);
+        $this->field_list['items']->is_title = true;
 
         $this->field_list['beginTS'] = $this->load->field('Field_date',"订货日期","beginTS");
         $this->field_list['endTS'] = $this->load->field('Field_date',"约定交货日期","endTS");
@@ -40,7 +42,7 @@ class Book_model extends Record_model {
         
     }
     public function buildInfoTitle(){
-        return '募捐:'.$this->field_list['name']->gen_show_html().'<small> ID:'.$this->field_list['showId']->gen_show_html().'</small>';
+        return '订货记录:'.$this->field_list['crmId']->gen_show_html().'<small> ID:'.$this->field_list['beginTS']->gen_show_html().'</small>';
     }
 
     

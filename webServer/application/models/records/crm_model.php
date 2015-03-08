@@ -14,7 +14,7 @@ class Crm_model extends Record_model {
         $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
 
         $this->field_list['typ'] = $this->load->field('Field_enum',"类型","typ",true);
-        $this->field_list['typ']->setEnum(array("其他","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他"));
+        $this->field_list['typ']->setEnum(array("其他","上游厂商","同行","下游批发零售商","打包发货物流"));
 
         $this->field_list['mainContactorName'] = $this->load->field('Field_string',"主要联系人","mainContactorName",true);
         $this->field_list['mainContactorName']->tips = '其他联系人及联系方式可以稍后创建';
@@ -22,9 +22,9 @@ class Crm_model extends Record_model {
         $this->field_list['mainContactorType']->setEnum(array("电话","qq","微信","其他"));
         $this->field_list['mainContactorNum'] = $this->load->field('Field_string',"号码","mainContactorNum",true);
 
-
-        $this->field_list['allContactors'] = $this->load->field('Field_array',"联系人","allContacts");
-        $this->field_list['allContactors']->arrayModel = "contactor_model";
+        
+        // $this->field_list['allContactors'] = $this->load->field('Field_array',"联系人","allContacts");
+        // $this->field_list['allContactors']->arrayModel = "contactor_model";
 
         $this->field_list['status'] = $this->load->field('Field_enum',"状态","status",true);
         $this->field_list['status']->setEnum(array("未设置","保持联系","很少联系/结束合作"));
@@ -105,6 +105,8 @@ class Crm_model extends Record_model {
             return array(
                     array('name'),
                     array('typ','status'),
+                    array('mainContactorName','null'),
+                    array('mainContactorType','mainContactorNum'),
                     array('needPayIn','needPayOut'),
                     array('province'),
                     array('comments'),
@@ -116,6 +118,8 @@ class Crm_model extends Record_model {
         return array(
                     array('name'),
                     array('typ','status'),
+                    array('mainContactorName','null'),
+                    array('mainContactorType','mainContactorNum'),
                     array('needPayIn','needPayOut'),
                     array('province'),
                     array('contactors'),
@@ -123,16 +127,35 @@ class Crm_model extends Record_model {
                 );
     }
 
-    
-    public function getTyp(){
-        //array("其他","上游-厂商","上游-其他","同行","下游-批发商","下游-零售商","下游-其他")
-        if (in_array($this->field_list['typ']->value,array(1,2))) {
-            return 1;
-        } else if (in_array($this->field_list['typ']->value,array(4,5,6))) {
-            return 2;
-        } else {
-            return 3;
+    public function checkHasRelateData($id){
+        $where_clause = array('crmId' => $id );
+        $this->db->where($where_clause, TRUE);
+        $query = $this->db->get('bBook');
+        $num = $query->num_rows();
+        if ($num>0) {
+            return "book";
         }
+        $this->db->where($where_clause, TRUE);
+        $query = $this->db->get('bBookin');
+        $num = $query->num_rows();
+        if ($num>0) {
+            return "bookin";
+        }
+        $this->db->where($where_clause, TRUE);
+        $query = $this->db->get('bPay');
+        $num = $query->num_rows();
+        if ($num>0) {
+            return "pay";
+        }
+        $this->db->where($where_clause, TRUE);
+        $query = $this->db->get('bSend');
+        $num = $query->num_rows();
+        if ($num>0) {
+            return "send";
+        }
+
+
+        return "null";
     }
 }
 ?>

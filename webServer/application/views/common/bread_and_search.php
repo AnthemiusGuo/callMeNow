@@ -23,7 +23,6 @@
                 <form role="form" id="searchForm">
                 <!-- <ul  class="list-group"> -->
                 <table class="table search-table">
-                    <tbody>
                     <?php
                     foreach ($this->listInfo->build_search_infos() as $key_names) :
                     ?>
@@ -35,10 +34,10 @@
                             $searchDefault['v'] = $this->searchInfo['i'][$key_names]['v'];
                         }
                         ?>
-                        <td style="width:30px">
+                        <td width="30px">
                             <input id="searchChk_<?=$key_names?>" name="searchChk_<?=$key_names?>" type="checkbox" value="" <?=($searchDefault['v']==null)?'':'checked="checked"'?>>
                         </td>
-                        <td style="width:100px">
+                        <td width="100px">
                             <?php 
                             echo $this->listInfo->dataModel[$key_names]->gen_show_name();
                             ?>
@@ -50,7 +49,7 @@
                         echo $this->listInfo->dataModel[$key_names]->gen_search_element($searchDefault['e']);
                         ?>
                         </td>
-                        <td >
+                        <td style="width:100px">
                         <?php 
                         echo $this->listInfo->dataModel[$key_names]->gen_search_editor($searchDefault['v']);
                         ?>
@@ -67,7 +66,6 @@
                             <a class="btn btn-default btn-sm" href="javascript:void(0);" onclick="toggle_search_box()">取消</a>
                             <a class="btn btn-primary btn-sm" href="javascript:void(0);" onclick="fullsearch('<?=$this->controller_name?>','<?=$this->method_name?>',reqSearchFields,searchFormValidator)">搜索</a></td>
                     </tr>
-                    </tbody>
                 </table>
                 </form>
             </div>

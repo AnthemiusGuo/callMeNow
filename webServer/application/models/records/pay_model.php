@@ -4,16 +4,18 @@ class Pay_model extends Record_model {
     public function __construct() {
         parent::__construct('bPay');
         $this->deleteCtrl = 'crm';
-        $this->deleteMethod = 'doDeletePay';
-        $this->edit_link = 'crm/editPay';
+        $this->deleteMethod = 'doSubDel/pay';
+        $this->edit_link = 'crm/subEdit/pay/';
+        $this->info_link = 'crm/subinfo/pay/';
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['desc'] = $this->load->field('Field_text',"备注","desc");
         $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
 
-        $this->field_list['crmId']= $this->load->field('Field_string',"客户","crmId",true);
+        $this->field_list['crmId'] = $this->load->field('Field_relate_crm',"客户","crmId",true);
         $this->field_list['money']= $this->load->field('Field_money',"金额(￥)","money",true);
-        
+        $this->field_list['money']->tips = '进账收款为正值，出账付款请输入负值';
+        $this->field_list['money']->is_title = true;
 
         $this->field_list['method'] = $this->load->field('Field_enum',"方式","method");
         $this->field_list['method']->setEnum(array("其他","现金","银行转帐","支付宝等","支票"));
@@ -38,7 +40,7 @@ class Pay_model extends Record_model {
         
     }
     public function buildInfoTitle(){
-        return '募捐:'.$this->field_list['donor']->gen_show_html().'<small> ID:'.$this->field_list['money']->gen_show_html() .'</small>';
+        return '付款记录:'.$this->field_list['crmId']->gen_show_html().'<small> ID:'.$this->field_list['payTS']->gen_show_html().'</small>';
     }
     public function buildChangeNeedFields(){
         return array('payTS','crmId','money','desc','method','status');

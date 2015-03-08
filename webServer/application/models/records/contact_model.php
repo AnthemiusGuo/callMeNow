@@ -4,14 +4,16 @@ class Contact_model extends Record_model {
     public function __construct() {
         parent::__construct("cContactHis");
         $this->deleteCtrl = 'crm';
-        $this->deleteMethod = 'doDeleteContactHis';
-        $this->edit_link = 'crm/editContactHis';
+        $this->deleteMethod = 'doSubDel/contact';
+        $this->edit_link = 'crm/subEdit/contact/';
+        $this->info_link = 'crm/subinfo/contact/';
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
         $this->field_list['crmId']= $this->load->field('Field_relate_crm',"客户","crmId");
         $this->field_list['typ'] = $this->load->field('Field_enum',"类型","typ",true);
         $this->field_list['typ']->setEnum(array("其他","订货","咨询"));
+        $this->field_list['typ']->is_title = true;
 
         $this->field_list['contactMethod'] = $this->load->field('Field_enum',"联系方式","contactMethod",true);
         $this->field_list['contactMethod']->setEnum(array("电话","QQ","微信","门店现场","其他"));
@@ -23,9 +25,6 @@ class Contact_model extends Record_model {
         $this->field_list['desc'] = $this->load->field('Field_text',"联系详情","desc",true);
 
         
-    }
-    public function buildChangeNeedFields(){
-        return array('name','crmId','typ','contactMethod','desc','contactTS');
     }
 
     public function buildChangeShowFields(){
@@ -39,7 +38,6 @@ class Contact_model extends Record_model {
 
     public function buildDetailShowFields(){
         return array(
-                    array('crmId'),
                     array('typ','contactMethod'),
                     array('contactTS'),
                     array('desc'),

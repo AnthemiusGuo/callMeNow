@@ -5,17 +5,22 @@ class Contactor_model extends Record_model {
         parent::__construct('cContactor');
 
         $this->deleteCtrl = 'crm';
-        $this->deleteMethod = 'doDeleteContactor';
-        $this->edit_link = 'crm/editContactor';
-        
+        $this->deleteMethod = 'doSubDel/contactor';
+        $this->edit_link = 'crm/subEdit/contactor/';
+        $this->info_link = 'crm/subinfo/contactor/';
+
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
         $this->field_list['name'] = $this->load->field('Field_string',"姓名","name",true);
+        $this->field_list['name']->is_title = true;
         $this->field_list['crmId'] = $this->load->field('Field_string',"crmId","crmId");
         $this->field_list['dianhua'] = $this->load->field('Field_string',"电话","dianhua");
         $this->field_list['qq'] = $this->load->field('Field_string',"QQ","qq");
-        $this->field_list['qitafangshi'] = $this->load->field('Field_string',"其他联系方式","qitafangshi");
+        $this->field_list['weixin'] = $this->load->field('Field_string',"微信","weixin");
+
         
+        $this->field_list['qitafangshi'] = $this->load->field('Field_string',"其他联系方式","qitafangshi");
+        $this->field_list['isMain'] = $this->load->field('Field_bool',"是主要联系人","isMain");
         
     }
     
@@ -31,18 +36,18 @@ class Contactor_model extends Record_model {
 
     public function buildChangeShowFields(){
             return array(
-                    array('name'),
+                    array('name','isMain'),
                     array('dianhua','qq'),
-                    array('qitafangshi'),
+                    array('weixin','qitafangshi'),
 
                 );
     }
 
     public function buildDetailShowFields(){
         return array(
-                    array('name'),
+                    array('name','isMain'),
                     array('dianhua','qq'),
-                    array('qitafangshi'),
+                    array('weixin','qitafangshi'),
                 );
     }
     public function gen_brief_html(){
@@ -52,6 +57,9 @@ class Contactor_model extends Record_model {
         }
         if ($this->field_list['qq']->value!=''){
             $_html .= '  <span>QQ:'.$this->field_list['qq']->gen_show_html().'</span>';
+        }
+        if ($this->field_list['weixin']->value!=''){
+            $_html .= '  <span>微信:'.$this->field_list['weixin']->gen_show_html().'</span>';
         }
         if ($this->field_list['qitafangshi']->value!=''){
             $_html .= '  <span>其他:'.$this->field_list['qitafangshi']->gen_show_html().'</span>';

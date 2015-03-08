@@ -42,7 +42,7 @@ endif;
                             <?php
                             if ($this_record->field_list[$key_names]->is_title):
                             
-                                echo '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($this->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
+                                echo '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($this_record->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
                             elseif ($this_record->field_list[$key_names]->typ=="Field_text"):
                                 echo $this_record->field_list[$key_names]->gen_list_html(8);
                             else :                         

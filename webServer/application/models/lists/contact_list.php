@@ -13,7 +13,7 @@ class Contact_list extends List_model {
     
     public function build_list_titles(){
         //姓名,类型,省份,状态,最后更新
-        return array('contactTS','typ','contactMethod','contactUid');
+        return array('crmId','contactTS','typ','contactMethod','desc');
     }
 }
 ?>

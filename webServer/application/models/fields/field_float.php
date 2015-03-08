@@ -28,7 +28,7 @@ class Field_float extends Fields {
         if ($typ==1){
             $this->default = $this->value;
         }
-        return "<input id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"{$this->default}\" $validates /> ";
+        return "<input  autocomplete=\"on\" id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"{$this->default}\" $validates /> ";
     }
     public function check_data_input($input)
     {

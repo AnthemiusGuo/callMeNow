@@ -10,7 +10,7 @@ class Field_relate_contactor extends Field_related_id {
     }
 
     public function setCrmId($crmId){
-    	$this->setEditor('crm/searchContactor/'.$crmId);
+    	$this->setEditor('crm','searchContactor/'.$crmId);
         $this->setPlusCreateData(array('name'=>'','crmId'=>$crmId));
     }
 

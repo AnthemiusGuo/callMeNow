@@ -6,12 +6,16 @@ class Field_relate_crm extends Field_related_id {
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
         $this->set_relate_db('cCrm','_id','name');
-        $this->setEditor('crm/searchCrm/');
-        $this->setPlusCreateData(array('typ'=>0));
+        $this->setEditor('crm','searchCrm');
+        $this->setPlusCreateData(array('typ'=>0,'updateTS'=>time()));
+        $this->searchPlus = "";
     }
 
-    public function setTyp($typ){
-    	$this->setEditor('crm/searchCrm'.$typ.'/');
+    //$crmTyp: 'send','noSend','all'
+
+    public function setTyp($crmTyp){
+    	$this->searchPlus = "/".$crmTyp;
+        
     }
 
 }

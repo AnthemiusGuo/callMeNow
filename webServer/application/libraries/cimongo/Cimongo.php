@@ -104,6 +104,10 @@ class Cimongo extends Cimongo_extras {
                 return $this;
         }
 
+        public function removeWhere(){
+                $this->wheres = array();
+        }
+
         /**
          * where clause:
          *

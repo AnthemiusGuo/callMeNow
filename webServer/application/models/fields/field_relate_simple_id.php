@@ -141,7 +141,7 @@ class Field_relate_simple_id extends Field_mongoid {
     }
     public function check_data_input($input)
     {
-        if ($input==0){
+        if ($input===0){
             return false;
         }
         return parent::check_data_input($input);

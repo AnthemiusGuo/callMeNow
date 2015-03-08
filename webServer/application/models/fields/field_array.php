@@ -10,11 +10,6 @@ class Field_array extends Fields {
     public function init($value){
         parent::init((int)$value);
     }
-    public function gen_value($input){
-        $input = (int)$input;
-    
-        return $input;
-    }
     public function build_validator(){
         $validater = ' digits ';
         if ($this->is_must_input){
@@ -22,13 +17,8 @@ class Field_array extends Fields {
         }
         $validater .= parent::build_validator();
         return $validater;
-        $this->default = array();
     }
 
-
-    public function init($value){
-        parent::init($value);
-    }
     public function gen_search_result_show($value){
         return $this->enum[$value];
     }
@@ -97,46 +87,46 @@ class Field_array extends Fields {
                 $this->default = array();
             }
         }
-        // $string = '<div class="checkbox">';
-        // if ($typ!=2){
-        //     $string = "<select multiple id=\"$inputName\" name=\"$inputName\" class=\"{$this->input_class}\" $validates>";
-        // } else {
-        //     $string = "<select id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" $validates>";
+    //     // $string = '<div class="checkbox">';
+    //     // if ($typ!=2){
+    //     //     $string = "<select multiple id=\"$inputName\" name=\"$inputName\" class=\"{$this->input_class}\" $validates>";
+    //     // } else {
+    //     //     $string = "<select id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" $validates>";
         
-        // }
+    //     // }
         
-        // foreach ($this->enum as $key => $value) {
+    //     // foreach ($this->enum as $key => $value) {
             
-        //     $string .= '<option value="'.$key.'">'.$value.'</option>'."\n";
-        // }
-        // $string .= "</select>";
-        if ($typ==2){
-            $width = 'width:42%;text-align:left;padding-top:3px;margin-top:5px;';
-        } else {
-            $width = "";
-        }
-        if ($typ==2){
-            $string = "<select id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" $validates>";
-            foreach ($this->enum as $key => $value) {
-                $string.= "<option ". (($key==$this->default)?'selected="selected"':'') ." value=\"$key\">$value</option>";
-            }
-            $string .= "</select>";
-        } else {
-            foreach ($this->enum as $key => $value) {
-                if (in_array($key,$this->default)){
-                    $plus = 'checked="checked"';
-                } else {
-                    $plus = "";
-                }
-                $string .= '<label class="checkbox-inline" style="'.$width.'"><input type="checkbox" name="'.$inputName.'[]" class="'.$inputName.'" id="'.$inputName.$key.'" value="'.$key.'" '.$plus.'/>'.$value."</label>";
-            } 
-        }
+    //     //     $string .= '<option value="'.$key.'">'.$value.'</option>'."\n";
+    //     // }
+    //     // $string .= "</select>";
+    //     if ($typ==2){
+    //         $width = 'width:42%;text-align:left;padding-top:3px;margin-top:5px;';
+    //     } else {
+    //         $width = "";
+    //     }
+    //     if ($typ==2){
+    //         $string = "<select id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" $validates>";
+    //         foreach ($this->enum as $key => $value) {
+    //             $string.= "<option ". (($key==$this->default)?'selected="selected"':'') ." value=\"$key\">$value</option>";
+    //         }
+    //         $string .= "</select>";
+    //     } else {
+    //         foreach ($this->enum as $key => $value) {
+    //             if (in_array($key,$this->default)){
+    //                 $plus = 'checked="checked"';
+    //             } else {
+    //                 $plus = "";
+    //             }
+    //             $string .= '<label class="checkbox-inline" style="'.$width.'"><input type="checkbox" name="'.$inputName.'[]" class="'.$inputName.'" id="'.$inputName.$key.'" value="'.$key.'" '.$plus.'/>'.$value."</label>";
+    //         } 
+    //     }
         
 
         
-        // $string .= "</div>";
-        return $string;
-    }
+    //     // $string .= "</div>";
+    //     return $string;
+    // }
     public function gen_value($input){
         
 

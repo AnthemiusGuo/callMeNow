@@ -45,6 +45,32 @@
         </tr>
         <tr>
             <td class="td_title">
+                <?php echo $this->dataInfo->field_list['mainContactorName']->gen_show_name(); ?>
+            </td>
+            <td class="td_data">
+                <?php echo $this->dataInfo->field_list['mainContactorName']->gen_show_html() ?>          
+            </td>
+            <td class="td_title">
+            </td>
+            <td class="td_data">
+            </td>
+        </tr>
+        <tr>
+            <td class="td_title">
+                <?php echo $this->dataInfo->field_list['mainContactorType']->gen_show_name(); ?>
+            </td>
+            <td class="td_data">
+                <?php echo $this->dataInfo->field_list['mainContactorType']->gen_show_html() ?>          
+            </td>
+            <td class="td_title">
+                <?php echo $this->dataInfo->field_list['mainContactorNum']->gen_show_name(); ?>
+            </td>
+            <td class="td_data">
+                <?php echo $this->dataInfo->field_list['mainContactorNum']->gen_show_html() ?>          
+            </td>
+        </tr>
+        <tr>
+            <td class="td_title">
                 联系人
             </td>
             <td colspan="3">

@@ -4,7 +4,7 @@
         </div>
         <div class="modal-body">
             <form role="form" id="editForm">
-                <input type="hidden" id="modify_id" name="modify_id" value="<?=$this->dataInfo->field_list['id']->value?>"/>
+                <input type="hidden" id="modify_id" name="modify_id" value="<?=$this->dataInfo->field_list['_id']->toString()?>"/>
                 <?php echo $contents; ?>
             </form>
         </div>

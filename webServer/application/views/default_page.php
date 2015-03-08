@@ -8,7 +8,7 @@
             <!-- BEGIN LOGO -->
             <div class="page-logo">
                 <a href="<?=site_url()?>">
-                    <img src="<?=static_url('images/logo.png')?>" alt="logo" class="logo-default" width="100px">
+                    <img src="<?=static_url('images/logo.png')?>" alt="logo" class="logo-default" width="150px">
                 </a>
             </div>
             <!-- END LOGO -->

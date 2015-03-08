@@ -1,5 +1,5 @@
 <?
-$inputName = $this->editorData->build_input_name($typ);
+$inputName = $this->editorData->build_input_name($this->editorData->editor_typ);
 $validates = $this->editorData->build_validator();
 if ($typ==1){
     $this->editorData->default = $this->editorData->value;
@@ -10,9 +10,9 @@ if ($typ==1){
 $now_data = array();
 foreach ($this->editorData->datas as $item) {
     echo '<li class="list-group-item">'; 
-    echo  $item['itemName']->gen_show_html()."(".$item['color']->gen_show_html().") X ".$item['meter']->gen_show_html().'米 X'.$item['price']->gen_show_html().'元 = '.$item['allPrice']->gen_show_html().'元';
+    echo  $item->field_list['itemName']->gen_show_html()."(".$item->field_list['color']->gen_show_html().") X ".$item->field_list['meter']->gen_show_html().'米 X'.$item->field_list['price']->gen_show_html().'元 = '.$item->field_list['allPrice']->gen_show_html().'元';
     echo '</li>'; 
-    $now_data[$item['_id']->gen_show_html()] = array($item['itemName']->value,$item['color']->value,$item['meter']->value,$item['price']->value,$item['allPrice']->value);
+    $now_data[$item->field_list['_id']->toString()] = array($item->field_list['itemName']->value,$item->field_list['color']->value,$item->field_list['meter']->value,$item->field_list['price']->value,$item->field_list['allPrice']->value);
 }
 ?>
 </ul>

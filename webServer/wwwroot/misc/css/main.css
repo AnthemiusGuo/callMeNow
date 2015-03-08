@@ -14,7 +14,7 @@ Page Header
 .page-header.navbar .top-menu .navbar-nav {
   /* Extended Dropdowns */
   /* Notification */
-  /* Inbox */
+  /* box */
   /* Tasks */
   /* User */
   /* Language */
@@ -920,9 +920,12 @@ body {
 ****/
 
 .modal-body{
-  height: 360px;
+  height: 420px;
   overflow-x:hidden;
   overflow-y:auto;
+}
+.modal-header,.modal-footer {
+  padding: 5px;
 }
 .note h1,
 .note h2,
@@ -1085,3 +1088,39 @@ td.td_data_width {
 .editor_info dt,.editor_info dd {
   width:25%;float: left;
 }
+
+.no-data-large{
+  font-size: 64px;
+  color: #DDD;
+  text-align: center;
+}
+.relate_box_holder{
+  position: relative;
+}
+.relate_box_list{
+  position: absolute;
+  top:35px;
+  left:0px;
+  width:100%;
+  height:250px;
+  background: #FFFFFF;
+  border: 1px solid #e5e5e5;
+}
+.relate_box_ul li{
+  cursor: pointer;
+}
+.relate_box_list_close{
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+}
+.relate_box_list_close .list-group-item{
+  background: #F6F6F6;
+  height: 42px;
+  padding: 5px;
+}
+.relate_box_list .list-group{
+  margin-bottom:0;
+}
+

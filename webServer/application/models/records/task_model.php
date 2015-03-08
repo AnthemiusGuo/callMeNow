@@ -23,7 +23,7 @@ class Task_model extends Record_model {
         $this->field_list['projectId'] = $this->load->field('Field_projectid',"关联项目","projectId");
         $this->field_list['preTaskId'] = $this->load->field('Field_related_id',"前置任务","preTaskId");
         $this->field_list['preTaskId']->set_relate_db('pTask','id','name');
-        $this->field_list['preTaskId']->setEditor('task/searchTask/');
+        $this->field_list['preTaskId']->setEditor('task','searchTask/');
         $this->field_list['preTaskId']->setPlusCreateData(array('name'=>'','roleId'=>0));
 
         

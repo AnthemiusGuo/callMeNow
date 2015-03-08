@@ -35,7 +35,7 @@ class Field_string extends fields {
         if ($typ==1){
             $this->default = $this->value;
         }
-        return "<input id=\"$inputName\"  name=\"$inputName\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"{$this->default}\" $validates/>";
+        return "<input  autocomplete=\"on\" id=\"$inputName\"  name=\"$inputName\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"{$this->default}\" $validates/>";
     }
 }
 ?>

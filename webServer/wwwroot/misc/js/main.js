@@ -54,3 +54,49 @@ function resetTable(table_id){
 	$("#creator_totalGetting").val(totalGetting);
 	
 }
+//目前还不支持缓存，后面必须支持搜索缓存，或者打开页面拉取所有数据，本地查询
+//还有就是做个多少毫秒的延迟，
+var searchDataCache = {};
+
+function addSearch(inputName,name){
+    $("#"+inputName).val(name);
+    $("#"+inputName+"_list_holder").addClass('hidden');
+    $("#search_loading").addClass('hidden');
+}
+
+function searchbox_on_change(inputName,editorController,editorMethod){
+    $("#"+inputName+"_list_holder").removeClass('hidden');
+    var data_input = $("#"+inputName+"").val();
+    var target_dom = $("#"+inputName+"_list");
+    var _template = '<li class="list-group-item" onclick="addSearch(\''+inputName+'\',\'{name}\')"><span class="glyphicon glyphicon-plus"></span>{name}</li>';
+    $("#search_loading").removeClass('hidden');
+    //检查缓存
+    if (typeof searchDataCache[inputName] === 'undefined') {
+	    searchDataCache[inputName] = {};
+	}
+
+    if (typeof searchDataCache[inputName][data_input] !== 'undefined') {
+        var _html = "";
+        $.each(searchDataCache[inputName][data_input],function(k,v){
+            _html += _template.str_supplant(v);
+        });
+        $("#"+inputName+"_list").html(_html);
+        $("#search_loading").addClass('hidden');
+        return;
+    }
+    ajax_post({m:editorController,a:editorMethod,data:{data:data_input},callback:function(json){
+        if (json.rstno==1) {
+            var _html = "";
+            searchDataCache[inputName][data_input] = json.data;
+            $.each(json.data,function(k,v){
+                _html += _template.str_supplant(v);
+            });
+            $("#"+inputName+"_list").html(_html);
+        } else {
+
+        }
+        $("#search_loading").addClass('hidden');
+           
+        }
+    });
+}

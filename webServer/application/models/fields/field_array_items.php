@@ -7,6 +7,7 @@ class Field_array_items extends Field_array_hash {
         parent::__construct($show_name,$name,$is_must_input);
         $this->typ = "Field_array_hash";
         $this->field_typ = "items_model";
+
         $this->dataModel = new $this->field_typ();
         $this->value = array();
         $this->datas = array();
@@ -81,6 +82,9 @@ class Field_array_items extends Field_array_hash {
     public function check_data_input($input)
     {
         if ($input==0){
+            return false;
+        }
+        if (is_array($input) && count($input)==0){
             return false;
         }
         return parent::check_data_input($input);

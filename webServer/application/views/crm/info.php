@@ -1,7 +1,7 @@
 <div>
     <ol class="breadcrumb">
-        <li><a href="#"><span class='glyphicon glyphicon-home'></span> Home</a></li>
-        <li><a href="#"><span class='glyphicon <?=$this->menus[$this->controller_name]['icon']?>'></span> <?=$this->menus[$this->controller_name]['name']?></a></li>
+        <li><a href="<?=site_url()?>"><span class='glyphicon glyphicon-home'></span> Home</a></li>
+        <li><a href="<?=site_url($this->controller_name.'/index')?>"><span class='glyphicon <?=$this->menus[$this->controller_name]['icon']?>'></span> <?=$this->menus[$this->controller_name]['name']?></a></li>
         <li class="active"><span class='glyphicon glyphicon-file'></span> <?php echo $this->dataInfo->field_list['name']->gen_show_html() ?></li>
     </ol>
 </div>

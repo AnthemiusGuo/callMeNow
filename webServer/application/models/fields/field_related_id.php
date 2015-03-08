@@ -9,12 +9,14 @@ class Field_related_id extends Field_relate_simple_id {
         $this->placeholder = '请点击<+>输入';
         $this->jsonValue = array();
         $this->plusCreateData = array();
+        $this->searchPlus = "";
     }
     public function setPlusCreateData($data){
         $this->plusCreateData = $data;
     }
-    public function setEditor($editorUrl){
-        $this->editorUrl = $editorUrl;
+    public function setEditor($controller,$method){
+        $this->editorController = $controller;
+        $this->editorMethod = $method;
     }
     public function gen_search_editor($default=""){
         $this->input_class = "form-control input-sm";
@@ -45,33 +47,39 @@ class Field_related_id extends Field_relate_simple_id {
         
     }
     public function plusCreate($input){
-        $this->plusCreateData[$this->showField] = $input[$this->showField];
+        $this->plusCreateData[$this->showField] = $input;
         if (isset($this->whereOrgId)){
             $this->plusCreateData['orgId'] = $this->whereOrgId;
         } else {
-            $this->plusCreateData['orgId'] = $this->CI->orgId;
+            $this->plusCreateData['orgId'] = $this->CI->myOrgId;
         }
         
         $this->CI->db->insert($this->tableName,$this->plusCreateData);
         return $this->CI->db->insert_id();
     }
     public function gen_value($input){
-        $value = json_decode($input,true);
-        if ($value==NULL){
-            //输入是 id 字符串本身
+        //先检查是不是已经是 mongoid
+        if (strlen($input)==24 && MongoId::isValid($input)){
             return $input;
         }
-
-        if (count($value)!=1){
-            return $input;
-        } else {
-            if ($value[0]['id']==-1){
-                return $this->plusCreate($value[0]);
-            } else {
-                return $value[0]['id'];
-            }
+        $this->db->select(array($this->valueField,$this->showField))
+            ->where(array($this->showField => $input));
+        if (!isset($this->whereOrgId)){
+            $this->whereOrgId = $this->CI->myOrgId;
+        }
+        $this->db->where(array('orgId'=>$this->whereOrgId));
+        
+        $query = $this->db->get($this->tableName);
+        if ($query->num_rows() > 0)
+        {
+            $result = $query->row_array(); 
+            $real_id = $result['_id']->{'$id'};
             
+        } else {
+            $new_id = $this->plusCreate($input);
+            $real_id = $new_id->{'$id'};
         }
+        return $real_id;
     }
     public function gen_search_result_id($value){
         $value = json_decode($value,true);
@@ -125,25 +133,17 @@ class Field_related_id extends Field_relate_simple_id {
     //     return $this->dataModel->field_list[$this->showField]->gen_show_html();
     // }
     public function gen_editor($typ=0){
-        $inputName = $this->build_input_name($typ);
-        $validates = $this->build_validator();
+        
 
-        $default = json_encode($this->jsonValue);
+        $this->editor_typ = $typ;
+        $this->CI->editorData = $this;
         if ($typ==2) {
-            $btn_class = "btn-sm";
+            $editor = $this->CI->load->view('editor/relate_box_search', '', true);
         } else {
-            $btn_class = "";
+            $editor = $this->CI->load->view('editor/relate_box', '', true);
         }
-
-        return "<div class=\"holder-editor-related-id\" >
-                    <input type=\"hidden\" value='{$default}' id=\"$inputName\" name=\"$inputName\"/>
-                    <div id=\"holder-editor-{$inputName}\">
-                        <div id=\"holder_{$inputName}\" class=\"alert alert-danger editor-related-inputed pull-left\" style=\"width:75%;\">{$this->placeholder}</div>
-                        <a class=\"btn btn-default {$btn_class} pull-right\" href=\"javascript:void(0);\" onclick=\"build_relate_box('{$this->name}','single',$typ,'".site_url($this->editorUrl)."')\">
-                        <span class=\"glyphicon glyphicon-search\"></span>
-                        </a>
-                    </div>
-                </div>";
+        
+        return $editor;
     }
 }
 ?>

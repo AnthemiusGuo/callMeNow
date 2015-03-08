@@ -18,6 +18,16 @@ class Utility {
 		}
 		return false;
 	}
+
+	function mbstring_2_array($str,$charset='UTF-8') {     
+   		$strlen=mb_strlen($str);     
+   		while($strlen){
+      		$array[]=mb_substr($str,0,1,$charset);
+      		$str=mb_substr($str,1,$strlen,$charset);
+      		$strlen=mb_strlen($str);
+   		}
+   		return $array;
+   	}
 	
 	// 访问webservice接口
 	function webservice($url, $params, $function) {

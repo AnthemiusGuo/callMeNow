@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<title>客户管家</title>
+	<title>万家客户 - 专业服务中小商户</title>
 	<?php echo link_tag(static_url('css/bootstrap.css')); ?>
 	<?php echo link_tag(static_url('css/layout.css')); ?>
 	<?php echo link_tag(static_url('css/components.css')); ?>

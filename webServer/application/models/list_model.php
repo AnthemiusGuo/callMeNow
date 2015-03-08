@@ -29,7 +29,9 @@ class List_model extends CI_Model {
     public function init($name,$dataModelName){
         $this->name = $name;
         $this->dataModelName = $dataModelName;
+
         $dataModel = new $dataModelName();
+        
         $this->dataModel = $dataModel->field_list;
         
     }
@@ -105,6 +107,87 @@ class List_model extends CI_Model {
             };
             $this->load_data_with_where();
         }
+    }
+
+    public function load_data_with_fullSearch($field_name,$where_array,$plus_where = array()){
+        $where_clause = array();
+        
+
+        if ($this->whereOrgId!==null && isset($this->dataModel['orgId'])){
+            $where_clause['orgId'] = $this->whereOrgId;
+        }
+        if (count($plus_where)!=0){
+            foreach ($plus_where as $key => $value) {
+                $where_clause[$key] = $value;
+            }
+        }
+        if (count($where_array)!=0){
+            $where_clause['$or'] = array();
+            foreach ($where_array as $value) {
+                $value = (string) trim($value);
+                $value = quotemeta($value);
+                $where_clause['$or'][] = array($field_name => new MongoRegex("/$value/i"));
+            }
+        }
+
+        $this->db->where($where_clause, TRUE);
+
+        $this->db->order_by($this->orderKey);
+                    
+        $query = $this->db->get($this->tableName);
+
+        $num = $query->num_rows();
+        if ($num > 0)
+        {
+            foreach ($query->result_array() as $row)
+            {
+                if (is_object($row['_id'])){
+                    $id = (string)$row['_id'];
+                } else {
+                    $id = $row['_id'];
+                }
+                
+                $this->record_list[$id] = new $this->dataModelName();
+                $this->record_list[$id]->orgId = $this->whereOrgId;
+                $this->record_list[$id]->init_with_data($row['_id'],$row);
+            }
+            return $num;
+        } else {
+            return 0;
+        }
+
+
+    }
+
+    public function load_data_with_orignal_where($where_array=array()){
+        
+        $this->db->where($where_array, TRUE);
+        
+        $this->db->order_by($this->orderKey);
+                    
+        $query = $this->db->get($this->tableName);
+
+        $num = $query->num_rows();
+        if ($num > 0)
+        {
+            foreach ($query->result_array() as $row)
+            {
+                if (is_object($row['_id'])){
+                    $id = (string)$row['_id'];
+                } else {
+                    $id = $row['_id'];
+                }
+                
+                $this->record_list[$id] = new $this->dataModelName();
+                $this->record_list[$id]->orgId = $this->whereOrgId;
+                $this->record_list[$id]->init_with_data($row['_id'],$row);
+            }
+            return $num;
+        } else {
+            return 0;
+        }
+
+
     }
 
     public function load_data_with_where($where_array=0){
