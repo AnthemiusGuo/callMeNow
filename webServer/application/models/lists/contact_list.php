@@ -10,6 +10,10 @@ class Contact_list extends List_model {
     public function build_search_infos(){
         return array('contactTS','typ');
     }
+
+    public function build_inline_list_titles(){
+        return array('contactTS','typ','contactMethod','desc');
+    }
     
     public function build_list_titles(){
         //姓名,类型,省份,状态,最后更新

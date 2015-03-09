@@ -31,12 +31,12 @@ class List_model extends CI_Model {
         $this->dataModelName = $dataModelName;
 
         $dataModel = new $dataModelName();
-        
+
         $this->dataModel = $dataModel->field_list;
-        
+
     }
     public function init_with_relate_id($relateField,$relateId){
-        
+
     }
 
     public function purge_where(){
@@ -46,7 +46,7 @@ class List_model extends CI_Model {
         $this->whereData[$name] = array('typ'=>$typ,'data'=>$data);
     }
     public function build_where($typ,$name,$data){
-        
+
         switch ($typ) {
             case '=':
                 $this->add_where(WHERE_TYPE_WHERE,$name,$data);
@@ -98,20 +98,20 @@ class List_model extends CI_Model {
         } elseif ($searchInfo['t']=="quick"){
 
             $this->add_quick_search_where($searchInfo['i']);
-            
+
             $this->load_data_with_where();
         } elseif ($searchInfo['t']=="full"){
             foreach ($searchInfo['i'] as $key => $value) {
                 $this->build_where($value['e'],$key,$this->dataModel[$key]->gen_search_result_id($value['v']));
-                
+
             };
             $this->load_data_with_where();
         }
     }
 
-    public function load_data_with_fullSearch($field_name,$where_array,$plus_where = array()){
+    public function load_data_with_fullSearch($field_name,$where_array,$plus_where = array(),$limit = 5){
         $where_clause = array();
-        
+
 
         if ($this->whereOrgId!==null && isset($this->dataModel['orgId'])){
             $where_clause['orgId'] = $this->whereOrgId;
@@ -133,7 +133,10 @@ class List_model extends CI_Model {
         $this->db->where($where_clause, TRUE);
 
         $this->db->order_by($this->orderKey);
-                    
+        if ($limit>0){
+            $this->db->limit($limit);
+        }
+
         $query = $this->db->get($this->tableName);
 
         $num = $query->num_rows();
@@ -146,7 +149,7 @@ class List_model extends CI_Model {
                 } else {
                     $id = $row['_id'];
                 }
-                
+
                 $this->record_list[$id] = new $this->dataModelName();
                 $this->record_list[$id]->orgId = $this->whereOrgId;
                 $this->record_list[$id]->init_with_data($row['_id'],$row);
@@ -160,11 +163,11 @@ class List_model extends CI_Model {
     }
 
     public function load_data_with_orignal_where($where_array=array()){
-        
+
         $this->db->where($where_array, TRUE);
-        
+
         $this->db->order_by($this->orderKey);
-                    
+
         $query = $this->db->get($this->tableName);
 
         $num = $query->num_rows();
@@ -177,7 +180,7 @@ class List_model extends CI_Model {
                 } else {
                     $id = $row['_id'];
                 }
-                
+
                 $this->record_list[$id] = new $this->dataModelName();
                 $this->record_list[$id]->orgId = $this->whereOrgId;
                 $this->record_list[$id]->init_with_data($row['_id'],$row);
@@ -217,7 +220,7 @@ class List_model extends CI_Model {
         }
 
         $this->db->order_by($this->orderKey);
-                    
+
         $query = $this->db->get($this->tableName);
 
         $num = $query->num_rows();
@@ -230,7 +233,7 @@ class List_model extends CI_Model {
                 } else {
                     $id = $row['_id'];
                 }
-                
+
                 $this->record_list[$id] = new $this->dataModelName();
                 $this->record_list[$id]->orgId = $this->whereOrgId;
                 $this->record_list[$id]->init_with_data($row['_id'],$row);
@@ -262,7 +265,7 @@ class List_model extends CI_Model {
             } else {
                 $id = $row['_id'];
             }
-            
+
             $this->record_list[$id] = new $dataModelName();
             $this->record_list[$id]->orgId = $this->whereOrgId;
             $this->record_list[$id]->init_with_data($row['_id'],$row);

@@ -8,12 +8,17 @@ if ($typ==1){
 <ul class="list-group"  id="table_<?=$inputName?>">
 <?
 $now_data = array();
+$now_data_counter = 0;
 foreach ($this->editorData->datas as $item) {
-    echo '<li class="list-group-item">'; 
-    echo  $item->field_list['itemName']->gen_show_html()."(".$item->field_list['color']->gen_show_html().") X ".$item->field_list['meter']->gen_show_html().'米 X'.$item->field_list['price']->gen_show_html().'元 = '.$item->field_list['allPrice']->gen_show_html().'元';
-    echo '</li>'; 
-    $now_data[$item->field_list['_id']->toString()] = array($item->field_list['itemName']->value,$item->field_list['color']->value,$item->field_list['meter']->value,$item->field_list['price']->value,$item->field_list['allPrice']->value);
+    $now_data_counter ++;
+    $now_data[$item->field_list['_id']->toString()] = array('_id'=>$item->field_list['_id']->toString(),
+                                                            'itemName'=>$item->field_list['itemName']->value,
+                                                            'color'=>$item->field_list['color']->value,
+                                                            'meter'=>$item->field_list['meter']->value,
+                                                            'price'=>$item->field_list['price']->value,
+                                                            'allPrice'=>$item->field_list['allPrice']->value);
 }
+// var_dump($now_data);
 ?>
 </ul>
 <table class="table table-bordered">
@@ -42,7 +47,7 @@ var table_item_vars = <?=json_encode($this->editorData->listFields)?>;
 var table_item_must_vars = {itemName:true,color:false,meter:true,price:true,allPrice:true};
 var table_item_template = '<li class="list-group-item"><span>{itemName} ({color}) X{meter}米 X{price}元 = {allPrice}元 </span> <a href="javascript:void(0);" onclick="removeSubLine(\'<?=$inputName?>\',\'{_id}\')"><span class="glyphicon glyphicon-remove pull-right"></span></a></li>';
 <?
-if (count($now_data==0)){
+if ($now_data_counter<=0){
 ?>
 var table_all_data = {};
 <?
@@ -57,10 +62,11 @@ var price_id_pre = 'creator_';
 <?
 } else {
 ?>
-var price_id_pre = 'modifier_';
+var price_id_pre = 'modify_';
 <?
 }
 ?>
+resetTable('<?=$inputName?>');
 var allPriceId = "#"+price_id_pre+'allPrice';
 var meterId = "#"+price_id_pre+'meter';
 var priceId = "#"+price_id_pre+'price';

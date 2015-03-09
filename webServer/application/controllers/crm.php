@@ -11,7 +11,7 @@ class Crm extends P_Controller {
         $this->load_org_info();
         $this->quickSearchName = "名称/姓名/电话";
         $this->buildSearch($searchInfo);
-        
+
 
         $this->load->model('lists/Crm_list',"listInfo");
 
@@ -55,8 +55,9 @@ class Crm extends P_Controller {
         $this->load->model('lists/Crm_list',"listInfo");
 
         $this->listInfo->setOrgId($this->myOrgId);
-        $this->listInfo->load_data_with_fullSearch('name',$searchArray,$searchPlus);
-        
+		$limit = 5;
+        $this->listInfo->load_data_with_fullSearch('name',$searchArray,$searchPlus,$limit);
+
         $jsonRst = 1;
         $jsonData = array();
         foreach ($this->listInfo->record_list as  $this_record){
@@ -113,7 +114,7 @@ class Crm extends P_Controller {
         $this->load->model('lists/Pay_list',"payList");
         $this->payList->load_data_with_foreign_key("crmId",$id);
 
-        
+
 
 
         $this->detailShowFields = $this->dataInfo->buildDetailShowFields();
@@ -151,7 +152,7 @@ class Crm extends P_Controller {
         } else {
             $this->now_sub_menu = "mini_info";
         }
-        
+
         $this->template->load('default_page', 'crm/info');
     }
 
@@ -182,7 +183,7 @@ class Crm extends P_Controller {
         }
 
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         // $this->checkRule("Project","BaseView");
 
         $this->id = $id;
@@ -198,7 +199,7 @@ class Crm extends P_Controller {
     function subEdit($typ,$id){
 
         switch ($typ){
-            case "contactor":
+          	case "contactor":
                 $this->load->model('records/Contactor_model',"dataInfo");
                 break;
             case "contact":
@@ -222,7 +223,7 @@ class Crm extends P_Controller {
         }
 
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         // $this->checkRule("Project","BaseView");
 
         $this->id = $id;
@@ -239,6 +240,175 @@ class Crm extends P_Controller {
         $this->editor_typ = 1;
         $this->title_create = "编辑 - ".$this->dataInfo->buildInfoTitle();
         $this->template->load('default_lightbox_edit', 'common/create_related');
+    }
+
+    function doCreateSub($typ){
+        $zeit = time();
+        $targetSubMenu = $typ;
+        // "mini_info"=>array("name"=>"信息"),
+        //     "contactors"=>array("name"=>"联系人"),
+        //     "contacts"=>array("name"=>"通话记录"),
+        //     "books"=>array("name"=>"订货记录"),
+        //     "bookins"=>array("name"=>"订货记录(上游)"),
+        //     "send"=>array("name"=>"发货记录"),
+        //     "pays"=>array("name"=>"收付款记录"),
+		$this->contactor_hack = false;
+        switch ($typ){
+            case "contactor":
+                $this->load->model('records/Contactor_model',"dataModel");
+                $targetSubMenu = "contactors";
+                if ($this->input->post('dianhua')=="" && $this->input->post('qq')=="" && $this->input->post('weixin')=="" && $this->input->post('qitafangshi')==""){
+                    $jsonRst = -1;
+                    $jsonData = array();
+                    $jsonData['err']['id'] = 'creator_dianhua';
+                    $jsonData['err']['msg'] ='至少填写一种联系方式';
+                    echo $this->exportData($jsonData,$jsonRst);
+                    return;
+                }
+				//如果 crm 主表尚未创建过主联系人，这一条作为主联系人
+				//联系人是无法直接创建的，必须通过 crm 列表，所以必须有 crmId
+				$crmId = $this->input->post('crmId');
+				if ($crmId===false || $crmId=="" || !MongoId::isValid($crmId)){
+					$jsonRst = -2;
+                    $jsonData = array();
+                    $jsonData['err']['msg'] ='系统故障，请联系客服';
+                    echo $this->exportData($jsonData,$jsonRst);
+                    return;
+				}
+				$this->load->model('records/Crm_model',"crmModel");
+				$this->crmModel->init_with_id($crmId);
+				if ($this->crmModel->field_list['mainContactorId']->value===0){
+					//尚未创建mainContactorId
+					$this->contactor_hack = true;
+				}
+                break;
+            case "contact":
+                $this->load->model('records/Contact_model',"dataModel");
+                $targetSubMenu = "contacts";
+
+                break;
+            case "pay":
+                $this->load->model('records/Pay_model',"dataModel");
+                $targetSubMenu = "pays";
+                break;
+            case "book":
+                $this->load->model('records/Book_model',"dataModel");
+                $targetSubMenu = "books";
+
+                break;
+            case "bookin":
+                $this->load->model('records/Bookin_model',"dataModel");
+                $targetSubMenu = "bookins";
+
+                break;
+            case "send":
+                $this->load->model('records/Send_model',"dataModel");
+                $targetSubMenu = "send";
+
+                break;
+            default:
+                return;
+                break;
+        }
+
+		//处理数据
+		$this->createPostFields = $this->dataModel->buildChangeNeedFields(array('crmId'));
+
+        $dataInfo = array();
+        foreach ($this->createPostFields as $value) {
+            if (isset($this->dataModel->field_list[$value])){
+                $dataInfo[$value] = $this->dataModel->field_list[$value]->gen_value($this->input->post($value));
+            }
+
+        }
+
+        $checkRst = $this->dataModel->check_data($dataInfo);
+        if (!$checkRst){
+            $jsonRst = -1;
+            $jsonData = array();
+            $jsonData['err']['id'] = 'creator_'.$this->dataModel->get_error_field();
+            $jsonData['err']['msg'] ='请填写所有星号字段！';
+            echo $this->exportData($jsonData,$jsonRst);
+            return;
+        }
+        $dataInfo['orgId'] = $this->myOrgId;
+
+        $zeit = time();
+        if (isset($this->dataModel->field_list['createUid'])){
+            $dataInfo['createUid'] = $this->userInfo->uid;
+            $dataInfo['createTS'] = $zeit;
+        }
+        if (isset($this->dataModel->field_list['lastModifyUid'])){
+            $dataInfo['lastModifyUid'] = $this->userInfo->uid;
+            $dataInfo['lastModifyTS'] = $zeit;
+        }
+
+
+		switch ($typ){
+            case "contactor":
+				if ($this->contactor_hack){
+					$dataInfo['isMain'] = 1;
+				}
+				break;
+			default:
+
+				break;
+		}
+
+        $dataInfo['newId'] = $this->dataModel->insert_db($dataInfo);
+        $this->updateCrmUpdateTS($dataInfo['crmId']);
+
+        if ($dataInfo==false){
+            return;
+        }
+
+        switch ($typ){
+            case "contactor":
+
+                if ($dataInfo['isMain']==1){
+                    //是主要联系人，更新主要联系人段落
+                    $contactorData = array();
+                    $contactorData['mainContactorName']= $dataInfo['name'];
+                    if ($dataInfo['dianhua']!=''){
+                        $contactorData['mainContactorType'] = 0;
+                        $contactorData['mainContactorNum'] = $dataInfo['dianhua'];
+                    } else if ($dataInfo['qq']!=''){
+                        $contactorData['mainContactorType'] = 1;
+                        $contactorData['mainContactorNum'] = $dataInfo['qq'];
+                    } else if ($dataInfo['weixin']!=''){
+                        $contactorData['mainContactorType'] = 2;
+                        $contactorData['mainContactorNum'] = $dataInfo['weixin'];
+                    } else {
+                        $contactorData['mainContactorType'] = 3;
+                        $contactorData['mainContactorNum'] = $dataInfo['qitafangshi'];
+                    }
+					$contactorData['mainContactorId'] = $dataInfo['newId'];
+
+                    $this->db->where(array('_id'=>new MongoId($dataInfo['crmId'])))->update('cCrm',$contactorData);
+                }
+
+                break;
+            case "contact":
+
+                break;
+            case "pay":
+
+                break;
+            case "book":
+
+                break;
+            case "bookin":
+
+                break;
+            case "send":
+
+                break;
+            default:
+                return;
+                break;
+        }
+        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
+
     }
 
     function doUpdateSub($typ,$id=""){
@@ -292,6 +462,31 @@ class Crm extends P_Controller {
         if ($dataInfo==false){
             return;
         }
+		if ($typ=="contactor" && $this->dataModel->field_list['isMain']->value==1){
+			//更新主联系人
+
+			$contactorData = array();
+			if (isset($dataInfo['name'])){
+				$contactorData['mainContactorName']= $dataInfo['name'];
+			}
+
+			if (isset($dataInfo['dianhua']) && $dataInfo['dianhua']!=''){
+				$contactorData['mainContactorType'] = 0;
+				$contactorData['mainContactorNum'] = $dataInfo['dianhua'];
+			} else if (isset($dataInfo['qq']) && $dataInfo['qq']!=''){
+				$contactorData['mainContactorType'] = 1;
+				$contactorData['mainContactorNum'] = $dataInfo['qq'];
+			} else if (isset($dataInfo['weixin']) && $dataInfo['weixin']!=''){
+				$contactorData['mainContactorType'] = 2;
+				$contactorData['mainContactorNum'] = $dataInfo['weixin'];
+			} else if (isset($dataInfo['qitafangshi']) && $dataInfo['qitafangshi']!=''){
+				$contactorData['mainContactorType'] = 3;
+				$contactorData['mainContactorNum'] = $dataInfo['qitafangshi'];
+			}
+			if (count($contactorData)>0){
+				$this->db->where(array('_id'=>new MongoId($this->crmId)))->update('cCrm',$contactorData);
+			}
+		}
 
         $this->onEditSubTableReturn($dataInfo,$targetSubMenu);
 
@@ -310,6 +505,7 @@ class Crm extends P_Controller {
             case "contactor":
                 $this->load->model('records/Contactor_model',"dataModel");
                 $targetSubMenu = "contactors";
+
                 break;
             case "contact":
                 $this->load->model('records/Contact_model',"dataModel");
@@ -343,6 +539,22 @@ class Crm extends P_Controller {
         if ($id=="" || !MongoId::isValid($id)){
             return;
         }
+		$rst = $this->dataModel->init_with_id($id);
+        if ($rst==false){
+            $jsonRst = -1;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='该记录不存在';
+            echo $this->exportData($jsonData,$jsonRst);
+            return false;
+        }
+		if ($typ=="contactor" && $this->dataModel->field_list['isMain']->value==1){
+			//主要联系人
+			$jsonRst = -10;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='主要联系人不可删除';
+            echo $this->exportData($jsonData,$jsonRst);
+            return false;
+		}
 
         $dataInfo = $this->onDelSubTable($id);
         if ($dataInfo==false){
@@ -379,9 +591,27 @@ class Crm extends P_Controller {
             echo $this->exportData($jsonData,$jsonRst);
             return false;
         }
-        exit;
 
-        $this->dataModel->delete_db($id); 
+		if ($this->dataModel->field_list['typ']->value==4){
+			//打包物流商
+			$this->load->model('lists/Send_list',"sendList");
+
+            $where_array = array('orgId'=>$this->myOrgId,'$or'=>array(array('packP'=>$id),array('sendP'=>$id)));
+            $this->sendList->load_data_with_orignal_where($where_array);
+			if (count($this->sendList->record_list)>0){
+				$jsonRst = -3;
+	            $jsonData = array();
+	            $jsonData['err']['msg'] = "该客户有发货的打包或者发货记录，请先确认删除发货记录";
+	            echo $this->exportData($jsonData,$jsonRst);
+	            return false;
+			}
+		}
+
+        $this->dataModel->delete_db($id);
+
+		//剩下的联系人和联系记录数据不检查删除时候是否有记录，直接一起删除掉
+		$this->dataModel->delete_related($id);
+
         $jsonRst = 1;
         $jsonData['goto_url'] = site_url('crm/index');
 
@@ -389,16 +619,16 @@ class Crm extends P_Controller {
     }
 
     function contactList($searchInfo = ""){
-        
+
         $this->load_menus();
         $this->load_org_info();
 
         $this->quickSearchName = "名称/姓名/电话";
         $this->buildSearch($searchInfo);
-        
+
 
         $this->load->model('lists/Contact_list',"listInfo");
-        
+
         $this->listInfo->setOrgId($this->myOrgId);
         $this->listInfo->load_data_with_search($this->searchInfo);
 
@@ -411,7 +641,7 @@ class Crm extends P_Controller {
     }
 
     function order($searchInfo = ""){
-        
+
         $this->load_menus();
         $this->load_org_info();
 
@@ -419,7 +649,7 @@ class Crm extends P_Controller {
         $this->buildSearch($searchInfo);
 
         $this->load->model('lists/Book_list',"listInfo");
-        
+
         $this->listInfo->setOrgId($this->myOrgId);
         $this->listInfo->load_data_with_search($this->searchInfo);
 
@@ -432,7 +662,7 @@ class Crm extends P_Controller {
     }
 
     function send($searchInfo = ""){
-        
+
         $this->load_menus();
         $this->load_org_info();
 
@@ -440,7 +670,7 @@ class Crm extends P_Controller {
         $this->buildSearch($searchInfo);
 
         $this->load->model('lists/Send_list',"listInfo");
-        
+
         $this->listInfo->setOrgId($this->myOrgId);
         $this->listInfo->load_data_with_search($this->searchInfo);
 
@@ -453,7 +683,7 @@ class Crm extends P_Controller {
     }
 
     function pay($searchInfo = ""){
-        
+
         $this->load_menus();
         $this->load_org_info();
 
@@ -461,7 +691,7 @@ class Crm extends P_Controller {
         $this->buildSearch($searchInfo);
 
         $this->load->model('lists/Pay_list',"listInfo");
-        
+
         $this->listInfo->setOrgId($this->myOrgId);
         $this->listInfo->load_data_with_search($this->searchInfo);
 
@@ -475,7 +705,7 @@ class Crm extends P_Controller {
 
     function create(){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
         $this->createUrlF = 'doCreateCrm';
 
@@ -485,6 +715,9 @@ class Crm extends P_Controller {
         $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
         $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
 
+		$this->dataInfo->field_list['typ']->setDefault(3);
+		$this->dataInfo->field_list['status']->setDefault(1);
+
         $this->editor_typ = 0;
         $this->title_create = "新建客户信息";
         $this->template->load('default_lightbox_new', 'common/create');
@@ -492,7 +725,7 @@ class Crm extends P_Controller {
 
     function editCrm($id){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
         $this->createUrlF = 'doUpdateCrm';
 
@@ -505,7 +738,7 @@ class Crm extends P_Controller {
 
         $this->editor_typ = 1;
         $this->title_create = "编辑客户信息";
-        $this->template->load('default_lightbox_edit', 'crm/create');
+        $this->template->load('default_lightbox_edit', 'common/create');
     }
 
     function doCreateCrm(){
@@ -523,7 +756,6 @@ class Crm extends P_Controller {
         }
 
         $data['orgId'] = $this->myOrgId;
-        $data['allContactors'] = array($this->dataInfo->gen_new_contactor($this->input->post('mainContactorName'),$this->input->post('mainContactorType'),$this->input->post('mainContactorNum')));
 
         $data['updateTS'] = $zeit;
         $data['createUid'] = $this->userInfo->uid;
@@ -545,7 +777,7 @@ class Crm extends P_Controller {
         $contactorData = array();
         $this->load->model('records/Contactor_model',"contactorInfo");
         $contactorData['orgId']= $this->myOrgId;
-        $contactorData['crmId']= $newId;
+        $contactorData['crmId']= $newId->{'$id'};
 
         $contactorData['name']= $data['mainContactorName'];
 // array("电话","qq","微信","其他")
@@ -570,19 +802,115 @@ class Crm extends P_Controller {
 
         $contactorData['newId'] = $this->contactorInfo->insert_db($contactorData);
 
+		$updateData = array('mainContactorId'=> $contactorData['newId']);
+		$this->dataInfo->update_db($updateData,$newId);
+
         $jsonData = array();
 
-        $jsonData['goto_url'] = site_url('crm/index');
+
 
         $jsonData['newId'] = (string)$newId;
+		$jsonData['goto_url'] = site_url('crm/info/'.(string)$newId);
+        echo $this->exportData($jsonData,$jsonRst);
+    }
+
+	function doUpdateCrm($id){
+        $modelName = 'records/Crm_model';
+        $jsonRst = 1;
+        $zeit = time();
+
+
+        $this->load->model($modelName,"dataModel");
+
+		$this->dataModel->init_with_id($id);
+		$this->createPostFields = $this->dataModel->buildChangeNeedFields();
+
+        $data = array();
+        foreach ($this->createPostFields as $value) {
+            $newValue = $this->dataModel->field_list[$value]->gen_value($this->input->post($value));
+            if ($newValue!="".$this->dataModel->field_list[$value]->value){
+                $data[$value] = $newValue;
+            }
+        }
+
+        if (empty($data)){
+            $jsonRst = -2;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='无变化';
+            echo $this->exportData($jsonData,$jsonRst);
+            return false;
+        }
+
+        $checkRst = $this->dataModel->check_data($data,false);
+        if (!$checkRst){
+            $jsonRst = -1;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='请填写所有星号字段！';
+            echo $this->exportData($jsonData,$jsonRst);
+            return false;
+        }
+        $zeit = time();
+
+		$data['updateTS'] = $zeit;
+        if (isset($this->dataModel->field_list['lastModifyUid'])){
+            $data['lastModifyUid'] = $this->userInfo->uid;
+            $data['lastModifyTS'] = $zeit;
+        }
+
+		//检查联系人数据是否更新过
+		if (isset($data['mainContactorType']) ||
+			isset($data['mainContactorNum']) ||
+			isset($data['mainContactorName'])){
+			//更新联系人相关记录
+			$contactorId = $this->dataModel->field_list['mainContactorId']->value;
+			$contactorData = array();
+			$this->load->model('records/Contactor_model',"contactorInfo");
+			$contactorData['name']= $data['mainContactorName'];
+		// array("电话","qq","微信","其他")
+			switch ($data['mainContactorType']){
+				case 0:
+					$contactorData['dianhua'] = $data['mainContactorNum'];
+					break;
+				case 1:
+					$contactorData['qq'] = $data['mainContactorNum'];
+					break;
+				case 2:
+					$contactorData['weixin'] = $data['mainContactorNum'];
+					break;
+				case 3:
+					$contactorData['qitafangshi'] = $data['mainContactorNum'];
+					break;
+				default:
+					$contactorData['qitafangshi'] = $data['mainContactorNum'];
+					break;
+			}
+
+			if ($contactorId!==0){
+
+				$this->contactorInfo->update_db($contactorData,$contactorId);
+			} else {
+				//自动创建的那种数据，需要创建主要联系人
+				$this->load->model('records/Contactor_model',"contactorInfo");
+				$contactorData['orgId']= $this->myOrgId;
+				$contactorData['crmId']= $id;
+				$contactorData['isMain'] = 1;
+				$contactorData['newId'] = $this->contactorInfo->insert_db($contactorData);
+
+				$data['mainContactorId'] = $contactorData['newId'];
+			}
+		}
+
+        $this->dataModel->update_db($data,$id);
+
+		$jsonData['goto_url'] = site_url('crm/info/'.$id);
         echo $this->exportData($jsonData,$jsonRst);
     }
 
     function createContacter($id){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
-        $this->createUrlF = 'doCreateContacter';
+        $this->createUrlF = 'doCreateSub/contactor';
 
         $this->load->model('records/Contactor_model',"dataInfo");
         $this->dataInfo->setRelatedOrgId($this->myOrgId);
@@ -599,57 +927,11 @@ class Crm extends P_Controller {
         $this->template->load('default_lightbox_new', 'common/create_related');
     }
 
-    function doCreateContacter(){
-        
-        $modelName = 'records/Contactor_model';
-        $jsonRst = 1;
-        $zeit = time();
-        $targetSubMenu = 'contactors';
-        if ($this->input->post('dianhua')=="" && $this->input->post('qq')=="" && $this->input->post('weixin')=="" && $this->input->post('qitafangshi')==""){
-            $jsonRst = -1;
-            $jsonData = array();
-            $jsonData['err']['id'] = 'creator_dianhua';
-            $jsonData['err']['msg'] ='至少填写一种联系方式';
-            echo $this->exportData($jsonData,$jsonRst);
-            return;
-        }
-        $dataInfo = $this->onCreateSubTable($modelName);
-        if ($dataInfo==false){
-            return;
-        }
-
-        if ($dataInfo['isMain']==1){
-            //是主要联系人，更新主要联系人段落
-            $contactorData = array();
-            $contactorData['mainContactorName']= $dataInfo['name'];
-            if ($dataInfo['dianhua']!=''){
-                $contactorData['mainContactorType'] = 0;
-                $contactorData['mainContactorNum'] = $dataInfo['dianhua'];
-            } else if ($dataInfo['qq']!=''){
-                $contactorData['mainContactorType'] = 1;
-                $contactorData['mainContactorNum'] = $dataInfo['qq'];
-            } else if ($dataInfo['weixin']!=''){
-                $contactorData['mainContactorType'] = 2;
-                $contactorData['mainContactorNum'] = $dataInfo['weixin'];
-            } else {
-                $contactorData['mainContactorType'] = 3;
-                $contactorData['mainContactorNum'] = $dataInfo['qitafangshi'];
-            }
-
-            $this->db->where(array('_id'=>new MongoId($dataInfo['crmId'])))->update('cCrm',$contactorData);
-            //将其他记录全部设为非主要
-            
-            // $this->db->where(array('crmId'=>$dataInfo['crmId'],'_id'=>array('$ne'=>new MongoId($dataInfo['newId']))))->update('cContactor',array('isMain'=>0));
-        }
-
-        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
-    }
-
     function createContactHis($id = ''){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
-        $this->createUrlF = 'doCreateContacterHis';
+        $this->createUrlF = 'doCreateSub/contact';
 
         $this->load->model('records/Contact_model',"dataInfo");
         $this->dataInfo->setRelatedOrgId($this->myOrgId);
@@ -658,24 +940,11 @@ class Crm extends P_Controller {
         $this->createSubTable($id);
     }
 
-    function doCreateContacterHis(){
-        
-        $modelName = 'records/Contact_model';
-        $jsonRst = 1;
-        $zeit = time();
-        $targetSubMenu = 'contacts';
-        $dataInfo = $this->onCreateSubTable($modelName);
-        if ($dataInfo==false){
-            return;
-        }
-
-        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
-    }
     function createBook($id = ""){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
-        $this->createUrlF = 'doCreateBook';
+        $this->createUrlF = 'doCreateSub/book';
 
         $this->load->model('records/Book_model',"dataInfo");
         $this->dataInfo->setRelatedOrgId($this->myOrgId);
@@ -685,23 +954,11 @@ class Crm extends P_Controller {
         $this->createSubTable($id);
     }
 
-    function doCreateBook(){
-        
-        $modelName = 'records/Book_model';
-        $jsonRst = 1;
-        $zeit = time();
-        $targetSubMenu = 'books';
-        $dataInfo = $this->onCreateSubTable($modelName);
-        if ($dataInfo==false){
-            return;
-        }
-        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
-    }
     function createBookIn($id = ""){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
-        $this->createUrlF = 'doCreateBookIn';
+        $this->createUrlF = 'doCreateSub/bookin';
 
         $this->load->model('records/Bookin_model',"dataInfo");
         $this->dataInfo->setRelatedOrgId($this->myOrgId);
@@ -711,24 +968,11 @@ class Crm extends P_Controller {
         $this->createSubTable($id);
     }
 
-    function doCreateBookIn(){
-        
-        $modelName = 'records/Bookin_model';
-        $jsonRst = 1;
-        $zeit = time();
-        $targetSubMenu = 'bookins';
-        $dataInfo = $this->onCreateSubTable($modelName);
-        if ($dataInfo==false){
-            return;
-        }
-        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
-    }
-
     function createPay($id = ""){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
-        $this->createUrlF = 'doCreatePay';
+        $this->createUrlF = 'doCreateSub/pay';
 
         $this->load->model('records/Pay_model',"dataInfo");
         $this->dataInfo->setRelatedOrgId($this->myOrgId);
@@ -740,24 +984,12 @@ class Crm extends P_Controller {
         $this->createSubTable($id);
     }
 
-    function doCreatePay(){
-        
-        $modelName = 'records/Pay_model';
-        $jsonRst = 1;
-        $zeit = time();
-        $targetSubMenu = 'pays';
-        $dataInfo = $this->onCreateSubTable($modelName);
-        if ($dataInfo==false){
-            return;
-        }
-        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
-    }
 
     function createSend($id = ""){
         $this->setViewType(VIEW_TYPE_HTML);
-        
+
         $this->createUrlC = 'crm';
-        $this->createUrlF = 'doCreateSend';
+        $this->createUrlF = 'doCreateSub/send';
 
         $this->load->model('records/Send_model',"dataInfo");
         $this->dataInfo->setRelatedOrgId($this->myOrgId);
@@ -768,18 +1000,6 @@ class Crm extends P_Controller {
         $this->createSubTable($id);
     }
 
-    function doCreateSend(){
-        
-        $modelName = 'records/Send_model';
-        $jsonRst = 1;
-        $zeit = time();
-        $targetSubMenu = 'send';
-        $dataInfo = $this->onCreateSubTable($modelName);
-        if ($dataInfo==false){
-            return;
-        }
-        $this->onCreateSubTableReturn($dataInfo,$targetSubMenu);
-    }
 
     private function updateCrmUpdateTS($crmId){
         $zeit = time();
@@ -799,48 +1019,8 @@ class Crm extends P_Controller {
         }
 
         $this->editor_typ = 0;
-        
+
         $this->template->load('default_lightbox_new', 'common/create_related');
-    }
-
-    private function onCreateSubTable($modelName){
-        
-        $this->load->model($modelName,"dataModel");
-        $this->createPostFields = $this->dataModel->buildChangeNeedFields(array('crmId'));
-
-        $dataInfo = array();
-        foreach ($this->createPostFields as $value) {
-            if (isset($this->dataModel->field_list[$value])){
-                $dataInfo[$value] = $this->dataModel->field_list[$value]->gen_value($this->input->post($value));
-            }
-            
-        }
-
-        $checkRst = $this->dataModel->check_data($dataInfo);
-        if (!$checkRst){
-            $jsonRst = -1;
-            $jsonData = array();
-            $jsonData['err']['id'] = 'creator_'.$this->dataModel->get_error_field();
-            $jsonData['err']['msg'] ='请填写所有星号字段！';
-            echo $this->exportData($jsonData,$jsonRst);
-            return false;
-        }
-        $dataInfo['orgId'] = $this->myOrgId;
-
-        $zeit = time();
-        if (isset($this->dataModel->field_list['createUid'])){
-            $dataInfo['createUid'] = $this->userInfo->uid;
-            $dataInfo['createTS'] = $zeit;
-        }
-        if (isset($this->dataModel->field_list['lastModifyUid'])){
-            $dataInfo['lastModifyUid'] = $this->userInfo->uid;
-            $dataInfo['lastModifyTS'] = $zeit;
-        }
-
-        $dataInfo['newId'] = $this->dataModel->insert_db($dataInfo);
-        $this->updateCrmUpdateTS($dataInfo['crmId']);
-
-        return $dataInfo;
     }
 
     private function onCreateSubTableReturn($dataInfo,$targetSubMenu=""){
@@ -855,7 +1035,7 @@ class Crm extends P_Controller {
 
         $this->createPostFields = $this->dataModel->buildChangeNeedFields();
         $this->dataModel->init_with_id($id);
-        
+
         $this->crmId = $this->dataModel->field_list['crmId']->value;
 
         $data = array();
@@ -863,9 +1043,9 @@ class Crm extends P_Controller {
             $newValue = $this->dataModel->field_list[$value]->gen_value($this->input->post($value));
             if ($newValue!="".$this->dataModel->field_list[$value]->value){
                 $data[$value] = $newValue;
-            }   
+            }
         }
-        
+
         if (empty($data)){
             $jsonRst = -2;
             $jsonData = array();
@@ -873,7 +1053,7 @@ class Crm extends P_Controller {
             echo $this->exportData($jsonData,$jsonRst);
             return false;
         }
-        
+
         $checkRst = $this->dataModel->check_data($data,false);
         if (!$checkRst){
             $jsonRst = -1;
@@ -883,7 +1063,7 @@ class Crm extends P_Controller {
             return false;
         }
         $zeit = time();
-        
+
         if (isset($this->dataModel->field_list['lastModifyUid'])){
             $data['lastModifyUid'] = $this->userInfo->uid;
             $data['lastModifyTS'] = $zeit;
@@ -901,35 +1081,26 @@ class Crm extends P_Controller {
         $jsonData['goto_url'] = site_url('crm/info/'.$this->crmId.'/'.$targetSubMenu);
 
         echo $this->exportData($jsonData,$jsonRst);
-        
+
     }
 
     private function onDelSubTable($id){
-
-        $rst = $this->dataModel->init_with_id($id);
-        if ($rst==false){
-            $jsonRst = -1;
-            $jsonData = array();
-            $jsonData['err']['msg'] ='该记录不存在';
-            echo $this->exportData($jsonData,$jsonRst);
-            return false;
-        }
         $this->crmId = $this->dataModel->field_list['crmId']->value;
 
-        $this->dataModel->delete_db($id); 
+        $this->dataModel->delete_db($id);
 
         $this->updateCrmUpdateTS($this->crmId);
         return true;
     }
-    
+
     private function onDelSubTableReturn($dataInfo,$targetSubMenu=""){
         $jsonRst = 1;
         $jsonData = array();
         $jsonData['goto_url'] = site_url('crm/info/'.$this->crmId.'/'.$targetSubMenu);
 
         echo $this->exportData($jsonData,$jsonRst);
-        
+
     }
-    
+
 
 }

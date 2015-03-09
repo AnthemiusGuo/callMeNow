@@ -19,19 +19,20 @@
         $this->field_list = array();
         $this->orgId = 0;
         $this->errData = '';
+        $this->relateTableName = array();
 
         $this->default_is_lightbox_or_page = true;
 
     }
     public function init($id){
         $this->id = $id;
-        
+
     }
 
     public function gen_url($key_names,$force_lightbox=false,$info_link=''){
         if ($info_link=='') {
             $info_link = $this->info_link;
-        } 
+        }
 
         if ($info_link==''){
             //报错
@@ -42,8 +43,8 @@
             return '<a href="'. site_url($info_link.'/'.$this->id).'">'.$this->field_list[$key_names]->gen_list_html().'</a>';
         }
     }
-        
-        
+
+
 
     public function fetchArray(){
         $arrayRst = array();
@@ -58,14 +59,14 @@
         }
     }
     public function gen_list_html($templates){
-        
+
     }
     public function gen_editor(){
-        
+
     }
-    
+
     public function buildInfoTitle(){
-        
+
     }
 
     public function check_data($data,$strict=true){
@@ -78,7 +79,7 @@
                         $this->error_field = $key;
                         return false;
                     }
-                    
+
                 }  elseif ($value->check_data_input($data[$key])==false) {
                     $this->error_field = $key;
                     return false;
@@ -117,16 +118,16 @@
         }
         $this->db->where(array('_id' => $real_id));
         $this->checkWhere();
-        
+
         $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $this->init_with_data($result['_id'],$result);
             return true;
         } else {
             return false;
-        }        
+        }
     }
 
     public function init_with_data($id,$data,$isFullInit=true){
@@ -138,7 +139,7 @@
                 } else {
                     $this->field_list[$key]->baseInit($value);
                 }
-                
+
             }
         }
     }
@@ -206,7 +207,7 @@
         }
         return implode(" | ", $strs);
     }
-    
+
     public function insert_db($data){
         if (isset($this->field_list['_id']) && $this->field_list['_id']->typ == "Field_mongoid") {
             if (!isset($data['_id'])) {
@@ -217,7 +218,7 @@
         $this->db->insert($this->tableName, $data);
         return $this->db->insert_id();
     }
-    
+
     public function delete_db($ids){
         $effect = 0;
         $idArray = explode('-',$ids);
@@ -227,6 +228,19 @@
         }
         return $effect;
     }
+
+    public function delete_related($ids){
+        $effect = 0;
+        $idArray = explode('-',$ids);
+        foreach ($idArray as $id) {
+            foreach ($this->relateTableName as $thisTableName){
+                $this->db->where(array('crmId'=> $id))->delete($thisTableName);
+                $effect += 1;
+            }
+        }
+        return $effect;
+    }
+
 
      public function update_db($data,$id){
         if (!is_object($id) && $this->id_is_id){
@@ -248,7 +262,7 @@
 
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
         }
         else
         {
@@ -301,11 +315,11 @@
             ->from($this->tableName)
             ->where($param);
         // $this->checkWhere();
-        
+
         $query = $this->db->get();
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             return $result["id"];
         } else {
             return -1;
@@ -327,7 +341,7 @@
         }
         return $array;
     }
-    
-     
+
+
 }
 ?>

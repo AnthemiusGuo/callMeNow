@@ -58,10 +58,16 @@ class Field_related_id extends Field_relate_simple_id {
         return $this->CI->db->insert_id();
     }
     public function gen_value($input){
+        //如果为空，返回空
+        if ($input==""){
+            return "";
+        }
+
         //先检查是不是已经是 mongoid
         if (strlen($input)==24 && MongoId::isValid($input)){
             return $input;
         }
+
         $this->db->select(array($this->valueField,$this->showField))
             ->where(array($this->showField => $input));
         if (!isset($this->whereOrgId)){

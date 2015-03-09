@@ -29,7 +29,7 @@ if ($this->need_plus!=""){
     if (isset($this->searchInfo) && $this->searchInfo['t']=="full"):
     ?>
     <div class="col-lg-12 search_tips">
-        <span class="glyphicon glyphicon-search"></span> 高级搜索 : 
+        <span class="glyphicon glyphicon-search"></span> 高级搜索 :
         <?php
         foreach ($this->searchInfo['i'] as $key => $value) {
             echo  $this->listInfo->dataModel[$key]->gen_show_name();
@@ -63,7 +63,7 @@ if ($this->need_plus!=""){
                 </tr>
             </thead>
             <tbody class="table-paged">
-                <?php 
+                <?php
                 $i = 1;
                 foreach($this->listInfo->record_list as  $this_record): ?>
                     <tr>
@@ -77,13 +77,13 @@ if ($this->need_plus!=""){
                                 <?php
                                 if ($this_record->field_list[$key_names]->is_title):
                                     if ($this->listInfo->is_lightbox):
-                                        echo '<a href="javascript:void(0)" onclick="lightbox({size:\'m\',url:\''. site_url($this->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
+                                        echo '<a href="javascript:void(0)" onclick="lightbox({size:\'m\',url:\''. site_url($this_record->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
                                     else :
                                         echo '<a href="'.site_url($this->info_link.$this_record->id).'">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
                                     endif;
                                 elseif ($this_record->field_list[$key_names]->typ=="Field_text"):
                                     echo $this_record->field_list[$key_names]->gen_list_html(8);
-                                else :                         
+                                else :
                                     echo $this_record->field_list[$key_names]->gen_list_html();
 
                                 endif;
@@ -95,10 +95,10 @@ if ($this->need_plus!=""){
                         <td>
                             <?php echo $this_record->gen_list_op()?>
                         </td>
-                    </tr>        
+                    </tr>
                 <?php $i++;
                 endforeach; ?>
-                
+
             </tbody>
         </table>
 
@@ -117,6 +117,6 @@ if ($this->need_plus!=""){
     </div>
 </div>
 <script>
-    
-    
+
+
 </script>

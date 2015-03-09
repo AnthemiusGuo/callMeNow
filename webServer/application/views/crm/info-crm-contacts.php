@@ -14,7 +14,7 @@ endif;
             <tr>
                 <th><input type="checkbox" value="" class="selectAll" data-select="crm-contact-table"> 全选</th>
                 <?
-                foreach ($this->contactList->build_list_titles() as $key_names):
+                foreach ($this->contactList->build_inline_list_titles() as $key_names):
                 ?>
                     <th>
                         <?php
@@ -36,7 +36,7 @@ endif;
                         <input type="checkbox" name="check_target[]" data-select="crm-contact-table" value="<?=$this_record->field_list['_id']->gen_list_html()?>">
                     </td>
                     <?
-                    foreach ($this->contactList->build_list_titles() as $key_names):
+                    foreach ($this->contactList->build_inline_list_titles() as $key_names):
                     ?>
                         <td>
                             <?php

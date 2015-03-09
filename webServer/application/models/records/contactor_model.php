@@ -18,17 +18,17 @@ class Contactor_model extends Record_model {
         $this->field_list['qq'] = $this->load->field('Field_string',"QQ","qq");
         $this->field_list['weixin'] = $this->load->field('Field_string',"微信","weixin");
 
-        
+
         $this->field_list['qitafangshi'] = $this->load->field('Field_string',"其他联系方式","qitafangshi");
         $this->field_list['isMain'] = $this->load->field('Field_bool',"是主要联系人","isMain");
-        
+
     }
-    
+
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function buildInfoTitle(){
         return $this->field_list['name']->gen_show_html().' <small> '.$this->field_list['dianhua']->gen_show_html().' </small>';
@@ -36,7 +36,7 @@ class Contactor_model extends Record_model {
 
     public function buildChangeShowFields(){
             return array(
-                    array('name','isMain'),
+                    array('name','null'),
                     array('dianhua','qq'),
                     array('weixin','qitafangshi'),
 
@@ -97,7 +97,7 @@ class Contactor_model extends Record_model {
                 continue;
             }
             $field_name = $cfg_field_lists[$key];
-            
+
             $data[$field_name] = $this->field_list[$field_name]->importData($value);
         }
         return $data;

@@ -16,6 +16,10 @@ class Contactor_list extends List_model {
         }
        
     }
+
+    public function build_inline_list_titles(){
+        return array('name','dianhua','qq','weixin','qitafangshi','isMain');
+    }
     
     public function build_list_titles(){
         //姓名,类型,省份,状态,最后更新

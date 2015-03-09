@@ -51,7 +51,7 @@ function resetTable(table_id){
 	$("#"+table_id).val(JSON.stringify(table_all_data));
 	console.log($("#"+table_id).val());
 	$("#creator_totalGetting").val(totalGetting);
-	$("#creator_totalGetting").val(totalGetting);
+	$("#modify_totalGetting").val(totalGetting);
 	
 }
 //目前还不支持缓存，后面必须支持搜索缓存，或者打开页面拉取所有数据，本地查询

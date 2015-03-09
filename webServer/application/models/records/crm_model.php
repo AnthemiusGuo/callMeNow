@@ -21,15 +21,15 @@ class Crm_model extends Record_model {
         $this->field_list['mainContactorType'] = $this->load->field('Field_enum',"主要联系方式","mainContactorType",true);
         $this->field_list['mainContactorType']->setEnum(array("电话","qq","微信","其他"));
         $this->field_list['mainContactorNum'] = $this->load->field('Field_string',"号码","mainContactorNum",true);
+        $this->field_list['mainContactorId'] = $this->load->field('Field_mongoid',"主要联系人Id","mainContactorId");
 
-        
         // $this->field_list['allContactors'] = $this->load->field('Field_array',"联系人","allContacts");
         // $this->field_list['allContactors']->arrayModel = "contactor_model";
 
         $this->field_list['status'] = $this->load->field('Field_enum',"状态","status",true);
         $this->field_list['status']->setEnum(array("未设置","保持联系","很少联系/结束合作"));
 
-        $this->field_list['province'] = $this->load->field('Field_provinceid',"省份","province",true);
+        $this->field_list['province'] = $this->load->field('Field_provinceid',"省份","province");
 
         $this->field_list['needPayIn'] = $this->load->field('Field_sum_money',"未收货款(￥)","needPayIn");
         $this->field_list['needPayOut'] = $this->load->field('Field_sum_money',"未付货款(￥)","needPayOut");
@@ -39,18 +39,20 @@ class Crm_model extends Record_model {
         $this->field_list['comments'] = $this->load->field('Field_text',"记事本","comments");
 
         $this->field_list['updateTS'] = $this->load->field('Field_ts',"更新时间","updateTS");
-        
+
         $this->field_list['createUid'] = $this->load->field('Field_userid',"创建人","createUid");
         $this->field_list['createTS'] = $this->load->field('Field_ts',"创建时间","createTS");
         $this->field_list['lastModifyUid'] = $this->load->field('Field_userid',"最终编辑人","lastModifyUid");
         $this->field_list['lastModifyTS'] = $this->load->field('Field_ts',"最后更新","lastModifyTS");
+
+        $this->relateTableName = array('cContactHis','cContactor');
     }
 
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function gen_new_contactor($name,$typ,$num){
         return array('_id'=>new MongoId(),'name'=>$name,'typ'=>$typ,'num'=>$num);
@@ -64,7 +66,7 @@ class Crm_model extends Record_model {
         $cfg_field_lists = array(
             0=>"name",3=>"province",4=>'status'
         );
-        
+
         return $this->checkImportDataBase($data,$cfg_field_lists);
     }
     //名称*必填 省份*必填   状态*必填   情况说明    通讯地址    邮编  需赞助金额   汇款账号    建筑设施    其他  联系人姓名   联系电话    电子邮箱    其他联系方式
@@ -73,7 +75,7 @@ class Crm_model extends Record_model {
         $cfg_field_lists = array(
             0=>"name",1=>"province",2=>'status'
         );
-        
+
         return $this->checkImportDataBase($data,$cfg_field_lists);
     }
 
@@ -94,7 +96,7 @@ class Crm_model extends Record_model {
                 continue;
             }
             $field_name = $cfg_field_lists[$key];
-            
+
             $data[$field_name] = $this->field_list[$field_name]->importData($value);
         }
         return $data;

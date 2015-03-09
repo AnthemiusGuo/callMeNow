@@ -6,16 +6,16 @@ class Pay_list extends List_model {
         parent::__construct('bPay');
         parent::init("Pay_list","Pay_model");
     }
-    
+
     public function build_search_infos(){
         return array('money','method','status','payTS','typ');
     }
-    
+
     public function build_inline_list_titles(){
     	return array('money','method','status','payTS');
     }
     public function build_list_titles(){
-        return array('crmId','money','method','status','payTS','typ');
+        return array('crmId','typ','money','method','status','payTS');
     }
 }
 ?>
