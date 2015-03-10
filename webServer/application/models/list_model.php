@@ -8,6 +8,7 @@ class List_model extends CI_Model {
 
 
     public function __construct($tableName = '') {
+        
         parent::__construct();
         $CI =& get_instance();
         $this->db = $CI->cimongo;

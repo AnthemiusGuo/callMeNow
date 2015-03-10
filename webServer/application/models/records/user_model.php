@@ -5,14 +5,25 @@ class User_model extends Record_model {
         parent::__construct('uUser');
         $this->uname = '';
         $this->uid = 0;
+
+        $this->deleteCtrl = 'management';
+        $this->deleteMethod = 'doDelUser';
+        $this->edit_link = 'management/editUser/';
+        $this->info_link = 'management/infoUser/';
+
+
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"uid","_id");
         $this->field_list['uid'] = $this->load->field('Field_string',"uid","uid");
-        
-        $this->field_list['email'] = $this->load->field('Field_string',"电子邮箱","email");
+
+        $this->field_list['email'] = $this->load->field('Field_email',"电子邮箱","email");
         $this->field_list['phone'] = $this->load->field('Field_string',"电话","phone");
-        
+
         $this->field_list['regTS'] = $this->load->field('Field_date',"注册时间","regTS");
-        $this->field_list['pwd'] = $this->load->field('Field_string',"密码","pwd");
+        $this->field_list['typ'] = $this->load->field('Field_enum',"身份","typ");
+        $this->field_list['typ']->setEnum(array("员工","老板"));
+
+        $this->field_list['isAdmin'] = $this->load->field('Field_bool',"超级管理员","isAdmin");
+        $this->field_list['pwd'] = $this->load->field('Field_pwd',"密码","pwd");
         $this->field_list['orgId'] = $this->load->field('Field_relate_org',"商户","orgId");
 
         $this->field_list['name'] = $this->load->field('Field_title',"姓名","name");
@@ -20,10 +31,32 @@ class User_model extends Record_model {
         $this->field_list['intro'] = $this->load->field('Field_text',"个人介绍","intro");
 
         $this->field_list['everEdit'] = $this->load->field('Field_int',"曾修改","everEdit");
-        
+
     }
+
+    public function buildChangeShowFields(){
+            return array(
+                    array('name','typ'),
+                    array('email','phone'),
+                    array('pwd'),
+                    array('sign'),
+                    array('intro'),
+
+                );
+    }
+
+    public function buildDetailShowFields(){
+        return array(
+                    array('name','typ'),
+                    array('email','phone'),
+                    array('regTS'),
+                    array('sign'),
+                    array('intro'),
+                );
+    }
+
     public function init($id){
-        
+
         parent::init($id);
         $this->db->select('*')
                     ->from('uUser')
@@ -32,14 +65,14 @@ class User_model extends Record_model {
         $query = $this->db->get();
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $this->init_with_data($id,$result);
         }
         else
         {
             return -1;
         }
-        
+
     }
 
     public function init_by_uid($uid){
@@ -50,7 +83,7 @@ class User_model extends Record_model {
         $query = $this->cimongo->get($this->tableName);
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $this->init_with_data($id,$result);
             return 1;
         }
@@ -67,7 +100,7 @@ class User_model extends Record_model {
         $query = $this->cimongo->get($this->tableName);
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $this->init_with_data($id,$result);
             return 1;
         }
@@ -108,7 +141,7 @@ class User_model extends Record_model {
 
         $this->db->where('orgId', $orgId)
                 ->where('email', $email)
-                ->update('pPeaple', $data); 
+                ->update('pPeaple', $data);
     }
 
     public function check_email_exist($email){
@@ -133,53 +166,68 @@ class User_model extends Record_model {
         }
     }
 
-    public function reg_user($data){
-        if ($data['email']!='' && $this->check_email_exist($data['email'])){
+    public function reg_user($input){
+        if ($input['email']!='' && $this->check_email_exist($input['email'])){
             return -1;
         }
-        if ($data['phone']!='' && $this->check_phone_exist($data['phone'])){
+        if ($input['phone']!='' && $this->check_phone_exist($input['phone'])){
             return -2;
         }
-        if ($data['email']=='' && $data['phone']=='') {
+        if ($input['email']=='' && $input['phone']=='') {
             return -3;
         }
 
         $zeit = time();
 
-        if ($inviteCode!=''){
-            $temp = explode('-',$inviteCode);
+        if ($input['inviteCode']!=''){
+            $temp = explode('-',$input['inviteCode']);
             if (count($temp)!=2){
                 return -4;
             }
             if ($temp[0]=='A'){
-                
+
 
             } elseif ($temp[0]=='B'){
-                
+
 
             } elseif ($temp[0]=='C'){
-                
+
             } else {
                 return -5;
             }
         }
-        
+
         $data = array(
-           'email' => $data['email'] ,
-           'phone' => $data['phone'] ,
-           'pwd' => strtolower(md5($data['pwd'])) ,
-           'name' => $data['uName'],
-           'regTS' =>time(),
-           'orgId' => 0,
+           'email' => $input['email'] ,
+           'phone' => $input['phone'] ,
+           'pwd' => $input['pwd'] ,
+           'name' => $input['uName'],
+           'orgId' => '',
            'superPwd' => 'null',
            'isAdmin' =>0,
-           'sign'=>'',
+           'sign'=>'新来的',
            'intro'=>'',
            'everEdit'=>0,
         );
 
-        $this->cimongo->insert($this->tableName, $data); 
-        $insert_ret = $this->cimongo->insert_id();
+        $modelName = 'records/User_model';
+        $jsonRst = 1;
+        $zeit = time();
+
+
+        $createPostFields = $this->buildChangeNeedFields();
+        $data = array();
+        foreach ($this->createPostFields as $value) {
+            $data[$value] = $this->dataInfo->field_list[$value]->gen_value($input[$value]);
+        }
+
+        $checkRst = $this->check_data($data);
+        if (!$checkRst){
+            return -10;
+        }
+        $data['regTS'] = time();
+        $insert_ret = $this->insert_db($data);
+
         if ($insert_ret===false) {
             return -999;
         }
@@ -201,7 +249,7 @@ class User_model extends Record_model {
 
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $real_pwd = $result['pwd'];
             if (strtolower(md5($pwd))==strtolower($real_pwd)){
 
@@ -222,32 +270,32 @@ class User_model extends Record_model {
            'pwd' => strtolower(md5($new_password))
         );
         $this->db->where('email', $email);
-        $this->db->update('uUser', $data); 
+        $this->db->update('uUser', $data);
     }
     public function changePwd($pwd,$pwdNew){
 
         if (strtolower(md5($pwd))!=strtolower($this->field_list['pwd']->value)){
-            
+
             return -1;
-        } 
+        }
         $data = array(
            'pwd' => strtolower(md5($pwdNew))
         );
 
         $this->db->where('uid', $this->uid);
-        $this->db->update('uUser', $data); 
+        $this->db->update('uUser', $data);
         return 1;
     }
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function buildInfoTitle(){
-        return '人事关系:'.$this->field_list['name']->gen_show_html().'<small>'.$this->field_list['nickname']->gen_show_html().'</small>';
+        return '用户:'.$this->field_list['name']->gen_show_html().'<small>'.$this->field_list['typ']->gen_show_html().'</small>';
     }
-   
-    
+
+
 }
 ?>

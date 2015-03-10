@@ -9,11 +9,11 @@ class Items_model extends Record_model {
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['meter'] = $this->load->field('Field_float',"米数","meter",true);
-        $this->field_list['itemName'] = $this->load->field('Field_string',"货号","itemName",true);
+        $this->field_list['itemName'] = $this->load->field('Field_relate_goods',"货号","itemName",true);
         $this->field_list['color'] = $this->load->field('Field_string',"颜色","color");
         $this->field_list['price'] = $this->load->field('Field_money',"单价(￥/米)","price",true);
         $this->field_list['allPrice'] = $this->load->field('Field_money',"总价(￥)","allPrice",true);
-        
+
     }
 
     public function set_page_typ($typ){
@@ -31,11 +31,11 @@ class Items_model extends Record_model {
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function buildInfoTitle(){
         return $this->field_list['beDonoredCrmId']->gen_show_html();
     }
-    
+
 }
 ?>

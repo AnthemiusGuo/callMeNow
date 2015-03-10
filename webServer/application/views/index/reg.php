@@ -8,7 +8,7 @@
                     <img src="<?=static_url('images/qq.png')?>" alt="" width="25px">QQ
                 </a>
             </li>
-            
+
         </ul>
     </div>
     <h3>注册帐号</h3>
@@ -28,7 +28,7 @@
         </div>
         <span class="help-block">可以使用qq号@qq.com</span>
     </div>
-    
+
     <div class="form-group">
         <label class="control-label visible-ie8 visible-ie9">姓名</label>
         <div class="input-icon">
@@ -80,7 +80,7 @@
             <a href="<?php echo site_url('index/login') ?>">点击登录</a>&nbsp;
             <a href="javascript:void(0)" onclick="lightbox({url:'<?php echo site_url('index/forgot') ?>',size:'m'})">忘记密码</a>
         </p>
-        
+
     </div>
 </form>
 <!-- END REGISTRATION FORM -->
@@ -110,7 +110,7 @@ function req_reg(){
 
     ajax_post({m:'index',a:'doReg',data:{uPhone:uPhone,uEmail:uEmail,uPassword:uPassword,uInvite:uInvite,uName:uName},callback:function(json){
             if (json.rstno>0){
-                window.location.href=json.data.goto_url; 
+                window.location.href=json.data.goto_url;
             } else {
                 var showErr = {};
                 showErr[json.data.err.id] = json.data.err.msg ;

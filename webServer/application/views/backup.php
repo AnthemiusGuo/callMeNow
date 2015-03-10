@@ -40,7 +40,7 @@
                                         New user registered. </span>
                                         </a>
                                     </li>
-                                    
+
                                 </ul>
                             </li>
                         </ul>
@@ -106,7 +106,7 @@
                                         </span>
                                         </a>
                                     </li>
-                                    
+
                                 </ul>
                             </li>
                         </ul>
@@ -204,7 +204,7 @@
                             ?>
                             <li class="<?php echo ($this->controller_name==$menu_name && $sub_menu_name==$this->method_name)?'active':'' ?>">
                                 <a href="<?php echo ("href"==$sub_menu_info['method'])?$sub_menu_info['href']:'javascript:void(0);' ?>" <?php echo ("onclick"==$sub_menu_info['method'])?'onclick="'.$sub_menu_info['onclick'].'"':'' ?> >
-                                <span class="glyphicon <?php echo ($this->controller_name==$menu_name && $sub_menu_name==$this->method_name)?'glyphicon-circle-arrow-right':'glyphicon-chevron-right' ?>"></span> 
+                                <span class="glyphicon <?php echo ($this->controller_name==$menu_name && $sub_menu_name==$this->method_name)?'glyphicon-circle-arrow-right':'glyphicon-chevron-right' ?>"></span>
                                 <?php echo $sub_menu_info['name'] ?></a>
                                 </li>
                             <?
@@ -214,8 +214,8 @@
                     </li>
                 <?
                 endforeach;
-                ?> 
-                       
+                ?>
+
             </ul>
         </div>
     </div>
@@ -228,9 +228,9 @@
     </div>
     <!-- END CONTENT -->
 <script>
-jQuery(document).ready(function() {   
+jQuery(document).ready(function() {
     $(".table-paged").quickPager({pageSize:10,holder:'#main_pager',struct:'tbody'});
-    $(".tablesorter").tablesorter(); 
+    $(".tablesorter").tablesorter();
     $('.tooltips').powerTip({offset:20});
 });
 </script>

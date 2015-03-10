@@ -22,24 +22,24 @@ class Index extends P_Controller {
 			$this->template->load('default_page', 'index/bindOrg');
 		} else {
 			$this->load_org_info();
-		
+
 	        $this->load->model('lists/Schedule_list',"schedule_list");
 	        $this->schedule_list->load_dated_data_with_uid($this->uid);
 
 	        $this->load->model('lists/Task_list',"task_list");
 	        $this->task_list->load_dated_data_with_uid($this->uid);
 
-	        
+
 			$this->template->load('default_page', 'index/dashboard');
 		}
-		
+
 
 	}
 	function doTest(){
 			$content = "亲爱的{username}，您好！<br/>
 <br/>
 您在{datetime}提交了账号密码找回请求，请点击下面的链接修改密码。<br/>";
-			
+
 
 			$this->sendMail("1964398291@qq.com",$content,"感谢您注册npone.cn");
 	}
@@ -85,7 +85,7 @@ class Index extends P_Controller {
 			break;
 		}
 		$this->template->load('default_before_login', 'index/forgetMe');
-		
+
 	}
 	function forgot() {
 		$this->title_create = "忘记密码";
@@ -110,8 +110,8 @@ class Index extends P_Controller {
 
         if ($query->num_rows() > 0)
         {
-        	$result = $query->row_array(); 
-            
+        	$result = $query->row_array();
+
             $uName = $result['username'];
         	$zeit = time();
 	        $verify_code = substr(md5($email.'xUUJKK'.$zeit),5,10);
@@ -134,7 +134,7 @@ http://www.npone.cn<br/>
 			array($uName,date('y年m月d日 H:i:s',$zeit),$url),$content);
         	$this->sendMail($email,$content,"npone.cn账号密码找回");
         }
-        
+
         $jsonRst = 1;
         $jsonData = array('succ'=>array());
         $jsonData['succ']['msg'] ='您的重置密码邮件已发送，请遵循邮件步骤重置密码';
@@ -157,18 +157,22 @@ http://www.npone.cn<br/>
         $config = array();
 		$config['base_url'] = site_url('index/mailbox/');
 		$config['total_rows'] = $this->all_counts;
-		$config['per_page'] = 5; 
-		$config['now_page'] = $this->pageNow; 
+		$config['per_page'] = 5;
+		$config['now_page'] = $this->pageNow;
 		$config['last_link'] = false;
 		$config['query_string_segment'] = 'page';
-		$this->kuopage->initialize($config); 
+		$this->kuopage->initialize($config);
 
 		$this->pages = $this->kuopage->create_links();
 
 
         $this->template->load('default_lightbox_list', 'index/mailbox');
 	}
-	
+
+	function enterOrg($id){
+		
+	}
+
 	function userInfo($uid)
 	{
 		$this->load->model('records/user_model',"dataInfo");
@@ -198,7 +202,7 @@ http://www.npone.cn<br/>
         );
         $this->editor_typ = 1;
 
-		
+
 		$this->template->load('default_lightbox_edit', 'index/perInfoEdit');
 	}
 
@@ -247,7 +251,7 @@ http://www.npone.cn<br/>
 		}
 		$this->template->load('default_before_login', 'index/regShop');
 	}
-	
+
 
 	function doUpdatePerInfo(){
 		$this->login_verify();
@@ -267,9 +271,9 @@ http://www.npone.cn<br/>
             $newValue = $this->dataInfo->field_list[$value]->gen_value($this->input->post($value));
             if ($newValue!="".$this->dataInfo->field_list[$value]->value){
                 $data[$value] = $newValue;
-            }   
+            }
         }
-        
+
         if (empty($data)){
             $jsonRst = -2;
             $jsonData = array();
@@ -278,7 +282,7 @@ http://www.npone.cn<br/>
             return;
         }
         $data['everEdit'] = 1;
-        
+
         $checkRst = $this->dataInfo->check_data($data,false);
         if (!$checkRst){
             $jsonRst = -1;
@@ -299,8 +303,8 @@ http://www.npone.cn<br/>
 		$input_data['email'] = $this->input->post('uEmail');
 		$input_data['phone'] = $this->input->post('uPhone');
 		$input_data['pwd'] = $this->input->post('uPassword');
-		$input_data['invite'] = $this->input->post('uInvite');
-		$input_data['uName'] = $this->input->post('uName');
+		$input_data['inviteCode'] = $this->input->post('uInvite');
+		$input_data['name'] = $this->input->post('uName');
 		//这块需要做输入过滤，防XSS等，暂时省略
 
 		$this->load->model('records/user_model',"userModel");
@@ -399,7 +403,7 @@ http://www.npone.cn<br/>
 		$this->db->where("orgId",$orgId)
 		->where("email",$this->userInfo->field_list['email']->value)
 		->update('pPeaple',array('uid'=>$this->uid));
-		
+
 		$jsonRst = 1;
 		$jsonData = array();
 		$jsonData['goto_url'] = site_url('index/index');

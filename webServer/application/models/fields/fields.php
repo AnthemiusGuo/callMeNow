@@ -8,7 +8,8 @@ class Fields {
     public $CI;
     public $special_search_element;
     public $is_title;
-    
+    public $list_short_len = 15;
+
     public function __construct($show_name,$name,$is_must_input=false) {
         $this->CI =& get_instance();
         $this->db = $this->CI->cimongo;
@@ -21,6 +22,7 @@ class Fields {
         $this->input_class = "form-control";
         $this->special_search_element = "";
         $this->is_title = false;
+        $this->min_len = 0;
     }
     public function init($value){
         $this->value = $value;
@@ -41,17 +43,17 @@ class Fields {
         } else {
             return '<span class="field_name">'.$this->show_name.'</span>';
         }
-        
+
     }
     public function gen_search_editor($default=""){
-            
+
         $this->input_class = "form-control input-sm";
         if ($default!="" && $default!=null) {
             $this->setDefault($default);
-        } 
+        }
 
         return $this->gen_editor(2);
-        
+
     }
     public function gen_search_element($default="="){
         if ($this->special_search_element!="") {
@@ -86,7 +88,7 @@ class Fields {
         return $this->value;
     }
     public function gen_editor(){
-        
+
     }
     public function check_data_input($input)
     {
@@ -133,6 +135,9 @@ class Fields {
         if ($this->is_must_input && $need_require_validator){
             $validater .= ' required ';
         }
+        if ($this->min_len>0){
+            $validater .= ' minlength="'.$this->min_len.'" ';
+        }
         return $validater;
     }
     public function gen_value($input){
@@ -143,7 +148,7 @@ class Fields {
     }
     public function gen_search_result_id($value){
         return $value;
-        
+
     }
     public function checkImportData($value){
         return 1;

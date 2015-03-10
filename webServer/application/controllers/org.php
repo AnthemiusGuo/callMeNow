@@ -9,7 +9,7 @@ class Org extends P_Controller {
 	function index() {
 		$this->load_menus();
 
-		
+
 
 	}
 
@@ -34,7 +34,7 @@ class Org extends P_Controller {
         $this->template->load('default_lightbox_new', 'common/new_common');
 	}
 
-	
+
 	function info($id) {
         $this->id = $id;
         $this->load->model('records/Org_model',"dataInfo");
@@ -48,7 +48,7 @@ class Org extends P_Controller {
         $jsonRst = 1;
         $zeit = time();
 
-        if ($this->userInfo->field_list['orgId']->value!==0){
+        if (!$this->userInfo->field_list['orgId']->isEmpty()){
             $jsonRst = -1;
             $jsonData = array();
             $jsonData['err']['msg'] ='您已经创建了商户，不可重复创建!';
@@ -62,7 +62,8 @@ class Org extends P_Controller {
             $data[$value] = $this->dataInfo->field_list[$value]->gen_value($this->input->post($value));
         }
         $data['supperUid'] = $this->userInfo->uid;
-        
+		$data['enterCode'] = substr(md5(time()),5,8);
+
         $data['createUid'] = $this->userInfo->uid;
         $data['createTS'] = $zeit;
         $data['lastModifyUid'] = $this->userInfo->uid;

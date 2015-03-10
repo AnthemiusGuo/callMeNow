@@ -14,7 +14,7 @@ function addSubLine(editor_typ,table_id){
 	var checkErr = false;
 	$.each(table_item_vars,function(k,v){
 		var value = $("#"+id_pre+v).val();
-		if (table_item_must_vars[v] && value==""){
+		if (table_item_must_vars[v] && (value=="" || value.trim()=="-"|| parseFloat(value)==0)){
 			checkErr = true;
 			return;
 		}
@@ -37,14 +37,14 @@ function removeSubLine(table_id,id){
 function resetTable(table_id){
 	var _html = '';
 	var totalGetting = 0;
-	for(var k in table_all_data){      
+	for(var k in table_all_data){
        	console.log(typeof(table_all_data[k]));
-       	if(typeof(table_all_data[k])=="function"){      
-                
-        }else{      
+       	if(typeof(table_all_data[k])=="function"){
+
+        }else{
             _html += table_item_template.str_supplant(table_all_data[k]);
             totalGetting += parseFloat(table_all_data[k].allPrice);
-        }      
+        }
     }
 	$("#table_"+table_id).html(_html);
 	console.log(table_all_data);
@@ -52,7 +52,7 @@ function resetTable(table_id){
 	console.log($("#"+table_id).val());
 	$("#creator_totalGetting").val(totalGetting);
 	$("#modify_totalGetting").val(totalGetting);
-	
+
 }
 //目前还不支持缓存，后面必须支持搜索缓存，或者打开页面拉取所有数据，本地查询
 //还有就是做个多少毫秒的延迟，
@@ -96,7 +96,7 @@ function searchbox_on_change(inputName,editorController,editorMethod){
 
         }
         $("#search_loading").addClass('hidden');
-           
+
         }
     });
 }

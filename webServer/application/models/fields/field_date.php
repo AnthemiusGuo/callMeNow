@@ -1,7 +1,7 @@
 <?php
 include_once(APPPATH."models/fields/field_ts.php");
 class Field_date extends Field_ts {
-    
+
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
         $this->typ = "Field_date";
@@ -41,14 +41,14 @@ class Field_date extends Field_ts {
     }
     public function gen_editor($typ=0){
         $inputName = $this->build_input_name($typ);
-        
+
         if ($typ==1){
             if ($this->value<=86400) {
                 $this->default = ' - ';
             } else {
                 $this->default = date("Y-m-d",$this->value);
             }
-            
+
         } else {
             if ($this->default<=86400) {
                 $this->default = ' - ';
@@ -66,7 +66,7 @@ class Field_date extends Field_ts {
                 $(function(){
                     $(\"#{$inputName}\").datetimepicker({format: 'yyyy-mm-dd',autoclose: true,
         todayBtn: true,language:'zh-CN',minView:'month',startView:'year'});
-                  
+
                 });
               </script>";
         return $str;
@@ -90,7 +90,7 @@ class Field_date extends Field_ts {
 
         return mktime(0,0,0,$month,$day,$year);
     }
-    
+
 
 }
 ?>

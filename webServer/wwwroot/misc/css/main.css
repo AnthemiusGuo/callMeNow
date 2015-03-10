@@ -1,7 +1,7 @@
 .has-error{
 	color: #FF2200;
 }
-/*********** 
+/***********
 Page Header
 ***********/
 /* Header search bar, toggler button & top menu */
@@ -608,8 +608,8 @@ Quick Sidebar Layout
   background: #393939;
 }
 
-/*** 
-Quick Sidebar Toggler 
+/***
+Quick Sidebar Toggler
 ***/
 .page-quick-sidebar-toggler {
   background: #525252;
@@ -736,7 +736,7 @@ Quick Sidebar Content
 }
 
 /******
-Page Footer 
+Page Footer
 ******/
 .page-footer .page-footer-inner {
   color: #a3a3a3;
@@ -942,7 +942,7 @@ body {
 td.td_title {
   width:15%;
   font-weight: bold;
-  
+
 }
 .table > tbody > tr > td.td_title {
   vertical-align:middle;
@@ -995,7 +995,7 @@ td.td_data_width {
   color:#222;
 }
 .shopInfoCard dd.dd_wide{
-  width:85%; 
+  width:85%;
 
 }
 
@@ -1016,6 +1016,7 @@ td.td_data_width {
 .main-nav .nav.sub-nav li.active > a{
   color:#d64635;
   font-weight: bold;
+	background:#444;
 }
 .main-nav .nav.sub-nav a:hover{
   background-color: #555;
@@ -1099,6 +1100,7 @@ td.td_data_width {
 }
 .relate_box_list{
   position: absolute;
+  z-index: 20;
   top:35px;
   left:0px;
   width:100%;
@@ -1123,4 +1125,3 @@ td.td_data_width {
 .relate_box_list .list-group{
   margin-bottom:0;
 }
-

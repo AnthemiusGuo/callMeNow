@@ -523,7 +523,7 @@
 			"file": "webServer/application/controllers/crm.php",
 			"settings":
 			{
-				"buffer_size": 30936,
+				"buffer_size": 36114,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "webServer/application/models/fields/field_related_id.php",
 			"settings":
 			{
-				"buffer_size": 4910,
+				"buffer_size": 5001,
 				"line_ending": "Unix"
 			}
 		},
@@ -555,7 +555,7 @@
 			"file": "webServer/application/models/fields/field_relate_simple_id.php",
 			"settings":
 			{
-				"buffer_size": 5260,
+				"buffer_size": 5278,
 				"line_ending": "Unix"
 			}
 		},
@@ -622,7 +622,6 @@
 	[
 		"/wwwroot/callMeNow/webServer",
 		"/wwwroot/callMeNow/webServer/application",
-		"/wwwroot/callMeNow/webServer/application/cache",
 		"/wwwroot/callMeNow/webServer/application/controllers",
 		"/wwwroot/callMeNow/webServer/application/core",
 		"/wwwroot/callMeNow/webServer/application/libraries",
@@ -635,10 +634,6 @@
 		"/wwwroot/callMeNow/webServer/application/views/common",
 		"/wwwroot/callMeNow/webServer/application/views/crm",
 		"/wwwroot/callMeNow/webServer/application/views/editor",
-		"/wwwroot/callMeNow/webServer/system/core",
-		"/wwwroot/callMeNow/webServer/system/helpers",
-		"/wwwroot/callMeNow/webServer/system/libraries",
-		"/wwwroot/callMeNow/webServer/wwwroot",
 		"/wwwroot/callMeNow/webServer/wwwroot/misc",
 		"/wwwroot/callMeNow/webServer/wwwroot/misc/css",
 		"/wwwroot/callMeNow/webServer/wwwroot/misc/js"
@@ -1149,36 +1144,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 30936,
+						"buffer_size": 36114,
 						"regions":
 						{
-							"bookmarks":
-							{
-								"flags": 144,
-								"icon": "bookmark",
-								"regions":
-								[
-									[
-										5271,
-										5271
-									],
-									[
-										13525,
-										13525
-									],
-									[
-										23684,
-										23684
-									]
-								],
-								"scope": "bookmarks"
-							}
 						},
 						"selection":
 						[
 							[
-								16259,
-								16259
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1260,15 +1234,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4910,
+						"buffer_size": 5001,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2308,
-								2308
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1290,15 +1264,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5260,
+						"buffer_size": 5278,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								851,
-								851
+								0,
+								0
 							]
 						],
 						"settings":

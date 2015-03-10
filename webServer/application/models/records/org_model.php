@@ -4,7 +4,7 @@ class Org_model extends Record_model {
     public function __construct() {
         parent::__construct('oOrg');
         $this->title_create = '创建商户';
-        
+
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['showid'] = $this->load->field('Field_showurl',"展示网址","showid");
         $this->field_list['name'] = $this->load->field('Field_title',"商户名称","name",true);
@@ -22,24 +22,25 @@ class Org_model extends Record_model {
         $this->field_list['vipOver'] = $this->load->field('Field_date',"VIP过期时间","vipOver");
 
         $this->field_list['zipCode'] = $this->load->field('Field_string',"邮编","zipCode");
+        $this->field_list['enterCode'] = $this->load->field('Field_string',"邮编","enterCode");
         $this->field_list['desc'] = $this->load->field('Field_text',"商户介绍","desc");
         $this->field_list['supperUid'] = $this->load->field('Field_userid',"店主","supperUid");
         $this->field_list['commonInviteCode'] = $this->load->field('Field_string',"通用邀请码","commonInviteCode");
         $this->field_list['supperInviteCode'] = $this->load->field('Field_string',"管理员邀请码","supperInviteCode");
 
-        
-        
+
+
         $this->field_list['createUid'] = $this->load->field('Field_userid',"创建人","createUid");
         $this->field_list['createTS'] = $this->load->field('Field_ts',"创建时间","createTS");
         $this->field_list['lastModifyUid'] = $this->load->field('Field_userid',"最终编辑人","lastModifyUid");
         $this->field_list['lastModifyTS'] = $this->load->field('Field_ts',"最终编辑时间","lastModifyTS");
     }
-    
+
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function isVip(){
         if ($this->field_list['isVip']->toBool()) {
@@ -86,8 +87,8 @@ class Org_model extends Record_model {
         if ($this->field_list['beginTS']->value>86400){
             $_html .= '<span class="shopBegin">始于 '.date("Y",$this->field_list['beginTS']->value).' 年</span>';
         }
-        
-        
+
+
         $_html .= '<p class="shopDesc">'.$this->field_list['desc']->gen_show_html().'</p>';
 
         $_html .= '<dl><dt>商户地址</dt>';
@@ -101,8 +102,8 @@ class Org_model extends Record_model {
         $_html .= '<dt>旺旺</dt>';
         $_html .= '<dd>'.$this->field_list['wangwang']->gen_show_html().'</dd>';
         $_html .= '<div class="clearfix"></div></div>';
-            
-                    
+
+
         return $_html;
     }
     public function buildChangeNeedFields(){
@@ -131,7 +132,7 @@ class Org_model extends Record_model {
                     array('addresses'),
                     array('phone','qq'),
                     array('weixin','wangwang'),
-                    
+
                 );
     }
 
@@ -140,7 +141,7 @@ class Org_model extends Record_model {
         $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $this->init_with_data($result['_id'],$result);
             return true;
         } else {

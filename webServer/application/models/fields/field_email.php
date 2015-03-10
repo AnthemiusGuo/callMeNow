@@ -2,10 +2,11 @@
 include_once(APPPATH."models/fields/field_string.php");
 
 class Field_email extends Field_string {
-    
+
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
         $this->typ = "Field_email";
+        $this->list_short_len = 30;
     }
     public function init($value){
         parent::init($value);

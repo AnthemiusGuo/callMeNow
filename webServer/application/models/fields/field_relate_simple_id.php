@@ -2,7 +2,7 @@
 include_once(APPPATH."models/fields/field_mongoid.php");
 class Field_relate_simple_id extends Field_mongoid {
     public $where = array();
-    
+
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
         $this->typ = "Field_related_id";
@@ -24,7 +24,7 @@ class Field_relate_simple_id extends Field_mongoid {
     }
     public function init($value){
         parent::init($value);
-        
+
         if ($value===0 || $value==="" ){
             $this->showValue = ' - ';
 
@@ -41,12 +41,12 @@ class Field_relate_simple_id extends Field_mongoid {
         $this->db->select(array($this->valueField,$this->showField))
             ->where(array($this->valueField => $real_value));
         $this->checkWhere();
-        
+
         $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
 
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $this->showValue = $result[$this->showField];
             $this->value_checked = 1;
         } else {
@@ -89,12 +89,12 @@ class Field_relate_simple_id extends Field_mongoid {
                 $this->db->where($value['data']);
             }
         }
-        
+
         if ($this->whereOrgId>0 && $this->needOrgId==1){
             $this->db->where('orgId', $this->whereOrgId);
         } elseif ($this->whereOrgId>0 && $this->needOrgId==2){
             $this->db->where_in('orgId',array($this->whereOrgId,0));
-        } 
+        }
     }
     private function setEnum(){
         $this->db->select("{$this->valueField},{$this->showField}");
@@ -110,14 +110,17 @@ class Field_relate_simple_id extends Field_mongoid {
             {
                 $this->enum[$row[$this->valueField]] = $row[$this->showField];
             }
-            
-        } 
-        
+
+        }
+
     }
     public function gen_search_element($default="="){
         return "<input type='hidden' name='searchEle_{$this->name}' id='searchEle_{$this->name}' value='='>=";
     }
     public function gen_show_html(){
+        return $this->showValue;
+    }
+    public function gen_show_value(){
         return $this->showValue;
     }
     public function gen_editor($typ=0){
@@ -126,8 +129,8 @@ class Field_relate_simple_id extends Field_mongoid {
         $this->setEnum();
         if ($typ==1){
             $this->default = $this->value;
-        } 
-        
+        }
+
         $editor = "<select id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" value=\"{$this->default}\" $validates>";
 
         foreach ($this->enum as $key => $value) {
@@ -152,6 +155,13 @@ class Field_relate_simple_id extends Field_mongoid {
         }
         $validater .= Fields::build_validator();
         return $validater;
+    }
+    public function isEmpty(){
+        if ($this->value==0 || $this->value==""){
+            return true;
+        }
+        //检查数据有效性，看情况再加
+        return false;
     }
 }
 ?>

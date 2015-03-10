@@ -1,11 +1,15 @@
 <?php
 include_once(APPPATH."views/common/bread_and_search.php");
 ?>
-<?
-if ($this->need_plus!=""){
-    include_once(APPPATH."views/".$this->need_plus.".php");
-}
-?>
+<div class="row">
+	<div class="col-lg-12">
+        <ul id="nav-crm" class="nav nav-tabs">
+             <li id="nav-crm-mini_info"><a href="<?=site_url("schedule/index/0")?>">日历模式</a></li>
+             <li id="nav-crm-mini_info" class="active"><a href="<?=site_url("schedule/index/1")?>">列表模式</a></li>
+        </ul>
+    </div>
+</div>
+    
 <div class="row">
     <?php
     if ($this->canEdit):
@@ -29,7 +33,7 @@ if ($this->need_plus!=""){
     if (isset($this->searchInfo) && $this->searchInfo['t']=="full"):
     ?>
     <div class="col-lg-12 search_tips">
-        <span class="glyphicon glyphicon-search"></span> 高级搜索 :
+        <span class="glyphicon glyphicon-search"></span> 高级搜索 : 
         <?php
         foreach ($this->searchInfo['i'] as $key => $value) {
             echo  $this->listInfo->dataModel[$key]->gen_show_name();
@@ -63,12 +67,12 @@ if ($this->need_plus!=""){
                 </tr>
             </thead>
             <tbody class="table-paged">
-                <?php
+                <?php 
                 $i = 1;
                 foreach($this->listInfo->record_list as  $this_record): ?>
                     <tr>
                         <td>
-                            <input type="checkbox" name="check_target[]" value="<?=$this_record->field_list['_id']->gen_list_html()?>">
+                            <input type="checkbox" name="check_target[]" value="<?=$this_record->field_list['id']->gen_list_html()?>">
                         </td>
                         <?
                         foreach ($this->listInfo->build_list_titles() as $key_names):
@@ -76,14 +80,11 @@ if ($this->need_plus!=""){
                             <td>
                                 <?php
                                 if ($this_record->field_list[$key_names]->is_title):
-                                    if ($this->listInfo->is_lightbox):
-                                        echo '<a href="javascript:void(0)" onclick="lightbox({size:\'m\',url:\''. site_url($this_record->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
-                                    else :
-                                        echo '<a href="'.site_url($this->info_link.$this_record->id).'">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
-                                    endif;
+                                
+                                    echo '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($this->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
                                 elseif ($this_record->field_list[$key_names]->typ=="Field_text"):
-                                    echo $this_record->field_list[$key_names]->gen_list_html();
-                                else :
+                                    echo $this_record->field_list[$key_names]->gen_list_html(8);
+                                else :                         
                                     echo $this_record->field_list[$key_names]->gen_list_html();
 
                                 endif;
@@ -93,16 +94,12 @@ if ($this->need_plus!=""){
                         endforeach;
                         ?>
                         <td>
-                            <?php
-                            if ($this->canEdit) {
-                                echo $this_record->gen_list_op();
-                            }
-                            ?>
+                            <?php echo $this_record->gen_list_op()?>
                         </td>
-                    </tr>
+                    </tr>        
                 <?php $i++;
                 endforeach; ?>
-
+                
             </tbody>
         </table>
 
@@ -120,7 +117,3 @@ if ($this->need_plus!=""){
         ?>
     </div>
 </div>
-<script>
-
-
-</script>

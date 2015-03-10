@@ -1,18 +1,17 @@
 <?php
 include_once(APPPATH."models/fields/field_array_hash.php");
-include_once(APPPATH."models/records/items_model.php");
-class Field_array_items extends Field_array_hash {
+include_once(APPPATH."models/records/colors_model.php");
+class Field_array_colors extends Field_array_hash {
 
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
         $this->typ = "Field_array_hash";
-        $this->field_typ = "items_model";
+        $this->field_typ = "colors_model";
 
         $this->dataModel = new $this->field_typ();
         $this->value = array();
         $this->datas = array();
-        $this->listFields = array('itemName','color','meter','price','allPrice');
-        $this->editor_url = 'crm/items_editor';
+        $this->listFields = array('colorName','subprice');
     }
     public function init($value){
         $this->value = $value;
@@ -25,7 +24,7 @@ class Field_array_items extends Field_array_hash {
     public function gen_list_html($limit = 0){
         $_html = '';
         foreach ($this->datas as $item) {
-            $_html .=$item->field_list['itemName']->gen_show_html()."(".$item->field_list['color']->gen_show_html().") X ".$item->field_list['meter']->gen_show_html().'米 X'.$item->field_list['price']->gen_show_html().'元 = '.$item->field_list['allPrice']->gen_show_html().'元<br/>';
+            $_html .=$item->field_list['colorName']->gen_show_html()."(参考售价".$item->field_list['subprice']->gen_show_html()."￥/米|件) <br/>";
         }
         return $_html;
     }
@@ -33,7 +32,7 @@ class Field_array_items extends Field_array_hash {
         $_html = '<ul class="list-group">';
         foreach ($this->datas as $item) {
             $_html .='<li class="list-group-item">';
-            $_html .=$item->field_list['itemName']->gen_show_html()."(".$item->field_list['color']->gen_show_html().") X ".$item->field_list['meter']->gen_show_html().'米 X'.$item->field_list['price']->gen_show_html().'元 = '.$item->field_list['allPrice']->gen_show_html().'元';
+            $_html .=$item->field_list['colorName']->gen_show_html()."(参考售价".$item->field_list['subprice']->gen_show_html()."￥/米|件)";
             $_html .='</li>';
         }
         $_html .= "</ul>";
@@ -76,7 +75,7 @@ class Field_array_items extends Field_array_hash {
         // return "<input id=\"{$inputName}\" name=\"{$inputName}\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"{$this->default}\" $validates /> ";
         $this->editor_typ = $typ;
         $this->CI->editorData = $this;
-        $editor = $this->CI->load->view('editor/items', '', true);
+        $editor = $this->CI->load->view('editor/colors', '', true);
         return $editor;
     }
     public function check_data_input($input)

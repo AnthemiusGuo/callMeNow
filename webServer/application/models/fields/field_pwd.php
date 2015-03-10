@@ -1,12 +1,15 @@
 <?php
-include_once(APPPATH."models/fields/fields.php");
+include_once(APPPATH."models/fields/field_string.php");
 
-class Field_string extends fields {
+class Field_pwd extends Field_string {
 
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
-        $this->typ = "Field_string";
+        $this->typ = "Field_pwd";
         $this->value = '';
+        $this->tips = '修改时，如果不打算修改密码，留空即可';
+        $this->min_len = 6;
+
     }
     public function init($value){
         parent::init($value);
@@ -20,8 +23,11 @@ class Field_string extends fields {
             return $str;
         }
     }
+    public function gen_value($input){
+        return strtolower(md5($input));
+    }
     public function gen_show_html(){
-        return $this->value;
+        return '***';
     }
     public function gen_search_element($default="="){
         $editor = "<select id=\"searchEle_{$this->name}\" name=\"searchEle_{$this->name}\" class=\"form-control input-sm\" value=\"{$default}\">";
@@ -36,7 +42,7 @@ class Field_string extends fields {
         if ($typ==1){
             $this->default = $this->value;
         }
-        return "<input  autocomplete=\"on\" id=\"$inputName\"  name=\"$inputName\" class=\"{$this->input_class}\" placeholder=\"{$this->placeholder}\" type=\"text\" value=\"{$this->default}\" $validates/>";
+        return "<input autocomplete=\"on\" id=\"$inputName\"  name=\"$inputName\" class=\"{$this->input_class}\" type=\"password\" value=\"\" $validates/>";
     }
 }
 ?>

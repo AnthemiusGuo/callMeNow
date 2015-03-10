@@ -22,7 +22,7 @@ include_once(APPPATH."views/common/bread.php");
                     <p>
                         如果您是商户老板，请在这里创建商户。
                     </p>
-                    
+
                 </div>
                 <button type="button" class="btn yellow-gold" onclick="lightbox({url:'<?=site_url("org/createOrg")?>'})">
                             创建 <span class="glyphicon glyphicon-star"></span>
@@ -42,7 +42,7 @@ include_once(APPPATH."views/common/bread.php");
                         <p>
                             如果您是商户员工，并且已经创建过商户，请询问 商户加入 密码，这个密码在店主的商户信息页面。
                         </p>
-                        
+
                     </div>
                 <form role="form" action="<?=site_url("index/doLogin")?>" method="post">
 
@@ -55,10 +55,11 @@ include_once(APPPATH."views/common/bread.php");
                             <input class="form-control placeholder-no-fix" type="text" placeholder="店铺加入密码" id="enterCode" name="enterCode">
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
-                        
-                            <button type="button" class="btn green-meadow pull-right" onclick="req_login()">
+
+                            <button type="button" class="btn green-meadow pull-right" onclick="reqOperator('index','enterOrg',$('#enterCode').val())
+()">
                             加入 <span class="glyphicon glyphicon-ok-circle"></span>
                             </button>
                     </div>

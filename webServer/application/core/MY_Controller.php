@@ -23,6 +23,7 @@ class P_Controller extends CI_Controller {
 	public $pageClass = 'normal';
 	public $menus = array();
     public $need_plus = '';
+    public $isVip = false;
 
 	function __construct($login_verify = true) {
 		parent::__construct();
@@ -38,7 +39,7 @@ class P_Controller extends CI_Controller {
             $this->method_name = 'index';
         }
         $this->searchInfo = array('t'=>'no');
-        
+
         if($login_verify) {
 			$this->login_verify();
             $this->canEdit = $this->checkEditRule();
@@ -48,10 +49,10 @@ class P_Controller extends CI_Controller {
 	}
 
 	public function limit_access_by_rule($rule) {
-        
+
 
         $targetRule  = array('index'=>'all');
-        
+
         if ($rule['Project']!=null){
             $targetRule['project'] = array();
             if (in_array('InvoledView', $rule['Project'])){
@@ -86,7 +87,7 @@ class P_Controller extends CI_Controller {
                 }
                 $targetRule['crm'][] = 'index';
                 $targetRule['crm'][] = 'analytics';
-                
+
             }
             if (in_array('Edit', $rule['Project'])){
                 $targetRule['project'][] = 'create';
@@ -116,9 +117,9 @@ class P_Controller extends CI_Controller {
                 $targetRule['crm'][] = 'create';
             }
             if (in_array('BugetApprove', $rule['Project'])){
-                
+
             }
-            
+
         }
     if ($rule['Finance']!=null){
             $targetRule['finance'] = array();
@@ -140,7 +141,7 @@ class P_Controller extends CI_Controller {
                 $targetRule['finance'][] = 'analytics';
 
             }
-            
+
             if (in_array('TurnoverEdit', $rule['Finance'])){
                 $targetRule['finance'][] = 'cashflow';
             }
@@ -169,8 +170,8 @@ class P_Controller extends CI_Controller {
             } elseif (in_array('Analytics', $rule['Management'])){
                     $targetRule['management'][] = 'index';
                     $targetRule['management'][] = 'orgInfo';
-                    
-                    
+
+
                     $targetRule['project'][] = 'analytics';
                     $targetRule['hr'][] = 'analytics';
                     $targetRule['crm'][] = 'analytics';
@@ -182,6 +183,14 @@ class P_Controller extends CI_Controller {
 
 	public function load_menus(){
 		$this->_load_default_menus();
+        if ($this->userInfo->field_list['orgId']->isEmpty()){
+            unset($this->all_menus["crm"]);
+            unset($this->all_menus["management"]);
+            unset($this->all_menus["store"]);
+        }
+        if ($this->userInfo->field_list['isAdmin']->toBool()==false){
+            unset($this->all_menus["admin"]);
+        }
 		$this->limit_access_by_rule(array());
 	}
 
@@ -217,7 +226,7 @@ class P_Controller extends CI_Controller {
                 "name"=>'个人面板',
                 "icon"=>'glyphicon-user',
             );
-            
+
         $this->all_menus["crm"] = array(
                 "menu_array"=>array(
                     "index"=>array(
@@ -226,8 +235,8 @@ class P_Controller extends CI_Controller {
                         "name"=>"客户管理",
                         "onclick"=>''
                     ),
-                    
-                    
+
+
                     "contactList"=>array(
                         "method"=>"href",
                         "href"=>site_url('crm/contactList'),
@@ -240,7 +249,7 @@ class P_Controller extends CI_Controller {
                         "name"=>"订单管理",
                         "onclick"=>''
                     ),
-                    
+
                     "send"=>array(
                         "method"=>"href",
                         "href"=>site_url('crm/send'),
@@ -265,7 +274,7 @@ class P_Controller extends CI_Controller {
                     //     "name"=>"订单统计",
                     //     "onclick"=>''
                     // ),
-                    
+
                 ),
                 "default_menu"=>"index",
                 "name"=>'客户管理',
@@ -279,24 +288,24 @@ class P_Controller extends CI_Controller {
                         "name"=>"商户概况",
                         "onclick"=>''
                     ),
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/analytics'),
-                        "name"=>"商户统计",
-                        "onclick"=>''
-                    ),
+                    // "analytics"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('management/analytics'),
+                    //     "name"=>"商户统计",
+                    //     "onclick"=>''
+                    // ),
                     "hr"=>array(
                         "method"=>"href",
                         "href"=>site_url('management/hr'),
                         "name"=>"人员管理",
                         "onclick"=>''
                     ),
-                    "import"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('management/import'),
-                        "name"=>"数据导入",
-                        "onclick"=>''
-                    ),
+                    // "import"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('management/import'),
+                    //     "name"=>"数据导入",
+                    //     "onclick"=>''
+                    // ),
                 ),
                 "default_menu"=>"index",
                 "name"=>'商户管理',
@@ -307,101 +316,102 @@ class P_Controller extends CI_Controller {
                     "index"=>array(
                         "method"=>"href",
                         "href"=>site_url('store/index'),
-                        "name"=>"库存管理",
-                        "onclick"=>''
-                    ),
-                    "item"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('store/index'),
                         "name"=>"商品管理",
                         "onclick"=>''
                     ),
+                    "inventory"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('store/inventory'),
+                        "name"=>"库存管理",
+                        "onclick"=>''
+                    ),
+
                     "category"=>array(
                         "method"=>"href",
                         "href"=>site_url('store/category'),
                         "name"=>"商品分类管理",
                         "onclick"=>''
                     ),
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('store/analytics'),
-                        "name"=>"库存统计",
-                        "onclick"=>''
-                    )
-                    
+                    // "analytics"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('store/analytics'),
+                    //     "name"=>"库存统计",
+                    //     "onclick"=>''
+                    // )
+
                 ),
                 "default_menu"=>"index",
                 "name"=>'库存管理',
                 "icon"=>'glyphicon-th',
             );
 
-        $this->all_menus["schedule"]=array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('schedule/index'),
-                        "name"=>"日程查询",
-                        "onclick"=>''
-                    ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建日程",
-                        "onclick"=>"lightbox({url:'".site_url('schedule/create')."'})",
-                    )
-                ),
-                "default_menu"=>"index",
-                "name"=>'日程',
-                "icon"=>'glyphicon-calendar',
-            );
-        $this->all_menus["finance"] = array(
-                "menu_array"=>array(
-                    "cashflow"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('finance/cashflow'),
-                        "name"=>"流水",
-                        "onclick"=>''
-                    ),
-                    "analytics"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('finance/analytics'),
-                        "name"=>"财务统计",
-                        "onclick"=>'',
-                    ),                    
-                    "setting"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('finance/setting'),
-                        "name"=>"财务设置",
-                        "onclick"=>''
-                    ),
-                   
-                ),
-                "default_menu"=>"index",
-                "name"=>'财务',
-                "icon"=>'glyphicon-usd',
-            );
-        
-        
-        $this->all_menus["document"]= array(
-                "menu_array"=>array(
-                    "index"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('document/index'),
-                        "name"=>"文档查询",
-                        "onclick"=>''
-                    ),
-                    "create"=>array(
-                        "method"=>"onclick",
-                        "href"=>'',
-                        "name"=>"新建文档",
-                        "onclick"=>"lightbox({url:'".site_url('document/create')."'})",
-                    )
-                ),
-                "default_menu"=>"index",
-                "name"=>'文  档',
-                "icon"=>'glyphicon-paperclip',
-            );
-        
+        // $this->all_menus["schedule"]=array(
+        //         "menu_array"=>array(
+        //             "index"=>array(
+        //                 "method"=>"href",
+        //                 "href"=>site_url('schedule/index'),
+        //                 "name"=>"日程查询",
+        //                 "onclick"=>''
+        //             ),
+        //             "create"=>array(
+        //                 "method"=>"onclick",
+        //                 "href"=>'',
+        //                 "name"=>"新建日程",
+        //                 "onclick"=>"lightbox({url:'".site_url('schedule/create')."'})",
+        //             )
+        //         ),
+        //         "default_menu"=>"index",
+        //         "name"=>'日程',
+        //         "icon"=>'glyphicon-calendar',
+        //     );
+        // $this->all_menus["finance"] = array(
+        //         "menu_array"=>array(
+        //             "cashflow"=>array(
+        //                 "method"=>"href",
+        //                 "href"=>site_url('finance/cashflow'),
+        //                 "name"=>"流水",
+        //                 "onclick"=>''
+        //             ),
+        //             "analytics"=>array(
+        //                 "method"=>"href",
+        //                 "href"=>site_url('finance/analytics'),
+        //                 "name"=>"财务统计",
+        //                 "onclick"=>'',
+        //             ),
+        //             "setting"=>array(
+        //                 "method"=>"href",
+        //                 "href"=>site_url('finance/setting'),
+        //                 "name"=>"财务设置",
+        //                 "onclick"=>''
+        //             ),
+        //
+        //         ),
+        //         "default_menu"=>"index",
+        //         "name"=>'财务',
+        //         "icon"=>'glyphicon-usd',
+        //     );
+        //
+        //
+        // $this->all_menus["document"]= array(
+        //         "menu_array"=>array(
+        //             "index"=>array(
+        //                 "method"=>"href",
+        //                 "href"=>site_url('document/index'),
+        //                 "name"=>"文档查询",
+        //                 "onclick"=>''
+        //             ),
+        //             "create"=>array(
+        //                 "method"=>"onclick",
+        //                 "href"=>'',
+        //                 "name"=>"新建文档",
+        //                 "onclick"=>"lightbox({url:'".site_url('document/create')."'})",
+        //             )
+        //         ),
+        //         "default_menu"=>"index",
+        //         "name"=>'文  档',
+        //         "icon"=>'glyphicon-paperclip',
+        //     );
+
         $this->all_menus["admin"]=array(
                 "menu_array"=>array(
                     "orgs"=>array(
@@ -433,7 +443,7 @@ class P_Controller extends CI_Controller {
                 "name"=>'网站管理',
                 "icon"=>'glyphicon-cog',
             );
-		
+
 	}
 	private function _limitAccessSort($targetRule){
         $this->menus = array();
@@ -452,7 +462,7 @@ class P_Controller extends CI_Controller {
                         if (in_array($sub_key,$value)){
                             $this->menus[$key]['menu_array'][$sub_key] = $sub_menu;
                         }
-                        
+
                     }
                 }
             }
@@ -469,7 +479,7 @@ class P_Controller extends CI_Controller {
 		} else {
 			return $this->checkActionRule("Project","Edit");
 		}
-		
+
 	}
 	function checkRule($module,$action){
 		if ($this->accessRule[$module]!=null){
@@ -525,10 +535,10 @@ class P_Controller extends CI_Controller {
 			ob_end_clean();
 			echo $buffer;
 		}
-		
+
 		exit;
 	}
-	
+
 
 	function buildSearch($searchInfo){
 		if ($searchInfo=="") {
@@ -541,18 +551,22 @@ class P_Controller extends CI_Controller {
 		}
 	}
 
-    function load_org_info() {
+    function load_org_info($force_check = true) {
         if (!$this->is_login) {
             return;
         }
-        if ($this->userInfo->field_list['orgId']->value==0 || $this->userInfo->field_list['orgId']->value_checked<=0) {
+        if ($this->userInfo->field_list['orgId']->isEmpty() || $this->userInfo->field_list['orgId']->value_checked<=0) {
+            if ($force_check){
+                header("Location:".site_url('index/index'));
+            }
             return;
         }
 
         $this->load->model('records/org_model',"myOrgInfo");
-            
+
         $this->myOrgInfo->init_with_id($this->userInfo->field_list['orgId']->value);
-        
+        $this->isVip = $this->myOrgInfo->field_list['isVip']->toBool();
+
 
     }
 	function login_verify() {
@@ -560,7 +574,7 @@ class P_Controller extends CI_Controller {
 			$this->is_login = true;
 			$this->uid = $this->login->uid;
 			$this->load->model('records/user_model',"userInfo");
-			
+
 			$init_result = $this->userInfo->init_by_uid($this->uid);
 
 			if ($init_result<0){
@@ -569,17 +583,17 @@ class P_Controller extends CI_Controller {
 				exit;
 			} else {
                 $this->myOrgId = $this->userInfo->field_list['orgId']->value;
-				
+
 			};
 		} else {
 			header("Location:".site_url('index/login'));
 			exit;
 		}
 	}
-	
+
 	function login_init() {
-		
-		
+
+
 	}
 
 	public function genBreadCrumb(){
@@ -589,7 +603,7 @@ class P_Controller extends CI_Controller {
 		<li class='active'><span class='glyphicon glyphicon-circle-arrow-right'></span> {$this->Menus->show_menus[$this->controller_name]['menu_array'][$this->method_name]['name']}</a></li>
 		</ul>";
 	}
-	
+
 	function build_request($question_mark = false) {
 		$get = $this->input->get();
 		if(!$get) {
@@ -637,11 +651,11 @@ class P_Controller extends CI_Controller {
 			if ($this->userInfo->field_list['isAdmin']->value==1){
 				$key = 'admin';
 				$this->Menus->show_menus[$key] = $this->Menus->all_menus[$key];
-    		} 
-			
+    		}
+
 		}
     }
-    
+
     public function sendMail($email,$content,$title){
     	$this->load->library('email');
 
@@ -663,16 +677,16 @@ class P_Controller extends CI_Controller {
 		// $config['smtp_port'] = '25';
 		// $config['mailtype'] = 'html';
 		$this->email->initialize($config);
-    	
+
 		$this->email->from('nponechina@126.com', 'NPOne平台');
-		$this->email->to($email); 
+		$this->email->to($email);
 
 		$this->email->subject($title);
-		$this->email->message($content);	
+		$this->email->message($content);
 
 		$this->email->send();
     }
-   
+
     public function getPage(){
     	$this->pageNow = $this->input->get('page');
     	if ($this->pageNow===false){

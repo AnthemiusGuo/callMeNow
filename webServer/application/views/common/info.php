@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-lg-12">
-        <table class="table">
+        <table class="table table-striped">
             <?php
             foreach ($this->showNeedFields as $key => $value) {
             ?>
@@ -19,12 +19,12 @@
                 ?>
                     <td class="td_title"><?php echo $this->dataInfo->field_list[$v]->gen_show_name(); ?></td>
                     <td <?=($colspan==0)?'class="td_data"':'colspan="'.$colspan.'"'?> >
-                            <?php echo $this->dataInfo->field_list[$v]->gen_show_html() ?>    
+                            <?php echo $this->dataInfo->field_list[$v]->gen_show_html() ?>
                     </td>
                 <?
                     }
                 ?>
-                
+
                 <?
                 }
                 ?>
@@ -37,6 +37,6 @@
     </div>
     <div class="clearfix"></div>
     <div class="col-lg-12">
-        
+
     </div>
 </div>

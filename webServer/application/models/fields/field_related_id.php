@@ -1,7 +1,7 @@
 <?php
 include_once(APPPATH."models/fields/field_relate_simple_id.php");
 class Field_related_id extends Field_relate_simple_id {
-    
+
     public function __construct($show_name,$name,$is_must_input=false) {
         parent::__construct($show_name,$name,$is_must_input);
         $this->typ = "Field_related_id";
@@ -10,6 +10,7 @@ class Field_related_id extends Field_relate_simple_id {
         $this->jsonValue = array();
         $this->plusCreateData = array();
         $this->searchPlus = "";
+        $this->tips = "输入内容可以搜索选择，输入新的内容会自动创建";
     }
     public function setPlusCreateData($data){
         $this->plusCreateData = $data;
@@ -32,7 +33,7 @@ class Field_related_id extends Field_relate_simple_id {
                 $this->placeholder = '请点击<+>输入';
             }
 
-        } 
+        }
         return $this->gen_editor(2);
     }
     public function init($value){
@@ -44,7 +45,7 @@ class Field_related_id extends Field_relate_simple_id {
         } else {
             $this->placeholder = '请点击<+>输入';
         }
-        
+
     }
     public function plusCreate($input){
         $this->plusCreateData[$this->showField] = $input;
@@ -53,13 +54,14 @@ class Field_related_id extends Field_relate_simple_id {
         } else {
             $this->plusCreateData['orgId'] = $this->CI->myOrgId;
         }
-        
+
         $this->CI->db->insert($this->tableName,$this->plusCreateData);
         return $this->CI->db->insert_id();
     }
     public function gen_value($input){
         //如果为空，返回空
-        if ($input==""){
+        $input = trim($input);
+        if ($input=="" || $input=="-"){
             return "";
         }
 
@@ -74,13 +76,13 @@ class Field_related_id extends Field_relate_simple_id {
             $this->whereOrgId = $this->CI->myOrgId;
         }
         $this->db->where(array('orgId'=>$this->whereOrgId));
-        
+
         $query = $this->db->get($this->tableName);
         if ($query->num_rows() > 0)
         {
-            $result = $query->row_array(); 
+            $result = $query->row_array();
             $real_id = $result['_id']->{'$id'};
-            
+
         } else {
             $new_id = $this->plusCreate($input);
             $real_id = $new_id->{'$id'};
@@ -97,7 +99,7 @@ class Field_related_id extends Field_relate_simple_id {
             } else {
                 return $value[0]['id'];
             }
-            
+
         }
     }
     public function gen_search_result_show($value){
@@ -110,7 +112,7 @@ class Field_related_id extends Field_relate_simple_id {
             } else {
                 return $value[0]['name'];
             }
-            
+
         }
     }
     // public function gen_list_html(){
@@ -139,8 +141,10 @@ class Field_related_id extends Field_relate_simple_id {
     //     return $this->dataModel->field_list[$this->showField]->gen_show_html();
     // }
     public function gen_editor($typ=0){
-        
 
+        if ($typ==1){
+            $this->default = $this->showValue;
+        }
         $this->editor_typ = $typ;
         $this->CI->editorData = $this;
         if ($typ==2) {
@@ -148,7 +152,7 @@ class Field_related_id extends Field_relate_simple_id {
         } else {
             $editor = $this->CI->load->view('editor/relate_box', '', true);
         }
-        
+
         return $editor;
     }
 }
