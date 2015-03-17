@@ -28,7 +28,7 @@ endif;
             </tr>
         </thead>
         <tbody class="crm-contacter-table-paged" id="crm-contacter-table">
-            <?php 
+            <?php
             $i = 1;
             foreach($this->contactorList->record_list as  $this_record): ?>
                 <tr>
@@ -41,11 +41,11 @@ endif;
                         <td>
                             <?php
                             if ($this_record->field_list[$key_names]->is_title):
-                            
+
                                 echo '<a href="javascript:void(0)" onclick="lightbox({url:\''. site_url($this_record->info_link.$this_record->id).'\'})">'.$this_record->field_list[$key_names]->gen_list_html().'</a>';
                             elseif ($this_record->field_list[$key_names]->typ=="Field_text"):
                                 echo $this_record->field_list[$key_names]->gen_list_html(8);
-                            else :                         
+                            else :
                                 echo $this_record->field_list[$key_names]->gen_list_html();
 
                             endif;
@@ -55,12 +55,20 @@ endif;
                     endforeach;
                     ?>
                     <td>
+                        <?
+                        if ($this->contactorList->is_lightbox):
+                            echo '<a class="list_op tooltips" href="javascript:void(0)" onclick="lightbox({size:\'m\',url:\''. site_url($this_record->info_link.$this_record->id).'\'})"><span class="glyphicon glyphicon-search"></span></a>';
+                        else :
+                            echo '<a  class="list_op tooltips" href="'.site_url($this->info_link.$this_record->id).'"><span class="glyphicon glyphicon-search"></span></a>';
+                        endif;
+                        ?>
+                         |
                         <?php echo $this_record->gen_list_op()?>
                     </td>
-                </tr>        
+                </tr>
             <?php $i++;
             endforeach; ?>
-            
+
         </tbody>
     </table>
     <div id="crm-contacter-list_pager">

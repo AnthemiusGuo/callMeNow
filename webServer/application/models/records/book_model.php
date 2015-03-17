@@ -16,7 +16,7 @@ class Book_model extends Record_model {
         $this->field_list['crmId']->setTyp('book');
 
         $this->field_list['status'] = $this->load->field('Field_enum',"发货状态","status");
-        $this->field_list['status']->setEnum(array('未确定','现货备货','订单生产','打包','发货','收货'));
+        $this->field_list['status']->setEnum(array('未确定','现货备货','订单生产','打包发货','已到货'));
 
         $this->field_list['payStatus'] = $this->load->field('Field_enum',"付款状态","payStatus");
         $this->field_list['payStatus']->setEnum(array('已付款','查账中','未付款'));
@@ -25,7 +25,7 @@ class Book_model extends Record_model {
 
         $this->field_list['beginTS'] = $this->load->field('Field_date',"订货日期","beginTS");
         $this->field_list['endTS'] = $this->load->field('Field_date',"约定交货日期","endTS");
-        
+
         $this->field_list['totalGetting'] = $this->load->field('Field_money',"金额(￥)","totalGetting",true);
 
 
@@ -34,19 +34,19 @@ class Book_model extends Record_model {
         $this->field_list['lastModifyUid'] = $this->load->field('Field_userid',"最终编辑人","lastModifyUid");
         $this->field_list['lastModifyTS'] = $this->load->field('Field_ts',"最终编辑时间","lastModifyTS");
     }
-    
+
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function buildInfoTitle(){
         return '订货记录:'.$this->field_list['crmId']->gen_show_html().'<small> ID:'.$this->field_list['beginTS']->gen_show_html().'</small>';
     }
 
-    
-    
+
+
 
     public function buildChangeShowFields(){
             return array(
@@ -68,6 +68,6 @@ class Book_model extends Record_model {
                     array('desc'),
                 );
     }
-    
+
 }
 ?>

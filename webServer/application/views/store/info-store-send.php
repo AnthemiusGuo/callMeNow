@@ -55,6 +55,14 @@ endif;
                     endforeach;
                     ?>
                     <td>
+                        <?
+                        if ($this->sendList->is_lightbox):
+                            echo '<a class="list_op tooltips" href="javascript:void(0)" onclick="lightbox({size:\'m\',url:\''. site_url($this_record->info_link.$this_record->id).'\'})"><span class="glyphicon glyphicon-search"></span></a>';
+                        else :
+                            echo '<a  class="list_op tooltips" href="'.site_url($this->info_link.$this_record->id).'"><span class="glyphicon glyphicon-search"></span></a>';
+                        endif;
+                        ?>
+                         |
                         <?php echo $this_record->gen_list_op()?>
                     </td>
                 </tr>

@@ -7,6 +7,26 @@ class Book_list extends List_model {
         parent::init("Book_list","Book_model");
     }
 
+    public function load_anylatics_with_begin_end($beginTs,$endTS){
+        $array = array('totalGetting'=>0);
+        if ($this->whereOrgId!==null && isset($this->dataModel['orgId'])){
+            $where_clause['orgId'] = $this->whereOrgId;
+        }
+        $where_clause['beginTS'] = array('$gte'=>$beginTs,'$lte'=>$endTS);
+        $this->db->where($where_clause, TRUE)->select(array("totalGetting"));
+        $query = $this->db->get($this->tableName);
+
+        $num = $query->num_rows();
+        if ($num > 0)
+        {
+            foreach ($query->result_array() as $row)
+            {
+                $array['totalGetting'] += $row['totalGetting'];
+            }
+        }
+        return $array;
+    }
+
     public function genAnylytics($typ){
         $this->db->select("COUNT(id) as count_id,typId")
                 ->from("dDonation")
@@ -18,7 +38,7 @@ class Book_list extends List_model {
             $this->db->where_in("status",array(1,2));
         } elseif ($typ==2){
             // $this->db->where_in("status",array(3));
-        } 
+        }
 
         $query = $this->db->get();
         if ($query->num_rows() > 0)
@@ -27,7 +47,7 @@ class Book_list extends List_model {
             {
                 $real_data[intval($row['typId'])] = intval($row['count_id']);
             }
-        } 
+        }
 
         $exportData = array();
         foreach ($this->dataModel['typ']->enum as $key => $value) {

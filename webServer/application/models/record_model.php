@@ -144,6 +144,9 @@
         }
     }
 
+    public function gen_op_view(){
+        
+    }
     public function gen_op_edit(){
         return '<a class="list_op tooltips" onclick="lightbox({size:\'m\',url:\''.site_url($this->edit_link).'/'.$this->id.'\'})" title="编辑"><span class="glyphicon glyphicon-edit"></span></a>';
 

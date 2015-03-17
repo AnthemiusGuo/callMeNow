@@ -55,6 +55,22 @@ class Org_model extends Record_model {
         }
     }
 
+    public function init_with_org_enterCode($id){
+        $this->db->where(array('enterCode' => $id));
+        $this->checkWhere();
+
+        $query = $this->db->get($this->tableName);
+        if ($query->num_rows() > 0)
+        {
+            $result = $query->row_array();
+            $this->init_with_data($result['_id'],$result);
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+
     public function gen_all_url(){
         if ($this->isVip() && $this->field_list['showid']->value!='') {
             $id = $this->field_list['showid']->value;

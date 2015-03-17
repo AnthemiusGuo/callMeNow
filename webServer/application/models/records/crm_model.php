@@ -118,13 +118,22 @@ class Crm_model extends Record_model {
 
     public function buildDetailShowFields(){
         return array(
-                    array('name'),
+                    array('name','province'),
                     array('typ','status'),
+                    array('needPayIn','needPayOut'),
                     array('mainContactorName','null'),
                     array('mainContactorType','mainContactorNum'),
+
+                    array('comments'),
+                    array('updateTS'),
+                );
+    }
+
+    public function buildBriefShowFields(){
+        return array(
+                    array('name','province'),
+                    array('typ','status'),
                     array('needPayIn','needPayOut'),
-                    array('province'),
-                    array('contactors'),
                     array('comments'),
                 );
     }

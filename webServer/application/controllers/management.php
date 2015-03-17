@@ -10,6 +10,39 @@ class Management extends P_Controller {
         $this->load_menus();
 		$this->load_org_info();
 
+		$this->load->library("utility");
+		$beginThisMonth = $this->utility->getTS('beginThismonth');
+		$zeit = time();
+
+		$this->load->model('lists/Crm_list',"dataInfo");
+        $this->any_crm = $this->utility->calc_cn_money($this->dataInfo->load_anylatics_money(),true);
+
+		$this->load->model('lists/Send_list',"sendList");
+		$this->any_send = $this->utility->calc_cn_money($this->sendList->load_anylatics_with_begin_end($beginThisMonth,$zeit),true);
+		$this->sendList->setOrgId($this->myOrgId);
+        $this->sendList->load_data(5);
+
+		$this->load->model('lists/Book_list',"bookList");
+		$this->any_book = $this->utility->calc_cn_money($this->bookList->load_anylatics_with_begin_end($beginThisMonth,$zeit),true);
+		$this->bookList->setOrgId($this->myOrgId);
+        $this->bookList->load_data(5);
+
+		$this->load->model('lists/Book_list',"bookNoSendList");
+		$this->bookNoSendList->setOrgId($this->myOrgId);
+		$this->bookNoSendList->add_where(WHERE_TYPE_IN,'status',array(0,1,2));
+        $this->bookNoSendList->load_data_with_where(0,5);
+
+
+		$this->load->model('lists/Pay_list',"payList");
+		$this->any_pay = $this->utility->calc_cn_money($this->payList->load_anylatics_with_begin_end($beginThisMonth,$zeit),true);
+
+
+		$this->load->model('lists/Contact_list',"contactList");
+
+        $this->contactList->setOrgId($this->myOrgId);
+        $this->contactList->load_data(5);
+
+
 		$this->template->load('default_page', 'management/index');
 	}
 

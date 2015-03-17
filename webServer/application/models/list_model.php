@@ -8,7 +8,7 @@ class List_model extends CI_Model {
 
 
     public function __construct($tableName = '') {
-        
+
         parent::__construct();
         $CI =& get_instance();
         $this->db = $CI->cimongo;
@@ -44,7 +44,7 @@ class List_model extends CI_Model {
         $this->whereData = array();
     }
     public function add_where($typ,$name,$data){
-        $this->whereData[$name] = array('typ'=>$typ,'data'=>$data);
+        $this->whereData[] = array('typ'=>$typ,'name'=>$name,'data'=>$data);
     }
     public function build_where($typ,$name,$data){
 
@@ -56,19 +56,19 @@ class List_model extends CI_Model {
                 $this->add_where(WHERE_TYPE_LIKE,$name,$data);
                 break;
             case '>':
-                $this->add_where(WHERE_TYPE_WHERE,$name." > ",$data);
+                $this->add_where(WHERE_TYPE_WHERE_GT,$name,$data);
                 break;
             case '<':
-                $this->add_where(WHERE_TYPE_WHERE,$name." < ",$data);
+                $this->add_where(WHERE_TYPE_WHERE_LT,$name,$data);
                 break;
             case '>=':
-                $this->add_where(WHERE_TYPE_WHERE,$name." >= ",$data);
+                $this->add_where(WHERE_TYPE_WHERE_GTE,$name,$data);
                 break;
             case '<=':
-                $this->add_where(WHERE_TYPE_WHERE,$name." <= ",$data);
+                $this->add_where(WHERE_TYPE_WHERE_LTE,$name,$data);
                 break;
             case '!=':
-                $this->add_where(WHERE_TYPE_WHERE,$name." != ",$data);
+                $this->add_where(WHERE_TYPE_WHERE_NE,$name,$data);
                 break;
             default:
                 print("-----------------<br/>");
@@ -93,20 +93,20 @@ class List_model extends CI_Model {
         $this->db->where(array('$or'=>$array),true);
     }
 
-    public function load_data_with_search($searchInfo){
+    public function load_data_with_search($searchInfo,$limit=0){
         if ($searchInfo['t']=="no") {
-            $this->load_data_with_where();
+            $this->load_data_with_where(0,$limit);
         } elseif ($searchInfo['t']=="quick"){
 
             $this->add_quick_search_where($searchInfo['i']);
 
-            $this->load_data_with_where();
+            $this->load_data_with_where(0,$limit);
         } elseif ($searchInfo['t']=="full"){
             foreach ($searchInfo['i'] as $key => $value) {
                 $this->build_where($value['e'],$key,$this->dataModel[$key]->gen_search_result_id($value['v']));
 
             };
-            $this->load_data_with_where();
+            $this->load_data_with_where(0,$limit);
         }
     }
 
@@ -163,11 +163,14 @@ class List_model extends CI_Model {
 
     }
 
-    public function load_data_with_orignal_where($where_array=array()){
+    public function load_data_with_orignal_where($where_array=array(),$limit=0){
 
         $this->db->where($where_array, TRUE);
 
         $this->db->order_by($this->orderKey);
+        if ($limit>0){
+            $this->db->limit($limit);
+        }
 
         $query = $this->db->get($this->tableName);
 
@@ -194,26 +197,41 @@ class List_model extends CI_Model {
 
     }
 
-    public function load_data_with_where($where_array=0){
-        if ($where_array==0){
+    public function load_data_with_where($where_array=0,$limit=0){
+        if ($where_array===0){
             $where_array = $this->whereData;
         }
 
         foreach ($where_array as $key => $value) {
-            if ($value['typ'] == WHERE_TYPE_WHERE){
-                $this->db->where(array($key=>$value['data']));
-            } elseif ($value['typ'] == WHERE_TYPE_IN) {
-                $this->db->where_in(array($key, $value['data']));
-            } elseif (($value['typ'] == WHERE_TYPE_LIKE)) {
-                $this->db->like($key, $value['data'],'iu');
-            } elseif ($value['typ'] == WHERE_TYPE_OR_WHERE){
-                // $this->db->or_where($key, $value['data']);
-            } elseif ($value['typ'] == WHERE_TYPE_OR_IN) {
-                // $this->db->or_where_in($key, $value['data']);
-            } elseif (($value['typ'] == WHERE_TYPE_OR_LIKE)) {
-                // $this->db->or_like($key, $value['data']);
-            } elseif (($value['typ'] == WHERE_TXT)) {
-                // $this->db->where($value['data']);
+            $typ = $value['typ'];
+            $fieldName = $value['name'];
+            $fieldData = $value['data'];
+
+            switch ($typ) {
+                case WHERE_TYPE_WHERE:
+                    $this->db->where(array($fieldName=>$fieldData));
+                    break;
+                case WHERE_TYPE_WHERE_GT:
+                    $this->db->where_gt($fieldName,$fieldData);
+                    break;
+                case WHERE_TYPE_WHERE_GTE:
+                    $this->db->where_gte($fieldName,$fieldData);
+                    break;
+                case WHERE_TYPE_WHERE_LT:
+                    $this->db->where_lt($fieldName,$fieldData);
+                    break;
+                case WHERE_TYPE_WHERE_LTE:
+                    $this->db->where_lte($fieldName,$fieldData);
+                    break;
+                case WHERE_TYPE_WHERE_NE:
+                    $this->db->where_ne($fieldName,$fieldData);
+                    break;
+                case WHERE_TYPE_IN:
+                    $this->db->where_in($fieldName,$fieldData);
+                    break;
+                case WHERE_TYPE_LIKE:
+                    $this->db->like($key, $value['data'],'iu');
+                    break;
             }
         }
         if ($this->whereOrgId!==null && isset($this->dataModel['orgId'])){
@@ -221,7 +239,9 @@ class List_model extends CI_Model {
         }
 
         $this->db->order_by($this->orderKey);
-
+        if ($limit>0){
+            $this->db->limit($limit);
+        }
         $query = $this->db->get($this->tableName);
 
         $num = $query->num_rows();
@@ -247,15 +267,15 @@ class List_model extends CI_Model {
 
     }
 
-    public function load_data(){
+    public function load_data($limit=0){
         $this->purge_where();
-        $this->load_data_with_where();
+        $this->load_data_with_where(0,$limit);
     }
 
-    public function load_data_with_foreign_key($keyName,$keyValue){
+    public function load_data_with_foreign_key($keyName,$keyValue,$limit=0){
         $this->purge_where();
         $this->add_where(WHERE_TYPE_WHERE,$keyName,$keyValue);
-        $this->load_data_with_where();
+        $this->load_data_with_where(0,$limit);
     }
 
     public function load_data_with_data($data,$dataModelName){

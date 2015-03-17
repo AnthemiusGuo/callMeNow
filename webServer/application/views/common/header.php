@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<title>万家客户 - 专业服务中小商户</title>
+	<title><?=implode(' - ',$this->title)?></title>
 	<?php echo link_tag(static_url('css/bootstrap.css')); ?>
 	<?php echo link_tag(static_url('css/layout.css')); ?>
 	<?php echo link_tag(static_url('css/components.css')); ?>
@@ -13,8 +13,8 @@
     <?php echo link_tag(static_url('css/jquery.fancybox.css')); ?>
     <?php echo link_tag(static_url('css/jquery-ui.css')); ?>
 
-    
 
+	<meta property="qc:admins" content="1524167566671621135056375" />
 	<script type="text/javascript" src="<?php echo static_url('js/jquery-1.11.1.min.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/jquery-ui.min.js'); ?>"></script>
 	<script type="text/javascript" src="<?php echo static_url('js/bootstrap.min.js'); ?>"></script>
@@ -31,7 +31,7 @@
     <script type="text/javascript" src="<?php echo static_url('js/main.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo static_url('js/ajaxfileupload.js'); ?>"></script>
     <script type="text/javascript" src="<?php echo static_url('js/jquery.fancybox.js'); ?>"></script>
-    
+
     <script type="text/javascript">
     	var base_url = "<?php print base_url(); ?>";
     	var req_url_template = "<?php echo site_url('{ctrller}/{action}') ?>";

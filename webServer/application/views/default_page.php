@@ -19,19 +19,23 @@
                     <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
                     <li class="dropdown dropdown-user">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
-                        
+
                         <span class="username username-hide-on-mobile">
-                        <?=$this->userInfo->field_list['name']->gen_show_value()?> </span>
+                            <?
+                            if (isset($this->myOrgInfo)){
+                                echo $this->myOrgInfo->field_list['name']->gen_show_value().' - ';
+                            }?>
+                            <?=$this->userInfo->field_list['name']->gen_show_value()?> </span>
                         <span class="glyphicon glyphicon-chevron-down"></span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-default">
+                        <ul class="dropdown-menu dropdown-menu-default" style="z-index:2000;">
                             <li>
                                 <a href="extra_lock.html">
                                 <span class="glyphicon glyphicon-lock"></span>锁屏
                                 </a>
                             </li>
                             <li>
-                                <a href="login.html">
+                                <a href="<?site_url('index/doLogout')?>">
                                 <span class="glyphicon glyphicon-log-out"></span>退出
                                 </a>
                             </li>
@@ -87,7 +91,7 @@
                             ?>
                             <li class="<?php echo ($this->controller_name==$menu_name && $sub_menu_name==$this->method_name)?'active':'' ?>">
                                 <a href="<?php echo ("href"==$sub_menu_info['method'])?$sub_menu_info['href']:'javascript:void(0);' ?>" <?php echo ("onclick"==$sub_menu_info['method'])?'onclick="'.$sub_menu_info['onclick'].'"':'' ?> >
-                                <span class="glyphicon <?php echo ($this->controller_name==$menu_name && $sub_menu_name==$this->method_name)?'glyphicon-circle-arrow-right':'glyphicon-chevron-right' ?>"></span>
+                                <span class="glyphicon <?php echo ($this->controller_name==$menu_name && $sub_menu_name==$this->method_name)?'glyphicon-chevron-right':'glyphicon-minus' ?>"></span>
                                 <?php echo $sub_menu_info['name'] ?></a>
                                 </li>
                             <?

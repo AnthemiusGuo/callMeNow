@@ -152,7 +152,7 @@ class Crm extends P_Controller {
         } else {
             $this->now_sub_menu = "mini_info";
         }
-
+		array_unshift($this->title,$this->dataInfo->field_list['name']->gen_show_value());
         $this->template->load('default_page', 'crm/info');
     }
 
@@ -979,7 +979,6 @@ class Crm extends P_Controller {
         $this->title_create = "新建付款记录";
         $this->dataInfo->field_list['payTS']->default = time();
 
-        $this->title_create = "新建订货记录";
 
         $this->createSubTable($id);
     }

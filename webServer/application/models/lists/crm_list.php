@@ -11,14 +11,34 @@ class Crm_list extends List_model {
         $this->db->where($array,true);
         $this->orderKey = array("updateTS"=>"desc");
     }
-    
+
+    public function load_anylatics_money(){
+        $array = array('needPayIn'=>0,'needPayOut'=>0);
+        if ($this->whereOrgId!==null && isset($this->dataModel['orgId'])){
+            $where_clause['orgId'] = $this->whereOrgId;
+        }
+        $this->db->where($where_clause, TRUE)->select(array("needPayIn","needPayOut"));
+        $query = $this->db->get($this->tableName);
+
+        $num = $query->num_rows();
+        if ($num > 0)
+        {
+            foreach ($query->result_array() as $row)
+            {
+                $array['needPayIn'] += $row['needPayIn'];
+                $array['needPayOut'] += $row['needPayOut'];
+            }
+        }
+        return $array;
+    }
+
     public function init(){
-        
+
         for ($i=0;$i<35;$i++){
             $this->record_list[$i] = new Crm_model();
             $this->record_list[$i]->init($i);
         }
-       
+
     }
     public function genAnylytics($typ){
         /*
@@ -54,7 +74,7 @@ GROUP BY pProjectTypRel.typId
             {
                 $real_data[intval($row['typId'])] = intval($row['count_id']);
             }
-        } 
+        }
 
         if ($typ==1){
             $exportData = array();
@@ -71,7 +91,7 @@ GROUP BY pProjectTypRel.typId
             $exportData[] = array("label"=>"未设置",
                         "data"=>($real_data[0]));
 
-            
+
             return $exportData;
         } else if ($typ==2){
             $exportData = array();
@@ -90,8 +110,8 @@ GROUP BY pProjectTypRel.typId
             return $exportData;
         }
     }
-    
-    
+
+
     public function build_search_infos(){
         return array('name','typ','status','updateTS');
     }

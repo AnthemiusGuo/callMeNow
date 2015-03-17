@@ -23,12 +23,18 @@ class Index extends P_Controller {
 		} else {
 			$this->load_org_info();
 
-	        $this->load->model('lists/Schedule_list',"schedule_list");
-	        $this->schedule_list->load_dated_data_with_uid($this->uid);
+			$this->load->model('lists/Send_list',"sendList");
+			$this->sendList->setOrgId($this->myOrgId);
+	        $this->sendList->load_data(5);
 
-	        $this->load->model('lists/Task_list',"task_list");
-	        $this->task_list->load_dated_data_with_uid($this->uid);
+			$this->load->model('lists/Book_list',"bookList");
+			$this->bookList->setOrgId($this->myOrgId);
+	        $this->bookList->load_data(5);
 
+			$this->load->model('lists/Book_list',"bookNoSendList");
+			$this->bookNoSendList->setOrgId($this->myOrgId);
+			$this->bookNoSendList->add_where(WHERE_TYPE_IN,'status',array(0,1,2));
+	        $this->bookNoSendList->load_data_with_where(0,5);
 
 			$this->template->load('default_page', 'index/dashboard');
 		}
@@ -169,10 +175,6 @@ http://www.npone.cn<br/>
         $this->template->load('default_lightbox_list', 'index/mailbox');
 	}
 
-	function enterOrg($id){
-		
-	}
-
 	function userInfo($uid)
 	{
 		$this->load->model('records/user_model',"dataInfo");
@@ -181,47 +183,6 @@ http://www.npone.cn<br/>
 		$this->template->load('default_lightbox_info', 'index/userInfo');
 	}
 
-	function perInfo() {
-		$this->login_verify();
-		$this->infoTitle = "个人信息：".$this->userInfo->field_list['username']->gen_show_html();
-		$this->template->load('default_lightbox_perInfo', 'index/perInfo');
-	}
-	function perInfoEdit() {
-		$this->login_verify();
-		$id = $this->userInfo->uid;
-		$this->id = $id;
-        $this->load->model('records/user_model',"dataInfo");
-        $this->dataInfo->init($id);
-        $this->title_create = "个人信息：".$this->userInfo->field_list['username']->gen_show_html();
-        $this->createUrlC = 'index';
-        $this->createUrlF = 'doUpdatePerInfo';
-        $this->createPostFields = array(
-            'name','sex','nickname','usenick','birthTS','idType','idNumber','provinceId',
-            'addresses','zipCode','phoneNumber','qqNumber','wechatNumber','weiboNumber','otherContact','education',
-            'school','outcomming',
-        );
-        $this->editor_typ = 1;
-
-
-		$this->template->load('default_lightbox_edit', 'index/perInfoEdit');
-	}
-
-	function real(){
-		$this->login_verify();
-		$this->infoTitle = "个人信息：".$this->userInfo->field_list['username']->gen_show_html();
-		$this->template->load('default_lightbox_perInfo', 'index/real');
-	}
-	function realEdit(){
-		$this->login_verify();
-		$this->infoTitle = "个人信息：".$this->userInfo->field_list['username']->gen_show_html();
-		$this->template->load('default_lightbox_edit', 'index/realEdit');
-	}
-
-	function changePwd(){
-		$this->login_verify();
-		$this->infoTitle = "个人信息：".$this->userInfo->field_list['username']->gen_show_html();
-		$this->template->load('default_lightbox_perInfo', 'index/changePwd');
-	}
 
 	function login() {
 		$this->is_login = false;
@@ -252,51 +213,6 @@ http://www.npone.cn<br/>
 		$this->template->load('default_before_login', 'index/regShop');
 	}
 
-
-	function doUpdatePerInfo(){
-		$this->login_verify();
-		$jsonRst = 1;
-        $zeit = time();
-        $id = $this->userInfo->uid;
-        $this->createPostFields = array(
-            'name','sex','nickname',
-          'beginNGOTS','birthTS','idType','idNumber','provinceId',
-            'addresses','zipCode','phoneNumber','qqNumber','wechatNumber','weiboNumber','otherContact','education',
-            'school','outcomming',
-        );
-        $this->load->model('records/User_model',"dataInfo");
-        $this->dataInfo->init($id);
-        $data = array();
-        foreach ($this->createPostFields as $value) {
-            $newValue = $this->dataInfo->field_list[$value]->gen_value($this->input->post($value));
-            if ($newValue!="".$this->dataInfo->field_list[$value]->value){
-                $data[$value] = $newValue;
-            }
-        }
-
-        if (empty($data)){
-            $jsonRst = -2;
-            $jsonData = array();
-            $jsonData['err']['msg'] ='无变化';
-            echo $this->exportData($jsonData,$jsonRst);
-            return;
-        }
-        $data['everEdit'] = 1;
-
-        $checkRst = $this->dataInfo->check_data($data,false);
-        if (!$checkRst){
-            $jsonRst = -1;
-            $jsonData = array();
-            $jsonData['err']['msg'] ='请填写所有星号字段！';
-            echo $this->exportData($jsonData,$jsonRst);
-            return;
-        }
-        $this->dataInfo->update_db($data,$id);
-        // print $this->db->last_query();
-        // exit;
-        $jsonData = array();
-        echo $this->exportData($jsonData,$jsonRst);
-	}
 
 	function doReg(){
 		$input_data = array();
@@ -395,18 +311,5 @@ http://www.npone.cn<br/>
 		$this->login->logout();
 		$this->session->sess_destroy();
 		header("Location:".site_url('index/login'));
-	}
-	function doBind($orgId){
-		$this->login_verify();
-
-
-		$this->db->where("orgId",$orgId)
-		->where("email",$this->userInfo->field_list['email']->value)
-		->update('pPeaple',array('uid'=>$this->uid));
-
-		$jsonRst = 1;
-		$jsonData = array();
-		$jsonData['goto_url'] = site_url('index/index');
-		echo $this->exportData($jsonData,$jsonRst);
 	}
 }

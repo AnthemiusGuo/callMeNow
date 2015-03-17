@@ -16,9 +16,11 @@ class Send_model extends Record_model {
         $this->field_list['items'] = $this->load->field('Field_array_items',"发货单","items",true);
         $this->field_list['items']->is_title = true;
 
+        $this->field_list['totalGetting'] = $this->load->field('Field_money',"金额(￥)","totalGetting",true);
+        
         $this->field_list['desc'] = $this->load->field('Field_text',"备注","desc");
         $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
-        
+
         $this->field_list['orderId'] = $this->load->field('Field_int',"发货单号","orderId");
 
         $this->field_list['status'] = $this->load->field('Field_enum',"发货状态","status");
@@ -55,19 +57,19 @@ class Send_model extends Record_model {
                     array('desc'),
                 );
     }
-    
+
 
     public function gen_list_html($templates){
         $msg = $this->load->view($templates, '', true);
     }
     public function gen_editor(){
-        
+
     }
     public function buildInfoTitle(){
         return '发货记录:'.$this->field_list['crmId']->gen_show_html().'<small> ID:'.$this->field_list['beginTS']->gen_show_html().'</small>';
     }
 
-    
-    
+
+
 }
 ?>

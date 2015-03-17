@@ -100,3 +100,12 @@ function searchbox_on_change(inputName,editorController,editorMethod){
         }
     });
 }
+
+function phoneSearch(id){
+	var phone = $("#"+id).val().trim();
+	if (phone==""){
+		return;
+	}
+	var url = req_url_template.str_supplant({ctrller:'phone',action:'call'})+'/'+phone;
+	window.location.href=url;
+}

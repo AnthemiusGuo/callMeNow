@@ -34,6 +34,31 @@ class User_model extends Record_model {
 
     }
 
+    public function buildShowCard(){
+        $_html = '<div class="shopInfoCard">';
+        $url = '#';//$this->gen_front_url();
+        $_html .= '<h4><a href="'.$url.'" target="_blank">'.$this->field_list['name']->gen_show_html().'</a></h4>';
+        if (!$this->field_list['orgId']->isEmpty()){
+            $_html .= '<span class="shopBegin"> '.$this->field_list['orgId']->gen_show_html().' </span>';
+        }
+
+        $_html .= '<span class="shopBegin"> '.$this->field_list['sign']->gen_show_html().' </span>';
+        $_html .= '<p class="shopDesc">'.$this->field_list['intro']->gen_show_html().'</p>';
+
+        $_html .= '<dt>电话</dt>';
+        $_html .= '<dd>'.$this->field_list['phone']->gen_show_html().'</dd>';
+        $_html .= '<dt>电邮</dt>';
+        $_html .= '<dd>'.$this->field_list['email']->gen_show_html().'</dd>';
+        // $_html .= '<dt>微信</dt>';
+        // $_html .= '<dd>'.$this->field_list['orgId']->gen_show_html().'</dd>';
+        // $_html .= '<dt>旺旺</dt>';
+        // $_html .= '<dd>'.$this->field_list['wangwang']->gen_show_html().'</dd>';
+        $_html .= '<div class="clearfix"></div></div>';
+
+
+        return $_html;
+    }
+
     public function buildChangeShowFields(){
             return array(
                     array('name','typ'),

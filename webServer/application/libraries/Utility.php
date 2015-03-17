@@ -2,15 +2,15 @@
 
 class Utility {
 	private $CI;
-	
+
 	const TOKEN_CODE_PRE  = 'T_';
 	const EMAIL_CODE_PRE  = 'E_';
 	const MOBILE_CODE_PRE = 'M_';
-	
+
 	function __construct() {
 		$this->CI =& get_instance();
 	}
-	
+
 	//判断请求是否是ajax
 	function is_ajax_request() {
 		if(isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
@@ -19,8 +19,8 @@ class Utility {
 		return false;
 	}
 
-	function mbstring_2_array($str,$charset='UTF-8') {     
-   		$strlen=mb_strlen($str);     
+	function mbstring_2_array($str,$charset='UTF-8') {
+   		$strlen=mb_strlen($str);
    		while($strlen){
       		$array[]=mb_substr($str,0,1,$charset);
       		$str=mb_substr($str,1,$strlen,$charset);
@@ -28,25 +28,79 @@ class Utility {
    		}
    		return $array;
    	}
-	
+
+	//取本月初,周初等各种时间
+	function getTS($typ){
+		//php获取今日开始时间戳和结束时间戳
+		switch ($typ){
+			case 'beginToday':
+				$ts = mktime(0,0,0,date('m'),date('d'),date('Y'));
+				break;
+			case 'endToday':
+				$ts = mktime(0,0,0,date('m'),date('d')+1,date('Y')-1);
+				break;
+			case 'beginThismonth':
+				$ts = mktime(0,0,0,date('m'),1,date('Y'));
+				break;
+			case 'endThismonth':
+				$ts = mktime(23,59,59,date('m'),date('t'),date('Y'));
+				break;
+			default:
+				$ts = time();
+				break;
+		}
+		return $ts;
+	}
+
+	private function __calc_cn_money($input,$round){
+        if ($input<10000){
+            return $input;
+        } else if ($input<100000000){
+			if ($round){
+				return round(($input/10000),1).'万';
+			} else {
+				return ($input/10000).'万';
+			}
+
+        } else {
+			if ($round){
+				return round(($input/100000000),1).'亿';
+			} else {
+				return ($input/100000000).'亿';
+			}
+		}
+    }
+
+	function calc_cn_money($input,$round=false){
+		if (is_array($input)){
+			foreach ($input as $k =>$v){
+				$input[$k] = $this->__calc_cn_money($v,$round);
+			}
+			return $input;
+		} else {
+			return $this->__calc_cn_money($input*1);
+		}
+    }
+
+
 	// 访问webservice接口
 	function webservice($url, $params, $function) {
 		$current_url = current_url();
-		
+
         try{
 			$soap   = new  SoapClient($url , array('soap_version'=>'1.2' , 'encoding' => 'utf-8' , 'style' => SOAP_RPC));
 			$result = $soap->__soapCall($function , array('parameters'=>$params));
 			//log_scribe('trace', 'webservice', "[{$current_url}] webservice_success: function:{$function} param=".var_export($params, true)."   return : ".var_export($this->object_to_array($result), true));
 			return $this->object_to_array($result);
 		}catch(Exception $e){
-			$current_url = current_url();	
-			$server_ip = $_SERVER["SERVER_ADDR"];				
+			$current_url = current_url();
+			$server_ip = $_SERVER["SERVER_ADDR"];
 			log_scribe('trace', 'webservice', "[{$current_url}] webservice_error: pass9ip: {$server_ip} param=".var_export($params, true)."   error_info : ".$e);
 			return false;
 		}
 	}
-	
-	//通过代理机访问外部地址（GET方式）
+
+	//通过代理机访问外部地址(GET方式)
 	function get($url, $fields = '') {
 		$proxy_url = $this->CI->passport->get('proxy_g');
 		if(is_array($fields)) {
@@ -56,9 +110,9 @@ class Utility {
 		}
 		$proxy_url = $proxy_url.'?'.$qry_str.'&_actual_url='.urlencode($url);
 		log_scribe('trace', 'proxy_php', 'GET Request: '.$proxy_url);
-		
+
 		$ch = curl_init();
-		
+
 		// Set query data here with the URL
 		curl_setopt($ch, CURLOPT_URL, $proxy_url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -69,8 +123,8 @@ class Utility {
 		log_scribe('trace', 'proxy_php', 'GET Response: '.$content);
 		return $content;
 	}
-	
-	//通过代理机访问外部地址（POST方式）
+
+	//通过代理机访问外部地址(POST方式)
 	function post($url, $fields) {
 		$proxy_url = $this->CI->passport->get('proxy_p');
 		if(is_array($fields)) {
@@ -80,30 +134,30 @@ class Utility {
 		}
 		$qry_str = $qry_str.'&_actual_url='.urlencode($url);
 		log_scribe('trace', 'proxy_php', 'POST Request: '.$proxy_url.'?'.$qry_str);
-		
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $proxy_url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, '3');
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		
+
 		// Set request method to POST
 		curl_setopt($ch, CURLOPT_POST, 1);
-		
+
 		// Set query data here with CURLOPT_POSTFIELDS
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $qry_str);
-		
+
 		$content = trim(curl_exec($ch));
 		curl_close($ch);
 		log_scribe('trace', 'proxy_php', 'POST Response: '.$content);
 		return $content;
 	}
-	
+
 	function object_to_array(stdClass $Class)
     {
         # Typecast to (array) automatically converts stdClass -> array.
         $Class = (array)$Class;
-        
+
         # Iterate through the former properties looking for any stdClass properties.
         # Recursively apply (array).
         foreach($Class as $key => $value){
@@ -113,7 +167,7 @@ class Utility {
         }
         return $Class;
     }
-	
+
 	//长账号缩写
 	function shorten_loginname($val) {
 		if(strlen($val) > 10) {
@@ -121,7 +175,7 @@ class Utility {
 		}
 		return $val;
 	}
-	
+
 	//邮箱缩写
 	function shorten_email($val) {
 		$_t = explode('@', $val);
@@ -133,19 +187,19 @@ class Utility {
 		$domain = $_t[1];
 		return $name.'@'.$domain;
 	}
-	
+
 	//手机缩写
 	function shorten_mobile($val) {
 		$val = substr($val, 0, 3).'*****'.substr($val, -3, 3);
 		return $val;
 	}
-	
+
 	//身份证缩写
 	function shorten_cert_id($val) {
 		$val = substr($val, 0, 3).'************'.substr($val, -3, 3);
 		return $val;
 	}
-	
+
 	//检查时间格式
 	function chk_timestamp($time, $format = 'YmdHis') {
 		$tmp = date_parse_from_format($format, $time);
@@ -155,7 +209,7 @@ class Utility {
 		}
 		return $tmp;
 	}
-	
+
 	//检查第三方订单号格式
 	function chk_sp_order_id($val) {
 		if(!preg_match('/^\w{1,20}$/', $val)) {
@@ -164,7 +218,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查服务编号格式
 	function chk_service_id($val) {
 		if(!preg_match('/^[0-9]{1,12}$/', $val)) {
@@ -173,7 +227,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查游戏简称及对应配置是否存在
 	function chk_site_cd($val, $chk_config = true) {
 		if(!preg_match('/^[A-Z0-9]{1,5}$/', $val)) {
@@ -187,7 +241,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查游戏站点编号
 	function chk_site_id($val) {
 		if(!preg_match('/^[a-zA-Z0-9]{4}$/', $val)) {
@@ -196,10 +250,10 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	/**
-	 * 检查登录账号格式（所有类型）
-	 * $restrict true - 不兼容老账号格式（主要用于新账号注册）; false - 兼容老账号格式（用于功能中账号格式检查）
+	 * 检查登录账号格式(所有类型)
+	 * $restrict true - 不兼容老账号格式(主要用于新账号注册); false - 兼容老账号格式(用于功能中账号格式检查)
 	 * $forbid true - 检查禁用的账号和前后缀; false - 不做禁用账号和前后缀校验
 	 */
 	function chk_loginname($val, $restrict = false, $forbid = true) {
@@ -230,10 +284,10 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 检查普通账号格式
-	 * $restrict true - 不兼容老账号格式（主要用于新账号注册）; false - 兼容老账号格式（用于功能中账号格式检查）
+	 * $restrict true - 不兼容老账号格式(主要用于新账号注册); false - 兼容老账号格式(用于功能中账号格式检查)
 	 */
 	function chk_normal_loginname($val, $restrict = false) {
 		if($restrict === true) {
@@ -258,7 +312,7 @@ class Utility {
 			return true;
 		}
 	}
-	
+
 	//检查邮箱账号格式
 	function chk_email_loginname($val) {
 		if(!$this->chk_email($val)) {
@@ -267,12 +321,12 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查手机账号格式
 	function chk_mobile_loginname($val) {
 		return $this->chk_mobile($val);
 	}
-	
+
 	//检查手机号码格式
 	function chk_mobile($val) {
 		if(!preg_match('/^(13|14|15|18)\d{9}$/', $val)) {
@@ -281,7 +335,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查登录密码格式
 	function chk_pwd($val) {
 		if(!preg_match('/^[a-zA-Z0-9_]{6,16}$/', $val)) {
@@ -290,7 +344,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查支付密码格式
 	function chk_paypwd($val) {
 		if(!preg_match('/^[a-zA-Z0-9_]{6,12}$/', $val)) {
@@ -299,7 +353,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查用户昵称格式
 	function chk_nickname($val) {
 		require_once 'Tuxedo/inc/forbidden_words.inc.php';
@@ -309,7 +363,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查用户姓名格式
 	function chk_realname($val) {
 		if(!$this->is_big5($val)) {
@@ -331,7 +385,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查性别格式
 	function chk_gender($val) {
 		if($val != 'F' && $val != 'M') {
@@ -340,7 +394,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查婚否格式
 	function chk_marriage ($val){
 		if($val != 'Y' && $val != 'N'){
@@ -349,7 +403,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查地址格式
 	function chk_address($val) {
 		require_once 'Tuxedo/inc/forbidden_words.inc.php';
@@ -363,7 +417,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查邮编格式
 	function chk_zipcode($val) {
 		if(!preg_match('/^\d{6}$/', $val)) {
@@ -372,7 +426,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查固定电话格式
 	function chk_telephone($val) {
 		if(!preg_match('/^\d{3}-\d{8}$|^\d{4}-\d{7}$|^\d{4}-\d{8}$|^\d{7,8}$/', $val)) {
@@ -381,7 +435,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查即时聊天账号信息格式
 	function chk_im($val) {
 		if($this->chk_email($val)) {
@@ -392,11 +446,11 @@ class Utility {
 		$this->CI->error->set_error('10065');
 		return false;
 	}
-	
+
 	//检查用户身份证号码
 	function chk_cert_id($val) {
 		$val = strtoupper($val);
-		#验证身份证长度以及字符集（15位：全数字或18位：数字加字母X）
+		#验证身份证长度以及字符集(15位：全数字或18位：数字加字母X)
 		if(!preg_match('/^(([0-9]{17}[0-9X]{1})|[0-9]{15})$/', $val)) {
 			$this->CI->error->set_error('10028');
 			return false;
@@ -464,7 +518,7 @@ class Utility {
 			$this->CI->error->set_error('10028');
 			return false;
 		}
-		#验证出生年月日信息（日期格式合法且不得晚于当前日期）
+		#验证出生年月日信息(日期格式合法且不得晚于当前日期)
 		if(!checkdate($month, $day, $year) || date('Ymd') < $year.$month.$day) {
 			$this->CI->error->set_error('10028');
 			return false;
@@ -519,7 +573,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * 获取身份证内的出生日期
 	 */
@@ -539,19 +593,19 @@ class Utility {
 				'ext'   => $ext,
 		);
 	}
-	
+
 	/**
 	 *  校验是否小于18岁
 	 */
 	function is_cert_underage($cert_id) {
 		$cert_date = $this->get_cert_id_birth($cert_id);
-		
+
 		if(($cert_date['year'].$cert_date['month'].$cert_date['day']) > date ("Ymd", mktime(0, 0, 0, date("m"), date("d"), date("Y") - 18))) {
 			return true;
-		}		
+		}
 		return false;
 	}
-	
+
 	/**
 	 * 身份证从15位扩展至18位
 	 */
@@ -560,7 +614,7 @@ class Utility {
 			//TODO
 			return false;
 		} else {
-			// 如果身份证顺序码是996 997 998 999，这些是为百岁以上老人的特殊编码
+			// 如果身份证顺序码是996 997 998 999,这些是为百岁以上老人的特殊编码
 			if(array_search(substr($idcard, 12, 3), array('996', '997', '998', '999')) !== false){
 				$cert_id = substr($cert_id, 0, 6).'18'.substr($cert_id, 6, 9);
 			}else{
@@ -570,7 +624,7 @@ class Utility {
 		$cert_id = $cert_id.$this->get_cert_id_verify_code($cert_id);
 		return $cert_id;
 	}
-	
+
 	/**
 	 * 计算18位身份证校验位
 	 * @param unknown_type $idcard_base
@@ -583,20 +637,20 @@ class Utility {
 		}
 		// 加权因子
 		$factor = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
-		
+
 		// 校验码对应值
 		$verify_number_list = array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2');
-		
+
 		$checksum = 0;
 		for($i = 0; $i < strlen($cert_id_base); $i++) {
 			$checksum += substr($cert_id_base, $i, 1) * $factor[$i];
 		}
 		$mod = $checksum % 11;
 		$verify_code = $verify_number_list[$mod];
-		
+
 		return $verify_code;
 	}
-	
+
 	//检查电子邮箱格式
 	function chk_email($val) {
 		if(strlen($val) < 6 || strlen($val) > 50) {
@@ -664,7 +718,7 @@ class Utility {
 		}
 		return null;
 	}
-	
+
 	//检查推广号格式
 	function chk_spread_id($val) {
 		if(!preg_match('/^[_a-zA-Z0-9-]{3,50}$/', $val)) {
@@ -673,7 +727,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查密保卡序列号格式
 	function chk_matrix_id($val) {
 		if(!preg_match('/^[0-9A-Z]{20}$/', $val)) {
@@ -682,7 +736,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//检查九城实卡卡密格式是否是21位数字
 	function chk_precard_no($val) {
 		if(!preg_match('/^[0-9]{21}$/', $val)) {
@@ -692,10 +746,10 @@ class Utility {
 		return true;
 	}
 
-	//检查整数数字格式（如订单号、卡号等）
+	//检查整数数字格式(如订单号、卡号等)
 	//$digit - 数字位数
-	//$fixed - 是否定长，如$digit为4，则匹配：1000～9999为真，其余为假
-	//$zero_padding_left - 是否在左侧填充0值，如$digit为4，则匹配：0000～9999为真
+	//$fixed - 是否定长,如$digit为4,则匹配：1000～9999为真,其余为假
+	//$zero_padding_left - 是否在左侧填充0值,如$digit为4,则匹配：0000～9999为真
 	function chk_numeric($val, $digit = 16, $fixed = false, $zero_padding_left = false) {
 		if(!is_numeric($val) || $digit <= 0) {
 			return false;
@@ -709,7 +763,7 @@ class Utility {
 				} else {
 					$rexp = '/^[1-9]{1}[0-9]{'.($digit - 1).'}$/';
 				}
-				
+
 			}
 		} else {
 			if($zero_padding_left) {
@@ -727,7 +781,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//获取最近的年月份
 	function get_year_monthes($n) {
 		$date = array();
@@ -737,7 +791,7 @@ class Utility {
 		}
 		return $date;
 	}
-	
+
 	//获取token验证码
 	function get_token_code($force = true) {
 		$session_id = $this->CI->session->userdata('session_id');
@@ -751,11 +805,11 @@ class Utility {
 		}
 		return $token_code;
 	}
-	
+
 	//验证token验证码
 	function verify_token_code($token_code, $unset = true) {
 		$this->CI->load->driver('cache');
-		
+
 		$session_id = $this->CI->session->userdata('session_id');
 		$key = self::TOKEN_CODE_PRE.$session_id;
 		$code = $this->CI->cache->memcached->get($key);
@@ -778,12 +832,12 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//获取邮箱验证码
 	function get_email_code($email, $force = true) {
 		$url = current_url();
 		$ip  = $this->CI->input->ip_address();
-		
+
 		$expire = $this->CI->passport->get('email_code_expire');
 		$length = $this->CI->passport->get('email_code_length');
 		$this->CI->load->driver('cache');
@@ -795,19 +849,19 @@ class Utility {
 		}
 		return $email_code;
 	}
-	
+
 	//验证邮箱验证码
 	function verify_email_code($email, $email_code, $unset_on_true = false, $unset_on_false = false) {
 		$url = current_url();
 		$ip  = $this->CI->input->ip_address();
-				
+
 		$this->CI->load->driver('cache');
 		if(!$this->chk_email($email)) {
 			return false;
 		}
 		$code = $this->CI->cache->memcached->get(self::EMAIL_CODE_PRE.$email);
 		$code === false && log_scribe('trace', 'memcached', "{$ip} [{$url}] verify_email_code : get_error key=".self::EMAIL_CODE_PRE.$email);
-		
+
 		if(empty($code)) {
 			$this->CI->error->set_error('10132');
 			if($unset_on_false) {
@@ -830,7 +884,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//获取手机验证码
 	function get_mobile_code($mobile, $force = true) {
 		$expire = $this->CI->passport->get('mobile_code_expire');
@@ -843,7 +897,7 @@ class Utility {
 		}
 		return $mobile_code;
 	}
-	
+
 	//验证手机验证码
 	function verify_mobile_code($mobile, $mobile_code, $unset_on_true = false, $unset_on_false = false) {
 		$this->CI->load->driver('cache');
@@ -870,7 +924,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//获取随机字符串
 	function gen_rand_str($len, $type = null) {
 		switch($type) {
@@ -906,8 +960,8 @@ class Utility {
 		}
 		return $output;
 	}
-	
-	//发送邮件（svcnode实现）
+
+	//发送邮件(svcnode实现)
 	function send_email($to, $from, $title, $content) {
 		Nodesvc::send_email($title, $content, $from, $to);
 		if($this->CI->error->error()) {
@@ -915,22 +969,22 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	const MESSAGE_SEPARATOR   = '`';
-	
+
 	//发送用户消息
 	function send_msg($uuid, $category, $subcategory, $event) {
 		$argv = func_get_args();
-		
+
 		$args = '';
 		if(count($argv) > 4) {
 			$args = implode(self::MESSAGE_SEPARATOR, array_slice($argv, 4));
 		}
-		
+
 		if(!$tpl_id = $this->get_msg_tpl($category, $subcategory, $event)) {
 			return false;
 		}
-		
+
 		$input = array(
 			'uuid'   => $uuid,
 			'msg_id' => $tpl_id,
@@ -942,7 +996,7 @@ class Utility {
 		}
 		return true;
 	}
-	
+
 	//查询用户当月未阅读消息数
 	function get_unread_msg_count($uuid) {
 		$start_ts = date("Ym01000000", strtotime(date('Ym').'01'));
@@ -959,25 +1013,25 @@ class Utility {
 		}
 		return $ret['data']['unread'];
 	}
-	
+
 	//增加用户消息默认配置
 	function msg_default_settings($uuid) {
-		$input =   array('uuid' => $uuid);	   
+		$input =   array('uuid' => $uuid);
 		$ret   =   Messagesvc::addUser($input);
 		if($this->CI->error->error()) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	function get_msg_category() {
 		$message_cfg = $this->CI->passport->get('message_cfg');
 		return array_keys($message_cfg);
 	}
-	
+
 	function get_msg_types($category = '') {
 		$message_cfg = $this->CI->passport->get('message_cfg');
-		
+
 		if($category == 'all') {
 			$category = '';
 		}
@@ -996,7 +1050,7 @@ class Utility {
 		}
 		return $types;
 	}
-	
+
 	//获取用户消息模板id
 	function get_msg_tpl($category, $subcategory, $event) {
 		$message_cfg = $this->CI->passport->get('message_cfg');
@@ -1006,18 +1060,18 @@ class Utility {
 		}
 		return $message_cfg[$category][$subcategory]['id'][$event];
 	}
-	
+
 	//获取用户消息分类
 	function msg_type2category($type = '') {
 		$message_cfg = $this->CI->passport->get('message_cfg');
-		
+
 		$_result = array();
 		foreach($message_cfg as $category => $_cate_cfg) {
 			foreach($_cate_cfg as $subcategory => $_sub_cfg) {
 				$_result[$_sub_cfg['type']] = $category;
 			}
 		}
-		
+
 		if($type != '') {
 			if(!isset($_result[$type])) {
 				$this->CI->error->set_error('10134');
@@ -1027,7 +1081,7 @@ class Utility {
 		}
 		return $_result;
 	}
-	
+
 	//获取用户消息分类名称
 	function msg_category_name($category) {
 		$msg_category = $this->CI->passport->get('msg_category');
@@ -1037,7 +1091,7 @@ class Utility {
 		}
 		return $msg_category[$category];
 	}
-	
+
 	//获取用户消息分类描述
 	function msg_category_desc($category) {
 		$category_desc = $this->CI->passport->get('msg_category_desc');
@@ -1047,30 +1101,30 @@ class Utility {
 		}
 		return $category_desc[$category];
 	}
-	
+
 	//通过节点路径返回字符串的某个节点值
 	function get_data_for_xml($res_data, $node) {
 		$xml = simplexml_load_string($res_data);
 		$result = $xml->xpath($node);
 		//var_dump($result);
-	
+
 		while(list( , $node) = each($result)) {
 			return $node;
 		}
 	}
-	
+
 	//查询用户曾激活过的游戏
 	function get_user_active_game($uuid) {
 		$result = array();
 		$ret = Activesvc::getUserActiveStatus($this->CI->tuxedo->su(Svc::SVCID_ACTIVE_INFO, $uuid));
 		if($this->CI->error->error()) {
-			//后台返回用户未激活任何大区时，返回空数组
+			//后台返回用户未激活任何大区时,返回空数组
 			if($this->CI->error->get_error() == '5328') {
 				return $result;
 			}
 			return false;
 		}
-		
+
 		foreach($ret['data']['partStatus'] as $k => $v) {
 			if(preg_match('/[^0]/', $v)) {
 				$result[] = $ret['data']['gameList'][$k];
@@ -1078,14 +1132,14 @@ class Utility {
 		}
 		return $result;
 	}
-	
+
 	//获得用户激活过的游戏大区
 	function get_user_active_part($uuid, $site_cd) {
 		$ret = Activesvc::getUserActiveGameStatus($this->CI->tuxedo->su(Svc::SVCID_ACTIVE_INFO, $uuid), array('site_cd' => $site_cd));
 		if($this->CI->error->error()) {
 			return array();
 		}
-		
+
 		$_part_status = $ret['data']['gameStatusArray'];
 		$result = array();
 		foreach($_part_status as $part_id => $status) {
@@ -1095,7 +1149,7 @@ class Utility {
 		}
 		return $result;
 	}
-	
+
 	//是否是用户激活过的游戏大区
 	function is_user_active_part($uuid, $site_cd, $part_id) {
 		if(in_array($part_id, $this->get_user_active_part($uuid, $site_cd))) {
@@ -1103,7 +1157,7 @@ class Utility {
 		}
 		return false;
 	}
-	
+
 	//查询用户可充值的游戏
 	function get_user_chargeable_game($uuid) {
 		$_game = $this->CI->passport->chargeable_game_list();
@@ -1122,7 +1176,7 @@ class Utility {
 		}
 		return $result;
 	}
-	
+
 	//查询用户账号下的某款游戏是否可充值
 	function is_user_chargeable_game($uuid, $site_cd) {
 		if(in_array($site_cd, $this->get_user_chargeable_game($uuid))) {
@@ -1130,7 +1184,7 @@ class Utility {
 		}
 		return false;
 	}
-	
+
 	//查询用户可充值的游戏大区
 	function get_user_chargeable_part($uuid, $site_cd) {
 		if(!$this->is_user_chargeable_game($uuid, $site_cd)) {
@@ -1150,7 +1204,7 @@ class Utility {
 		}
 		return $result;
 	}
-	
+
 	//查询用户某游戏大区是否可充值
 	function is_user_chargeable_part($uuid, $site_cd, $part_id) {
 		if(in_array($part_id, $this->get_user_chargeable_part($uuid, $site_cd))) {
@@ -1158,7 +1212,7 @@ class Utility {
 		}
 		return false;
 	}
-	
+
 	function pay_status_to_string($status, $def='') {
 		switch ($status) {
 			case 'INITIAL' :
@@ -1174,12 +1228,12 @@ class Utility {
 			case 'TIMEOUT_CLOSED':
 				return '过期';
 			case 'UNKNOWN' :
-			case 'UNKOWN' : 
+			case 'UNKOWN' :
 			default :
 				return empty($status)?$def:$status;
 		}
 	}
-	
+
 	function order_type_to_string($type,$def='') {
 		switch ($type) {
 			case 'O' : return '划入';
@@ -1188,7 +1242,7 @@ class Utility {
 				return  empty($type)?$def:$type;
 		}
 	}
-	
+
 	function detail_status_to_string($status,$def='') {
 		switch ($status) {
 			case 'I' :
@@ -1205,17 +1259,17 @@ class Utility {
 				return empty($status)?$def:$status;
 		}
 	}
-	
+
 	function tradeway_to_string($type, $def = '', $service_id = null) {
 		switch ($type) {
 			case 'A' : return '支付宝';
 			case 'B' : return '九城钱包';
 			case 'C' : return '中国移动手机话费';
-			case 'D' : 
+			case 'D' :
 				if($service_id == '2602') {
 					return '游戏直充';
 				}
-				return '直充（游戏退款）';
+				return '直充(游戏退款)';
 			case 'E' : return '经销商Esales';
 			case 'F' : return '神州付神州行';
 			case 'G' : return '手机钱包';
@@ -1241,7 +1295,7 @@ class Utility {
 			case 'X' : return '快钱电信卡';
 			case 'Y' : return 'V币';
 			case 'Z' : return '系统赠点bonus';
-			
+
 			case '1' : return '新宽联网银';
 			case '2' : return '新宽联神州行';
 			case '3' : return '新宽联电信卡';
@@ -1258,7 +1312,7 @@ class Utility {
 				return empty($type) ? $def : $type;
 		}
 	}
-	
+
 	//使用pass9的密钥获取md5签名
 	function get_md5_sign($site_id, $fields) {
 		ksort($fields);
@@ -1276,19 +1330,19 @@ class Utility {
 		log_scribe('trace', 'sign', $this->CI->input->ip_address()."  url:".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].",  site_id={$site_id},  key={$key},  md5_string: {$plaintext},  pass9_sign=".md5($plaintext));
 		return md5($plaintext);
 	}
-	
+
 	/**
-	 * 传入一个数组，按照第三方接口方式对其进行md5后返回收银台的地址
+	 * 传入一个数组,按照第三方接口方式对其进行md5后返回收银台的地址
 	 */
 	function get_cashier_url($site_id, $fields) {
-		$url  =   site_url('payment/cashier');  
+		$url  =   site_url('payment/cashier');
 		$sign =   $this->get_md5_sign($site_id, $fields);
 		$qstr =   http_build_query($fields);
 		return $url."?{$qstr}&sign={$sign}";
 	}
-	
+
 	/**
-	 * 周边站点登录时，返回周边站点的加密方法
+	 * 周边站点登录时,返回周边站点的加密方法
 	 */
 	function login_notify_sign($plaintext, $site_id = '0000') {
 		$query_str = 'result=1&timestamp='.Nodesvc::get_svcnode_ts().'&'.$plaintext;
@@ -1298,9 +1352,9 @@ class Utility {
 		}
 		return $ret['data'];
 	}
-	
+
 	/**
-	 * 周边站点登录时，需要返回的用户信息
+	 * 周边站点登录时,需要返回的用户信息
 	 */
 	function login_notify_info($site_id, $uuid) {
 		$result = array();
@@ -1310,32 +1364,32 @@ class Utility {
 				'nick'     => 'nickname',
 				'email'    => 'email',
 				'certtype' => 'certid_status',
-				
+
 				'mobile'   => 'mobile',
 				'name'     => 'realname',
 				'gender'   => 'gender',
 				'birthday' => 'birthday',
-				
+
 				'login'           => 'loginname',
 				'active'          => 'gameStatus',
 				'first_active_ts' =>'active_ts',
 				'cais'            => 'cert_id',
-				
+
 				'phone'   => 'telephone',
 				'zip'     => 'zipcode',
 				'address' => 'address',
 				'nation'  => 'nation',
-				
+
 				'province'   => 'province',
 				'occupation' => 'job',
 				'business'   => 'industry',
 				'income'     => 'income',
-				
+
 				'education' => 'education',
 				'netplace'  => 'netplace',
 				'interest'  => 'interest',
 				'marriage'  => 'married',
-				
+
 				'certid' => 'cert_id',
 		);
 		$site_cfg = $this->CI->passport->get_member_site_cfg($site_id);
@@ -1344,30 +1398,30 @@ class Utility {
 		}
 		$site_cd     = $site_cfg['site_cd'];
 		$trust_level = $site_cfg['trust_level'];
-		
+
 		$ret = Membersvc::findInfoByUuid($this->CI->tuxedo->su(Svc::SVCID_FIND_INFO_BY_UUID, $uuid));
 		if($this->CI->error->error()) {
 			return false;
 		}
 		$user_info = $ret['data'];
-		
+
 		$ret = Membersvc::findStatusByUuid($this->CI->tuxedo->su(Svc::SVCID_FIND_INFO_BY_UUID, $uuid));
 		if($this->CI->error->error()) {
 			return false;
 		}
 		$user_status = $ret['data'];
-		
+
 		$user_info = array_merge($user_info, $user_status);
-		
+
 		$trust_level = base_convert($trust_level, 16, 2);
 		$arr_trust   = str_split($trust_level);
-		
+
 		$ret = Activesvc::getUserActiveGameStatus($this->CI->tuxedo->su(Svc::SVCID_ACTIVE_INFO, $uuid), array('site_cd' => $site_cd));
 		if($this->CI->error->error()) {
 			return false;
 		}
 		$user_info = array_merge($user_info, $ret['data']);
-		
+
 		$rtn = array(); $i = 0;
 		foreach($infoes_mapping as $rtn_index => $info_index) {
 			if($arr_trust[$i] != 0) {
@@ -1377,8 +1431,8 @@ class Utility {
 		}
 		$func = create_function('$v', '$v = trim($v);return ($v === "0") || !empty($v);');
 		$rtn  = array_filter($rtn, $func);
-		
-		//有填身份证且未满18岁，列入防沉迷(1=防沉迷,0=无)
+
+		//有填身份证且未满18岁,列入防沉迷(1=防沉迷,0=无)
 		if($arr_trust[11] == '1') {
 			if(empty($rtn['cais']) || $rtn['certtype'] == 0) {
 				$rtn['cais'] = 1;
@@ -1395,18 +1449,18 @@ class Utility {
 		} else {
 			unset($rtn['cais']);
 		}
-		
+
 		$result['data'] = $rtn;
-		
+
 		//是否需要补填nickname
 		if($arr_trust[1] && (empty($user_info['nickname']) || ($user_info['nickname'] == '0') || (trim($user_info['nickname']) == ''))) {
 			$result['need_nickname'] = true;
 		}
 		return $result;
 	}
-	
+
 	/**
-	 * 查询充值各类信息（用于充值成功后的综合信息显示）
+	 * 查询充值各类信息(用于充值成功后的综合信息显示)
 	 */
 	function charge_id_to_info($charge_id) {
 		$input = array(
@@ -1427,19 +1481,19 @@ class Utility {
 		$group_id       = $ret['data']['serverId'];
 		$from_loginname = $ret['data']['fromLoginname'];
 		$to_uuid        = $ret['data']['toUuid'];
-		
+
 		$ret = Membersvc::findInfoByUuid($this->CI->tuxedo->su(Svc::SVCID_FIND_INFO_BY_UUID, $to_uuid));
 		if($this->CI->error->error()) {
 			return false;
 		}
 		$to_loginname = $ret['data']['loginname'];
-		
+
 		$ret = Paysvc::getChargeType(array('bind_id' => $charge_id));
 		if($this->CI->error->error()) {
 			return false;
 		}
 		$charge_type = $ret['data']['chargetype'];
-		
+
 		$input = array(
 			'charge_id'   => $charge_id,
 		);
@@ -1448,13 +1502,13 @@ class Utility {
 		if(!$this->CI->error->error()) {
 			$reward = $ret['data']['jf_willget'];
 		}
-		
+
 		$ret = Paysvc::VipJfQuery($this->CI->tuxedo->su(Svc::SVCID_JF_INFO, $to_uuid));
 		if($this->CI->error->error()) {
 			return false;
 		}
 		$user_total_reward = $ret['data']['avaliable_jf'];
-		
+
 		return array(
 			'from_loginname' => $from_loginname,
 			'to_loginname'   => $to_loginname,
@@ -1466,7 +1520,7 @@ class Utility {
 			'user_total_reward' => $user_total_reward,
 		);
 	}
-	
+
 	/**
 	 * 查询用户信息状态
 	 */
@@ -1475,7 +1529,7 @@ class Utility {
 		if($this->CI->error->error()) {
 			return false;
 		}
-		
+
 		switch($field) {
 			case 'pwd':
 				return $ret['data']['pwd_status'];
@@ -1518,7 +1572,7 @@ class Utility {
 	}
 
 	/**
-	 * 登录状态下，访问pass9所跳转的首页
+	 * 登录状态下,访问pass9所跳转的首页
 	 */
 	function main_url($status = false, $redirect = false) {
 		if(empty($status)){
@@ -1581,7 +1635,7 @@ class Utility {
 		if(!$domain) {
 			return false;
 		}
-		
+
 		foreach($url_list as $url_regx) {
 			$pattern = '/^.*'.$url_regx.'$/';
 			if(preg_match($pattern, $domain)) {
@@ -1601,7 +1655,7 @@ class Utility {
 			return false;
 		}
 		$app_client_key = $app_info['client_key'];
-		
+
 		//echo $plaintext.$app_client_key;exit;
 		//echo md5($plaintext.$app_client_key).'|'.$sign;exit;
 		if(md5($plaintext.$app_client_key) != $sign
@@ -1618,7 +1672,7 @@ class Utility {
 			return true;
 		}
 	}
-	
+
 	/**
 	 * wap版手机sdk签名生成
 	 */
@@ -1629,14 +1683,14 @@ class Utility {
 			return false;
 		}
 		$app_client_key = $app_info['client_key'];
-		
+
 		$vendor_info = $this->CI->passport->get_app_vendor($app_info['vendor_id']);
 		if(!$vendor_info) {
 			$this->CI->error->set_error('10113');
 			return false;
 		}
 		$app_server_key = $vendor_info['server_key'];
-		
+
 		$type = strtoupper($type);
 		switch($type) {
 			case 'SERVER':
@@ -1651,7 +1705,7 @@ class Utility {
 	}
 
 	/**
-	 * 不可逆混淆加密文字，如日志中的密码信息
+	 * 不可逆混淆加密文字,如日志中的密码信息
 	 */
 	function mosaic($text) {
 		$key = $this->CI->config->item('encryption_key');
@@ -1659,7 +1713,7 @@ class Utility {
 	}
 
 	/**
-	 * 检查访问ip是否被禁止访问（白名单优先于黑名单）
+	 * 检查访问ip是否被禁止访问(白名单优先于黑名单)
 	 */
 	function is_banned_ip($ip) {
 		if(!$this->is_whitelist_ip($ip) && $this->is_blacklist_ip($ip)) {
@@ -1693,7 +1747,7 @@ class Utility {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 检查是否是可疑ip地址
 	 */
@@ -1730,24 +1784,24 @@ class Utility {
 		}
 		return $len;
 	}
-	
+
 
 	function is_forbid_string( $str = '', $forbid_arr = array('yy.the9', 'sina.the9', 'qq.the9', 'tqq.the9'), $delimiter='@')
 	{
 		if (empty($str)) return false;
-	
+
 		$arr = explode($delimiter, $str);
 		if ( in_array($arr[1], $forbid_arr ) ) return true;
-	
+
 		return false;
 	}
-	
+
 	function shorten_realname($realname)
 	{
 		$res      = '';
 		$realname = trim($realname);
 		$len      = mb_strlen($realname, 'UTF-8');
-		
+
 		for($i = 0; $i<$len; $i++){
 			if($i == 0) {
 				$res .= mb_substr($realname, 0, 1, 'UTF-8');
@@ -1759,18 +1813,18 @@ class Utility {
 	}
 
     function get_signature_string($params)
-    {   
+    {
         if (!is_array($params)) return  md5($params);
         $string = '';
         foreach ($params as  $param)
-        {   
+        {
             $string .=  $param;
-        }   
+        }
         return  md5($string);
     }
-	
+
 	//获得用户状态
-	function get_status($fields = array(), $uuid = null) {	
+	function get_status($fields = array(), $uuid = null) {
 		if($uuid === null) {
 			$uuid = element('uuid', $this->CI->session->userdata('user'));
 		}
@@ -1778,12 +1832,12 @@ class Utility {
 		if($this->CI->error->error()) {
 			return false;
 		}
-		
+
 		if(empty($field))return $ret['data'];
-		
+
 		$res = array();
 		foreach($fields as $key){
-			$res[$key] = $ret['data'][$key];	
+			$res[$key] = $ret['data'][$key];
 		}
 		return $res;
 	}
@@ -1797,16 +1851,16 @@ class Utility {
 		if($this->CI->error->error()) {
 			return false;
 		}
-		
+
 		if(empty($fields))return $ret['data'];
-			
+
 		$res = array();
 		foreach($fields as $key){
-			$res[$key] = $ret['data'][$key];	
+			$res[$key] = $ret['data'][$key];
 		}
 		return $res;
 	}
-	
+
 	//邮箱认证提交
 	function email_verify_submit($uuid, $loginname, $email, $return_url){
 		if(!$this->chk_email($email)){
@@ -1821,8 +1875,8 @@ class Utility {
 		if($this->CI->error->error()){
 			return false;
 		}
-		
-		//修改邮箱状态为认证中，并发送认证邮件
+
+		//修改邮箱状态为认证中,并发送认证邮件
 		$input = array(
 			'email' => $email,
 			'email_status' => EMAIL_STATUS_VERIFYING
@@ -1847,10 +1901,10 @@ class Utility {
 		if($this->CI->error->error()) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	//邮箱认证
 	function email_verify_process($loginname, $email_code, $redirect_url = 'email') {
 		if(!$this->chk_loginname($loginname)) {
@@ -1870,7 +1924,7 @@ class Utility {
 			$this->CI->error->show_error();
 		}
 		$email = $ret['data']['email'];
-		
+
 		if(!$this->verify_email_code($email, $email_code, true)) {
 			redirect(site_url($redirect_url), 'refresh');
 		}
@@ -1883,12 +1937,12 @@ class Utility {
 		if($this->CI->error->error()){
 			$this->CI->error->show_error();
 		}
-		
+
 		//发送邮箱认证成功消息
 		$this->send_msg($uuid, 'secure', 'tip', 'email_verify', date('Y'), date('m'), date('d'));
 		return true;
 	}
-	
+
 	/**
 	 * 检查是否是可疑账号
 	 */
@@ -1899,7 +1953,7 @@ class Utility {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 检查是否是需要洗白的账号
 	 */
@@ -1914,7 +1968,7 @@ class Utility {
 		}
 		return $status;
 	}
-	
+
 	/**
 	 * 消耗邀请码
 	 */
@@ -1923,7 +1977,7 @@ class Utility {
 			case 'PS2':
 				$url = $this->CI->passport->get('ws_ps2_active');
 				$ret = $this->webservice($url, $params, 'ConsumeCode');
-				
+
 				// 调用webservice失败
 				if(empty($ret)) {
 					return array(
@@ -1931,15 +1985,15 @@ class Utility {
 						'error_msg'  => $this->CI->error->error_msg('10195'),
 					);
 				}
-				
+
 				// 消耗成功
 				if($ret['errCode'] == '0'){
 					return true;
 				}
-				
+
 				// 消耗失败
 				$current_url = current_url();
-				$server_ip = $_SERVER["SERVER_ADDR"];						
+				$server_ip = $_SERVER["SERVER_ADDR"];
 				log_scribe('trace', 'webservice', "[{$current_url}] consume_invite_code: pass9ip:{$server_ip} param = ".var_export($params, true)."   return = ".var_export($ret, true));
 				return array(
 					//'error_code' => $ret['errCode'],
@@ -1950,17 +2004,17 @@ class Utility {
 				return false;
 		}
 	}
-	
+
 	/**
 	 * 生成倒计时数字
 	 */
 	function generate_count_down($base, $start_ts, $end_ts, $special, $current_time = ''){
 		empty($current_time) && $current_time = date('YmdHis');
-		
-		$special_speed = $this->get_count_down_speed($base, $start_ts, $end_ts, $special);	
+
+		$special_speed = $this->get_count_down_speed($base, $start_ts, $end_ts, $special);
 		$special_hours = $this->get_count_down_hours($base, $start_ts, $current_time, $special);
         //var_dump($special_speed);var_dump($special_hours);
-        
+
 		if($current_time <= $start_ts){
 			$count_down_number = $base;
 		}else if($current_time >= $end_ts){
@@ -1971,10 +2025,10 @@ class Utility {
 				$count_down_number -= $speed * $special_hours[$rate];
 			}
 		}
-		
+
 		return array('date' => $current_time, 'number' => $count_down_number);
 	}
-	
+
 	/**
 	 * 获取倒计时速率
 	 */
@@ -1983,10 +2037,10 @@ class Utility {
 		$special_speed = array();
 
 		foreach($special_day as $rate => $hours){
-			$total_hours += $hours * $rate; //计算总时间（一倍速率）
+			$total_hours += $hours * $rate; //计算总时间(一倍速率)
 		}
 		$speed = $base/$total_hours;
-		
+
 		foreach($special_day as $rate => $hours){
 			$special_speed[$rate] = $speed * $rate;
 		}
@@ -1999,10 +2053,10 @@ class Utility {
 				}
 			}
 		}
-		
+
 		return $special_speed;
-	}	
-	
+	}
+
 	/**
 	 * 获取倒计时时间段
 	 */
@@ -2010,14 +2064,14 @@ class Utility {
 		$firstday_hour = substr($start_ts, -6, 2)+ substr($start_ts, -4, 2)/60 + substr($start_ts, -2, 2)/3600;
 		$lastday_hour  = substr($end_ts, -6, 2)+ substr($end_ts, -4, 2)/60 + substr($end_ts, -2, 2)/3600;
 		//var_dump($end_ts);
-		foreach($special_cfg as $special){	
+		foreach($special_cfg as $special){
 			$start = $special['start'];
 			$end   = $special['end'];
 			$rate  = $special['rate'];
-			
-			$day = substr($end_ts, 0, 8) - substr($start_ts, 0, 8);			
+
+			$day = substr($end_ts, 0, 8) - substr($start_ts, 0, 8);
 			//var_dump(substr($end_ts, 0, 8));var_dump(substr($start_ts, 0, 8));
-			
+
 			if($start > $end){
 				if($day > 0){
 					// 检查第一天
@@ -2028,11 +2082,11 @@ class Utility {
 					}else{
 						$special_day[$rate] += abs(24 - $firstday_hour);
 					}
-					
-					$day >= 1 && $day--;			
+
+					$day >= 1 && $day--;
 					$special_day[$rate] += abs($day * ((24 - $start) + ($end - 0)));
 					$special_day[$rate] += abs($day * ($start - $end));
-					
+
 					// 检查最后一天
 					if($lastday_hour <= $end){
 						$special_day[$rate] += abs($lastday_hour - 0);
@@ -2059,8 +2113,8 @@ class Utility {
 						}
 					}else{
 						$special_day[$rate] += abs($lastday_hour - $firstday_hour);
-					}				
-				}	
+					}
+				}
 			}else{
 				if($day > 0){
 					// 检查第一天
@@ -2072,9 +2126,9 @@ class Utility {
 						$special_day[$rate] += 0;
 					}
 					//var_dump($special_day[$rate]);
-					$day >= 1 && $day--;		
+					$day >= 1 && $day--;
 					$special_day[$rate] += abs($day * ($end -$start));
-					
+
 					// 检查最后一天
 					if($lastday_hour <= $start){
 						$special_day[$rate] += 0;
@@ -2083,7 +2137,7 @@ class Utility {
 					}else{
 						$special_day[$rate] += abs($start - $end);
 					}
-					//var_dump($end_ts); var_dump($firstday_hour);		var_dump($lastday_hour);var_dump($start);	var_dump($end);	
+					//var_dump($end_ts); var_dump($firstday_hour);		var_dump($lastday_hour);var_dump($start);	var_dump($end);
 				}else{
 					// 开始和结束时间是同一天
 					if($firstday_hour <= $start){
@@ -2103,18 +2157,18 @@ class Utility {
 					}else{
 						$special_day[$rate] += 0;
 					}
-					//var_dump($end_ts);  var_dump($firstday_hour);		var_dump($lastday_hour);var_dump($start);	var_dump($end);var_dump($special_day);		
-				}			
+					//var_dump($end_ts);  var_dump($firstday_hour);		var_dump($lastday_hour);var_dump($start);	var_dump($end);var_dump($special_day);
+				}
 			}
 		}
 
 		foreach($special_day as $rate => $time){
 			$special_day[$rate] = $time * 3600;
 		}
-		
+
 		return $special_day;
 	}
-	
+
 	/**
 	 * 生成游戏入口地址
 	 */
@@ -2128,16 +2182,16 @@ class Utility {
 								'groupid' => $input['group_id'],
 								'seqid'   => $this->gen_rand_str('5', 'numeric'),
 							);
-				
+
 				$sign           = $this->get_md5_sign($this->CI->passport->site_cd2id($site_cd), $fields);
 				$fields['cdk']  = $input['cdkey'];
-				
+
 				while(list($key, $val) = each($fields)) {
 					$qstr .= $key."=".$val."&";
-				}		
+				}
 				$qstr .= "sig={$sign}";
 				$url   = $this->CI->passport->get_server_address($site_cd, $input['part_id'], $input['group_id']);
-				
+
 				return $url."?{$qstr}";
 				break;
 			default:

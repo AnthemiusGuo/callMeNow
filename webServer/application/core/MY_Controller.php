@@ -7,6 +7,13 @@ if (! defined('__DEFINED_WHERE_TYPE__')) {
     define("WHERE_TYPE_OR_WHERE", 10);
     define("WHERE_TYPE_OR_IN", 11);
     define("WHERE_TYPE_OR_LIKE", 12);
+    define("WHERE_TYPE_WHERE_GT", 21);
+    define("WHERE_TYPE_WHERE_LT", 22);
+    define("WHERE_TYPE_WHERE_GTE", 23);
+    define("WHERE_TYPE_WHERE_LTE", 24);
+    define("WHERE_TYPE_WHERE_NE", 25);
+
+
     define("WHERE_TXT", 99);
 }
 define("VIEW_TYPE_PAGE", 1);
@@ -46,6 +53,7 @@ class P_Controller extends CI_Controller {
 		} else {
 
 		}
+        $this->title = array($this->config->item('base_title'));
 	}
 
 	public function limit_access_by_rule($rule) {
@@ -192,6 +200,7 @@ class P_Controller extends CI_Controller {
             unset($this->all_menus["admin"]);
         }
 		$this->limit_access_by_rule(array());
+        array_unshift($this->title,$this->menus[$this->controller_name]['menu_array'][$this->method_name]['name']);
 	}
 
 	private function _load_default_menus(){
@@ -201,6 +210,12 @@ class P_Controller extends CI_Controller {
                         "method"=>"href",
                         "href"=>site_url('index/index'),
                         "name"=>"我的信息",
+                        "onclick"=>''
+                    ),
+                    "call"=>array(
+                        "method"=>"href",
+                        "href"=>site_url('phone/call'),
+                        "name"=>"来电查询",
                         "onclick"=>''
                     ),
                     // "notifies"=>array(

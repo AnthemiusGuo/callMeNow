@@ -17,7 +17,7 @@
 $config['base_url']	= '';
 $config['static_url']	= '/misc';
 $config['login_expire'] = 86400;
-
+$config['base_title'] = '万家客户 - 专业服务中小商户';
 /*
 |--------------------------------------------------------------------------
 | Index File

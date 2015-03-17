@@ -43,6 +43,27 @@ class Org extends P_Controller {
 		$this->template->load('default_lightbox_info', 'org/info');
 	}
 
+	function editOrg(){
+
+		$this->load_org_info();
+		$id = $this->myOrgId;
+
+		$this->setViewType(VIEW_TYPE_HTML);
+
+        $this->createUrlC = 'org';
+        $this->createUrlF = 'doUpdateOrg';
+
+        $this->load->model('records/Org_model',"dataInfo");
+        $this->dataInfo->init_with_id($id);
+
+        $this->createPostFields = $this->dataInfo->buildChangeNeedFields();
+        $this->modifyNeedFields = $this->dataInfo->buildChangeShowFields();
+
+        $this->editor_typ = 1;
+        $this->title_create = "编辑商户信息";
+        $this->template->load('default_lightbox_edit', 'common/create');
+	}
+
 	function doCreateOrg(){
 		$modelName = 'records/Org_model';
         $jsonRst = 1;
@@ -88,6 +109,55 @@ class Org extends P_Controller {
         $jsonData['goto_url'] = site_url('index/index');
 
         $jsonData['newId'] = (string)$newId;
+        echo $this->exportData($jsonData,$jsonRst);
+	}
+
+	function doUpdateOrg($id){
+		$modelName = 'records/Org_model';
+        $jsonRst = 1;
+        $zeit = time();
+
+
+        $this->load->model($modelName,"dataModel");
+
+		$this->dataModel->init_with_id($id);
+		$this->createPostFields = $this->dataModel->buildChangeNeedFields();
+
+        $data = array();
+        foreach ($this->createPostFields as $value) {
+            $newValue = $this->dataModel->field_list[$value]->gen_value($this->input->post($value));
+            if ($newValue!="".$this->dataModel->field_list[$value]->value){
+                $data[$value] = $newValue;
+            }
+        }
+
+        if (empty($data)){
+            $jsonRst = -2;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='无变化';
+            echo $this->exportData($jsonData,$jsonRst);
+            return false;
+        }
+
+        $checkRst = $this->dataModel->check_data($data,false);
+        if (!$checkRst){
+            $jsonRst = -1;
+            $jsonData = array();
+            $jsonData['err']['msg'] ='请填写所有星号字段！';
+            echo $this->exportData($jsonData,$jsonRst);
+            return false;
+        }
+        $zeit = time();
+
+        if (isset($this->dataModel->field_list['lastModifyUid'])){
+            $data['lastModifyUid'] = $this->userInfo->uid;
+            $data['lastModifyTS'] = $zeit;
+        }
+
+
+        $this->dataModel->update_db($data,$id);
+
+		$jsonData['goto_url'] = site_url('management/index');
         echo $this->exportData($jsonData,$jsonRst);
 	}
 
