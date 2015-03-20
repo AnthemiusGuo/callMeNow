@@ -18,6 +18,25 @@ $config['base_url']	= '';
 $config['static_url']	= '/misc';
 $config['login_expire'] = 86400;
 $config['base_title'] = '万家客户 - 专业服务中小商户';
+
+//申请到的appid
+$config["qq"] = array(
+    "appid"=> 101200862,
+//申请到的appkey
+    "appkey"   => "7e4e03217faf4cdca37990cfc9ba03ff",
+    "scope"=> "get_user_info"
+);
+
+
+
+
+
+//QQ登录成功后跳转的地址,请确保地址真实可用，否则会导致登录失败。
+//$_SESSION["callback"] = "http://your domain/oauth/get_access_token.php";
+
+//QQ授权api接口.按需调用
+//$_SESSION["scope"] = "get_user_info,add_share,list_album,add_album,upload_pic,add_topic,add_one_blog,add_weibo";
+
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -250,9 +269,9 @@ $config['sess_cookie_name']		= 'ci_session';
 $config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
-$config['sess_use_database']	= TRUE;
+$config['sess_use_database']	= FALSE;
 $config['sess_table_name']		= 'ci_sessions';
-$config['sess_match_ip']		= FALSE;
+$config['sess_match_ip']		= TRUE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;
 

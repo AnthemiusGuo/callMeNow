@@ -1,16 +1,22 @@
 <?php include_once('common/header.php')?>
 <?php echo link_tag(static_url('css/login2.css')); ?>
 <body class="<?=$this->pageClass ?>">
-	<!-- BEGIN LOGO -->
-	<div class="logo">
-		<a href="<?=site_url()?>">
-			<img src="<?=static_url('images/logo.png')?>" alt="" width="100px">
-		</a>
+<div class="container-fluid">
+	<div class="row">
+	  	<div class="col-lg-4 col-md-4 col-sm-3 col-xs-12"></div>
+	  	<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12"><div class="logo">
+			<a href="<?=site_url()?>">
+				<img src="<?=static_url('images/logo.png')?>" alt="" width="100px">
+			</a>
+		</div></div>
+	  	<div class="col-lg-4 col-md-4 col-sm-3 col-xs-12"></div>
 	</div>
-	<!-- END LOGO -->
-	<!-- BEGIN LOGIN -->
-	<div class="content">
-		<?php echo $contents; ?>
+	<div class="row">
+	  	<div class="col-lg-4 col-md-4 col-sm-3 col-xs-12"></div>
+	  	<div class="col-lg-4 col-md-4 col-sm-6 col-xs-12 login_contents">
+			<?php echo $contents; ?>
+		</div>
+	  	<div class="col-lg-4 col-md-4 col-sm-3 col-xs-12"></div>
 	</div>
-	<!-- END LOGIN -->
+</div>
 <?php include_once('common/footer.php')?>

@@ -4,6 +4,10 @@ class Org_model extends Record_model {
     public function __construct() {
         parent::__construct('oOrg');
         $this->title_create = '创建商户';
+        $this->deleteCtrl = 'admin';
+        $this->deleteMethod = 'doDeleteOrg';
+        $this->edit_link = 'admin/editOrg/';
+        $this->info_link = 'admin/infoOrg/';
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
         $this->field_list['showid'] = $this->load->field('Field_showurl',"展示网址","showid");
@@ -22,7 +26,7 @@ class Org_model extends Record_model {
         $this->field_list['vipOver'] = $this->load->field('Field_date',"VIP过期时间","vipOver");
 
         $this->field_list['zipCode'] = $this->load->field('Field_string',"邮编","zipCode");
-        $this->field_list['enterCode'] = $this->load->field('Field_string',"邮编","enterCode");
+        $this->field_list['enterCode'] = $this->load->field('Field_string',"加入密码","enterCode");
         $this->field_list['desc'] = $this->load->field('Field_text',"商户介绍","desc");
         $this->field_list['supperUid'] = $this->load->field('Field_userid',"店主","supperUid");
         $this->field_list['commonInviteCode'] = $this->load->field('Field_string',"通用邀请码","commonInviteCode");
@@ -69,7 +73,7 @@ class Org_model extends Record_model {
             return false;
         }
     }
-    
+
 
     public function gen_all_url(){
         if ($this->isVip() && $this->field_list['showid']->value!='') {
@@ -93,7 +97,7 @@ class Org_model extends Record_model {
     }
 
     public function buildInfoTitle(){
-        return '组织 :'.$this->field_list['name']->gen_show_html().'&nbsp;&nbsp; <small> ID:'.$this->field_list['id']->gen_show_html().'</small>';
+        return '商户 :'.$this->field_list['name']->gen_show_html().'&nbsp;&nbsp; <small> ID:'.$this->field_list['provinceId']->gen_show_html().'</small>';
     }
 
     public function buildShowCardAdmin(){
@@ -143,8 +147,35 @@ class Org_model extends Record_model {
         return array(
                     array('name'),
                     array('desc'),
-                    array('showid'),
+                    array('enterCode'),
                     array('provinceId','null'),
+                    array('addresses'),
+                    array('phone','qq'),
+                    array('weixin','wangwang'),
+
+                );
+    }
+    public function buildAdminChangeShowFields(){
+            return array(
+                    array('name'),
+                    array('desc'),
+                    array('showid'),
+                    array('provinceId','zipCode'),
+                    array('addresses'),
+                    array('phone','qq'),
+                    array('weixin','wangwang'),
+
+                );
+    }
+
+    public function buildAdminDetailShowFields(){
+        return array(
+                    array('name','isVip'),
+                    array('desc'),
+                    array('supperUid'),
+
+                    array('enterCode','status'),
+                    array('provinceId','zipCode'),
                     array('addresses'),
                     array('phone','qq'),
                     array('weixin','wangwang'),
@@ -163,6 +194,26 @@ class Org_model extends Record_model {
         } else {
             return $this->init_with_id($showId);
         }
+    }
+
+    public function get_list_ops(){
+        $allow_ops = parent::get_list_ops();
+        if ($this->field_list['isVip']->toBool()==false){
+            $allow_ops[] = "getvip";
+        } else {
+            $allow_ops[] = "disvip";
+        }
+        return $allow_ops;
+    }
+
+    public function gen_op_getvip(){
+        return '<a class="list_op tooltips" onclick=\'reqOperator("admin","doGetVip","'.$this->id.'")\' title="获得 VIP"><span class="glyphicon glyphicon-usd"></span></a>';
+
+    }
+
+    public function gen_op_disvip(){
+        return '<a class="list_op tooltips" onclick=\'reqOperator("admin","doDisVip","'.$this->id.'")\' title="解除 VIP"><span class="glyphicon glyphicon-hand-down"></span></a>';
+
     }
 
 }

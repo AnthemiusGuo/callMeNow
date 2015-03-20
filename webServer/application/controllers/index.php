@@ -58,6 +58,10 @@ class Index extends P_Controller {
     	var_dump($ret);
     }
 
+	function noAuth(){
+		$this->template->load('default_error', 'index/noAuth');
+	}
+
 	function license(){
 		$this->infoTitle = "用户协议";
 		$this->load->library('markdown');
@@ -183,6 +187,100 @@ http://www.npone.cn<br/>
 		$this->template->load('default_lightbox_info', 'index/userInfo');
 	}
 
+	function qqLogin(){
+		$this->load->library("apiqq");
+
+		$qq = $this->apiqq->getQQConfig();
+		$this->apiqq->qq_login($qq['appid'],$qq['scope'],$qq['callback']);
+	}
+
+
+
+	function doQQLogin(){
+		// http://www.callmenow.com/index.php/index/doQQLogin?code=FE6E14A1DBB51C34B13CEF0F90E04EBD&state=29d75610e537b5148e3aee6c192168fe
+		$this->load->library("session");
+		$this->load->library("apiqq");
+
+		if ($this->session->userdata('logged_in') == TRUE)
+        {
+			header("Location:".site_url('index/index'));
+			return;
+        }
+		$code = $this->input->get('code');
+		if ($this->session->userdata('qq_code') == $code)
+        {
+			//已经访问过 code 信息了
+			$userInfo = array('rst'=>2,
+							'openid'=>$this->session->userdata('qq_openid'),
+						);
+			$info = array('rst'=>2,
+			'access_token' => $this->session->userdata('qq_access_token'),
+			'expires_in' => $this->session->userdata('qq_expires_in'),
+			'refresh_token' => $this->session->userdata('qq_refresh_token')
+						);
+        } else {
+			$rst = $this->apiqq->qq_callback($code);
+			if ($rst['rst']!=1){
+				if ($rst['rst']==-1 && $rst['error']==100019){
+					//code超时了
+					$this->session->sess_destroy();
+					header("Location:".site_url('index/login'));
+					return;
+				}
+				//出错
+				var_dump($rst);
+				return;
+			}
+
+			$info = $rst['params'];
+			$userInfo = $this->apiqq->get_openid($info['access_token']);
+			// var_dump($info,$userInfo);
+			$data = array(
+                   	'qq_openid'  => $userInfo['openid'],
+					'qq_code'	=>	$code,
+					'qq_access_token' => $info['access_token'],
+					'qq_expires_in' => $info['expires_in'],
+					'qq_refresh_token' => $info['refresh_token'],
+                );
+
+            $this->session->set_userdata($data);
+		}
+
+		if ($userInfo['rst']<0){
+
+			//出错
+			var_dump($userInfo);
+			return;
+		}
+
+		$this->load->model('records/user_model',"userModel");
+        $login_rst = $this->userModel->verify_third_login('qq',$userInfo['openid']);
+		if ($login_rst > 0) {
+			//用户存在，直接登录
+			$this->login->process_login($this->userModel->field_list['email']->value,$this->userModel->uid,true,true);
+			header("Location:".site_url('index/index'));
+		} else {
+			//取 qq 信息
+			if ($this->session->userdata('qq_user')!==false){
+				$this->third_user_info = $this->session->userdata('qq_user');
+			} else {
+				$third_plat_user = $this->apiqq->qq_get_user_info($userInfo['openid'],$info['access_token']);
+				$this->third_user_info = $this->apiqq->filter_qq_user_info($third_plat_user);
+				$this->session->set_userdata("qq_user",$this->third_user_info);
+			}
+
+			if ($third_plat_user['ret']!=0){
+				return;
+			}
+			//走注册逻辑
+			$this->third_plat = 'qq';
+			$this->third_plat_name = 'QQ';
+			$this->third_id = $userInfo['openid'];
+			$this->pageClass = 'login';
+
+			$this->template->load('default_before_login', 'index/bindThird');
+		}
+	}
 
 	function login() {
 		$this->is_login = false;
@@ -227,27 +325,6 @@ http://www.npone.cn<br/>
 
 		$ret = $this->userModel->reg_user($input_data);
 		if ($ret>0){
-// 			$content = "{username}，您好，<br/>
-// <br/>
-// 感谢您注册npone.cn。<br/>
-// 您的注册邮箱是：{useremail}。<br/>
-// <br/>
-// NPONE专注于公益行业信息化解决方案的研究和建设。<br/>
-// 想了解我们的产品更新和新闻，请关注：<br/>
-// 新浪微博：@xxxx（http://www.weibo.com/xxxxxxxx）<br/>
-// 微博公众号：xxxxxxxx<br/>
-// <br/>
-// 敬上，<br/>
-// NPONE团队<br/>
-// <br/>
-// http://www.npone.cn<br/>
-// 客服邮箱：xxxx@npone.cn<br/>
-// ";
-// 			$content = str_replace(array('{username}',"{useremail}"),
-// 			array($uName,$email),$content);
-
-// 			$this->sendMail($email,$content,"感谢您注册npone.cn");
-// 			$this->sendMsg($uid,0,0,$content);
 			$uid = $this->userModel->uid;
 			$this->login->process_login($input_data['email'],$uid,true);
 			$data = array();
@@ -268,14 +345,14 @@ http://www.npone.cn<br/>
 	}
 
 	function doLogin(){
-		$email = $this->input->post('uEmail');
+		$uPhone = $this->input->post('uPhone');
 		$pwd = $this->input->post('uPassword');
 		$rememberMe = $this->input->post('uRememberMe');
 
 		$this->load->model('records/user_model',"userModel");
-        $login_rst = $this->userModel->verify_login($email,$pwd);
+        $login_rst = $this->userModel->verify_login($uPhone,$pwd);
 		if ($login_rst > 0) {
-			$this->login->process_login($email,$this->userModel->uid,$rememberMe,false);
+			$this->login->process_login($uPhone,$this->userModel->uid,$rememberMe,false);
 			$data = array();
 			$data['goto_url'] = site_url('index/index');
 			echo $this->exportData($data,$login_rst);
@@ -286,6 +363,81 @@ http://www.npone.cn<br/>
 			;
 
 			echo $this->exportData(array('err'=>$err_code),$login_rst);
+		}
+	}
+
+	function doBindOld(){
+		$uPhone = $this->input->post('uPhone');
+		$pwd = $this->input->post('uPassword');
+		$third_plat = $this->input->post('third_plat');
+		$third_id = $this->input->post('third_id');
+
+		if ($third_plat===false||$third_id===false){
+			echo $this->exportData(array('err'=>array('id'=>'loginPhone','msg'=>'未知错误')),-90);
+			return;
+		}
+		$this->load->model('records/user_model',"userModel");
+        $login_rst = $this->userModel->verify_login($uPhone,$pwd);
+		if ($login_rst > 0) {
+			//帐号密码验证通过了，然后要看是否绑定过
+			$bind_rst = $this->userModel->bind_third($third_plat,$third_id);
+			if ($bind_rst<0){
+				echo $this->exportData(array('err'=>array('id'=>'loginPhone','msg'=>'本用户已经绑定过帐号，请输入其他用户或者绑定新用户')),-91);
+				return;
+			} else {
+				$this->login->process_login($uPhone,$this->userModel->uid,true,false);
+				$data = array();
+				$data['goto_url'] = site_url('index/index');
+				echo $this->exportData($data,$login_rst);
+			}
+
+		} else {
+			$err_codes = array(-1=>array('id'=>'loginPhone','msg'=>'用户不存在'),
+								-2=>array('id'=>'loginPassword','msg'=>'密码不正确'));
+			$err_code = isset($err_codes[$login_rst])? $err_codes[$login_rst]:array('id'=>'loginPhone','msg'=>'未知错误');
+			;
+
+			echo $this->exportData(array('err'=>$err_code),$login_rst);
+		}
+	}
+
+	function doBindNew(){
+
+		$third_plat = $this->input->post('third_plat');
+		$third_id = $this->input->post('third_id');
+
+		if ($third_plat===false||$third_id===false){
+			echo $this->exportData(array('err'=>array('id'=>'regPhone','msg'=>'未知错误')),-90);
+			return;
+		}
+		$input_data = array();
+		$input_data['phone'] = $this->input->post('uPhone');
+		$input_data['pwd'] = $this->input->post('uPassword');
+		$input_data['name'] = $this->input->post('uName');
+		$input_data['third_plat'] = $third_plat;
+		$input_data['third_id'] = $third_id;
+		//这块需要做输入过滤，防XSS等，暂时省略
+
+		$this->load->model('records/user_model',"userModel");
+
+		$ret = $this->userModel->reg_user($input_data);
+		if ($ret>0){
+			$uid = $this->userModel->uid;
+			$this->login->process_login($input_data['email'],$uid,true);
+			$data = array();
+			$data['goto_url'] = site_url('index/index');
+			$data['newId'] = $uid;
+			echo $this->exportData($data,1);
+		} else {
+			$err_codes = array(-1=>array('id'=>'regEmail','msg'=>'用户已存在'),
+								-2=>array('id'=>'regPhone','msg'=>'用户已存在'),
+								-3=>array('id'=>'regPhone','msg'=>'手机号或邮箱必填一个'),
+								-999=>array('id'=>'regPhone','msg'=>'服务器故障，请稍后重试'),
+								);
+			$err_code = isset($err_codes[$ret])? $err_codes[$ret]:array('id'=>'regPhone','msg'=>'未知错误');
+			;
+
+			echo $this->exportData(array('err'=>$err_code),$ret);
 		}
 	}
 
@@ -308,7 +460,9 @@ http://www.npone.cn<br/>
 		}
 	}
 	function doLogout(){
+
 		$this->login->logout();
+		$this->load->library("session");
 		$this->session->sess_destroy();
 		header("Location:".site_url('index/login'));
 	}

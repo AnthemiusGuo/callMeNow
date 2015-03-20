@@ -9,6 +9,7 @@
     public $edit_link = '';
     public $info_link = '';
     public $id_is_id = true;//id字段是mongoid对象还是字符串
+    public $none_field_data = array();
 
     public function __construct($tableName='') {
 
@@ -140,12 +141,14 @@
                     $this->field_list[$key]->baseInit($value);
                 }
 
+            } else {
+                $this->none_field_data[$key] = $value;
             }
         }
     }
 
     public function gen_op_view(){
-        
+
     }
     public function gen_op_edit(){
         return '<a class="list_op tooltips" onclick="lightbox({size:\'m\',url:\''.site_url($this->edit_link).'/'.$this->id.'\'})" title="编辑"><span class="glyphicon glyphicon-edit"></span></a>';
@@ -157,43 +160,10 @@
     }
 
     public function get_list_ops(){
-         $CI =& get_instance();
         $allow_ops = array();
-        $class_name = get_class($this);
-        switch ($class_name) {
-            case 'Project_model':
-            case 'Task_model':
-            case 'Schedule_model':
-            case 'Budget_model':
-            case 'Crm_model':
-            case 'Donation_model':
-            case 'Project_model':
-            case 'Project_model':
-            case 'Project_model':
-                if ($CI->checkActionRule("Project","Edit")) {
-                    $allow_ops[] = 'edit';
-                    $allow_ops[] = 'delete';
-                }
-                break;
-            case 'Peaple_model':
-            case 'Department_model':
-            case 'Title_model':
-                if ($CI->checkActionRule("Hr","Edit")) {
-                    $allow_ops[] = 'edit';
-                    $allow_ops[] = 'delete';
-                }
-                break;
-            case 'Comment_model':
-                if ($CI->checkActionRule("Project","Edit")) {
-                    $allow_ops[] = 'delete';
-                }
-                break;
-            default:
-                # code...
-                $allow_ops[] = 'edit';
-                $allow_ops[] = 'delete';
-                break;
-        }
+
+        $allow_ops[] = 'edit';
+        $allow_ops[] = 'delete';
         return $allow_ops;
     }
 

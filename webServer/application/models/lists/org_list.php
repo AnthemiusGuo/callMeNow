@@ -13,7 +13,7 @@ class Org_list extends List_model {
         $this->purge_where();
         $this->add_where(WHERE_TYPE_IN,'typ',$typ);
         $this->load_data_with_where();
-        
+
     }
 
     public function load_data_with_apply($uid){
@@ -77,7 +77,7 @@ class Org_list extends List_model {
         $this->dataModel['attendTS'] = $this->load->field('Field_date',"加入时间","attendTS");
         $this->dataModel['departmentId'] = $this->load->field('Field_int',"部门","roleId");
         $this->dataModel['titleId'] = $this->load->field('Field_int',"职位","attendTS");
-        
+
     }
 
     public function load_data_with_include($email){
@@ -111,11 +111,11 @@ class Org_list extends List_model {
     }
 
     public function build_search_infos(){
-        return array('name','provinceId','id');
+        return array('name','provinceId','status','phone','isVip');
     }
     public function build_list_titles(){
         //姓名,类型,省份,状态,最后更新
-        return array('id','name','provinceId','typ','beginTS');
+        return array('name','provinceId','status','phone','isVip');
     }
 }
 ?>

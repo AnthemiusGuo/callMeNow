@@ -52,6 +52,19 @@ class Utility {
 		return $ts;
 	}
 
+	function curl_post($url, $data)
+	{
+	    $ch = curl_init();
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+	    curl_setopt($ch, CURLOPT_POST, TRUE);
+	    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+	    curl_setopt($ch, CURLOPT_URL, $url);
+	    $ret = curl_exec($ch);
+
+	    curl_close($ch);
+	    return $ret;
+	}
+
 	private function __calc_cn_money($input,$round){
         if ($input<10000){
             return $input;

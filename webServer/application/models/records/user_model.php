@@ -192,15 +192,15 @@ class User_model extends Record_model {
     }
 
     public function reg_user($input){
-        if ($input['email']!='' && $this->check_email_exist($input['email'])){
-            return -1;
-        }
+        // if ($input['email']!='' && $this->check_email_exist($input['email'])){
+        //     return -1;
+        // }
         if ($input['phone']!='' && $this->check_phone_exist($input['phone'])){
             return -2;
         }
-        if ($input['email']=='' && $input['phone']=='') {
-            return -3;
-        }
+        // if ($input['email']=='' && $input['phone']=='') {
+        //     return -3;
+        // }
 
         $zeit = time();
 
@@ -242,13 +242,17 @@ class User_model extends Record_model {
 
         $createPostFields = $this->buildChangeNeedFields();
         $data = array();
-        foreach ($this->createPostFields as $value) {
-            $data[$value] = $this->dataInfo->field_list[$value]->gen_value($input[$value]);
+        foreach ($createPostFields as $value) {
+            $data[$value] = $this->field_list[$value]->gen_value($input[$value]);
         }
+
 
         $checkRst = $this->check_data($data);
         if (!$checkRst){
             return -10;
+        }
+        if (isset($input['third_plat'])) {
+    		$data['third_typ_'.$input['third_plat']] = $input['third_id'];
         }
         $data['regTS'] = time();
         $insert_ret = $this->insert_db($data);
@@ -290,11 +294,45 @@ class User_model extends Record_model {
             return -1;
         }
     }
+
+    public function verify_third_login($third_typ,$third_id){
+        $this->db->where(array('third_typ_'.$third_typ=>$third_id));
+        $query = $this->db->get($this->tableName);
+
+        if ($query->num_rows() > 0)
+        {
+            $result = $query->row_array();
+            $this->init_with_data($result['_id'],$result);
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+    public function bind_third($third_typ,$third_id){
+        if (isset($this->none_field_data['third_typ_'.$third_typ])){
+            if ($this->none_field_data['third_typ_'.$third_typ]==$third_id){
+                return 2;
+            } else {
+                return -1;
+            }
+        } else {
+            //执行绑定
+            $this->update_db(array('third_typ_'.$third_typ=>$third_id),$this->uid);
+            return 1;
+        }
+
+    }
+
+
+
     public function forceChangePwd($email,$new_password){
         $data = array(
            'pwd' => strtolower(md5($new_password))
         );
-        $this->db->where('email', $email);
+        $this->db->where(array('email'=>$email));
         $this->db->update('uUser', $data);
     }
     public function changePwd($pwd,$pwdNew){
@@ -307,7 +345,7 @@ class User_model extends Record_model {
            'pwd' => strtolower(md5($pwdNew))
         );
 
-        $this->db->where('uid', $this->uid);
+        $this->db->where(array('uid'=>$this->uid));
         $this->db->update('uUser', $data);
         return 1;
     }

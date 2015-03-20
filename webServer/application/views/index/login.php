@@ -3,10 +3,10 @@
     <h3 class="form-title">登录</h3>
     <div class="form-group">
         <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
-        <label class="control-label visible-ie8 visible-ie9">登录邮箱/手机号</label>
+        <label class="control-label visible-ie8 visible-ie9">登录手机号</label>
         <div class="input-icon">
             <span class="glyphicon glyphicon-edit"></span>
-            <input class="form-control placeholder-no-fix" type="text" placeholder="登录邮箱/手机号" id="uEmail" name="uEmail">
+            <input class="form-control placeholder-no-fix" type="text" placeholder="登录手机号" id="uPhone" name="uPhone">
         </div>
     </div>
     <div class="form-group">
@@ -37,11 +37,10 @@
         <h4>或使用以下帐号登录</h4>
         <ul class="social-icons">
             <li>
-                <a href="#">
-                    <img src="<?=static_url('images/qq.png')?>" alt="" width="25px">
-                </a>
+                <a href="<?=site_url('index/qqLogin')?>"><img src="<?=static_url('images/qq.png')?>" alt="qq 登录"></a>
+
             </li>
-            
+
         </ul>
     </div>
     <hr/>
@@ -59,27 +58,21 @@
         </p>
     </div>
     <hr/>
-    <div>
-        <h4>帮助</h4>
-        <p>
-            帐号体系说明
-        </p>
-    </div>
 </form>
 <!-- END LOGIN FORM -->
 <script>
 var validator = $("#loginForm").validate();
 function req_login(){
-    var uEmail = $("#uEmail").val();
+    var uPhone = $("#uPhone").val();
     var uPassword = $("#uPassword").val();
     var uRememberMe = $("#uRememberMe").prop('checked');
     $("#loginForm .form-group").removeClass('has-error');
     if (validator.form()==false) {
         return;
     };
-    ajax_post({m:'index',a:'doLogin',data:{uEmail:uEmail,uPassword:uPassword,uRememberMe:uRememberMe},callback:function(json){
+    ajax_post({m:'index',a:'doLogin',data:{uPhone:uPhone,uPassword:uPassword,uRememberMe:uRememberMe},callback:function(json){
             if (json.rstno>0){
-                window.location.href=json.data.goto_url; 
+                window.location.href=json.data.goto_url;
             } else {
                 var showErr = {};
                 showErr[json.data.err.id] = json.data.err.msg ;

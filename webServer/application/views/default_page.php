@@ -35,7 +35,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="<?site_url('index/doLogout')?>">
+                                <a href="<?=site_url('index/doLogout')?>">
                                 <span class="glyphicon glyphicon-log-out"></span>退出
                                 </a>
                             </li>

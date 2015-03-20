@@ -12,68 +12,51 @@ Login page
   text-align: center;
 }
 
-.login .content {
-  background-color: #fff;
-  width: 360px;
-  margin: 0 auto;
-  margin-bottom: 0px;
-  padding: 30px;
-  padding-top: 20px;
-  padding-bottom: 15px;
-  -webkit-border-radius: 7px;
-  -moz-border-radius: 7px;
-  -ms-border-radius: 7px;
-  -o-border-radius: 7px;
-  border-radius: 7px;
+.login .login_contents {
+  background-color: #f3f3f3;
 }
 
-.login .content h3 {
+.login .login_contents h3 {
   color: #000;
 }
 
-.login .content h4 {
+.login .login_contents h4 {
   color: #555;
 }
 
-.login .content p {
+.login .login_contents p {
   color: #222;
 }
 
-.login .content .login-form,
-.login .content .forget-form {
-  padding: 0px;
-  margin: 0px;
-}
-
-.login .content .input-icon {
+.login .login_contents .input-icon {
   border-left: 2px solid #44B6AE !important;
 }
 
-.login .content .input-icon {
+.login .login_contents .input-icon {
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   -ms-border-radius: 4px;
   -o-border-radius: 4px;
   border-radius: 4px;
 }
-.login .content .input-icon .form-control {
+.login .login_contents .input-icon .form-control {
   border-left: 0;
 }
 
-.login .content .forget-form {
+.login .login_contents .forget-form {
   display: none;
 }
 
-.login .content .register-form {
+.login .login_contents .register-form {
   display: none;
 }
 
-.login .content .form-title {
+.login .login_contents .form-title {
   font-weight: 300;
   margin-bottom: 25px;
 }
 
-.login .content .form-actions {
+.login .login_contents .form-actions {
   background-color: #fff;
   clear: both;
   border: 0px;
@@ -83,62 +66,62 @@ Login page
   margin-right: -30px;
 }
 
-.login .content .form-actions .checkbox {
+.login .login_contents .form-actions .checkbox {
   margin-top: 8px;
   display: inline-block;
 }
 
-.login .content .form-actions .checkbox {
+.login .login_contents .form-actions .checkbox {
   margin-left: 0;
   padding-left: 0;
 }
 
-.login .content .forget-form .form-actions {
+.login .login_contents .forget-form .form-actions {
   border: 0;
   margin-bottom: 0;
   padding-bottom: 20px;
 }
 
-.login .content .register-form .form-actions {
+.login .login_contents .register-form .form-actions {
   border: 0;
   margin-bottom: 0;
   padding-bottom: 0px;
 }
 
-.login .content .form-actions .checkbox {
+.login .login_contents .form-actions .checkbox {
   margin-top: 8px;
   display: inline-block;
 }
 
-.login .content .form-actions .btn {
+.login .login_contents .form-actions .btn {
   margin-top: 1px;
 }
 
-.login .content .forget-password {
+.login .login_contents .forget-password {
   margin-top: 25px;
 }
 
-.login .content .create-account {
+.login .login_contents .create-account {
   border-top: 1px dotted #eee;
   padding-top: 10px;
   margin-top: 15px;
 }
 
-.login .content .create-account a {
+.login .login_contents .create-account a {
   display: inline-block;
   margin-top: 5px;
 }
 
 /* select2 dropdowns */
-.login .content .select2-container {
+.login .login_contents .select2-container {
   border-left: 2px solid #44B6AE !important;
 }
 
-.login .content .select2-container .select2-choice {
+.login .login_contents .select2-container .select2-choice {
   border-left: none !important;
 }
 
-.login .content .select2-container i {
+.login .login_contents .select2-container i {
   display: inline-block;
   position: relative;
   color: #ccc;
@@ -151,15 +134,15 @@ Login page
   text-align: center;
 }
 
-.login .content .has-error .select2-container i {
+.login .login_contents .has-error .select2-container i {
   color: #b94a48;
 }
 
-.login .content .select2-container a span {
+.login .login_contents .select2-container a span {
   font-size: 13px;
 }
 
-.login .content .select2-container a span img {
+.login .login_contents .select2-container a span img {
   margin-left: 4px;
 }
 
@@ -180,11 +163,11 @@ Login page
     margin-top: 10px;
   }
 
-  .login .content {
+  .login .login_contents {
     width: 280px;
   }
 
-  .login .content h3 {
+  .login .login_contents h3 {
     font-size: 22px;
   }
 

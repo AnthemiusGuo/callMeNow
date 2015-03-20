@@ -4,9 +4,8 @@
         <h4>您可以使用以下帐号登录，会自动注册帐号</h4>
         <ul class="social-icons">
             <li>
-                <a href="#">
-                    <img src="<?=static_url('images/qq.png')?>" alt="" width="25px">QQ
-                </a>
+                <a href="<?=site_url('index/qqLogin')?>"><img src="<?=static_url('images/qq.png')?>" alt="qq 登录"></a>
+
             </li>
 
         </ul>
@@ -18,15 +17,6 @@
             <span class="glyphicon glyphicon-phone"></span>
             <input class="form-control placeholder-no-fix" type="text" placeholder="登录手机号" id="uPhone" name="uPhone">
         </div>
-        <span class="help-block">手机号或邮箱必填一个</span>
-    </div>
-    <div class="form-group">
-        <label class="control-label visible-ie8 visible-ie9">登录邮箱</label>
-        <div class="input-icon">
-            <span class="glyphicon glyphicon-envelope"></span>
-            <input class="form-control placeholder-no-fix" type="email" placeholder="登录邮箱" id="uEmail" name="uEmail">
-        </div>
-        <span class="help-block">可以使用qq号@qq.com</span>
     </div>
 
     <div class="form-group">

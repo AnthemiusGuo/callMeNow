@@ -432,7 +432,7 @@ class P_Controller extends CI_Controller {
                     "orgs"=>array(
                         "method"=>"href",
                         "href"=>site_url('admin/orgs'),
-                        "name"=>"组织管理",
+                        "name"=>"商户管理",
                         "onclick"=>''
                     ),
                     "admins"=>array(
@@ -441,18 +441,18 @@ class P_Controller extends CI_Controller {
                         "name"=>"管理员",
                         "onclick"=>''
                     ),
-                    "approveReal"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('admin/approveReal'),
-                        "name"=>"实名认证",
-                        "onclick"=>''
-                    ),
-                    "role"=>array(
-                        "method"=>"href",
-                        "href"=>site_url('admin/role'),
-                        "name"=>"默认角色设置",
-                        "onclick"=>''
-                    ),
+                    // "approveReal"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('admin/approveReal'),
+                    //     "name"=>"实名认证",
+                    //     "onclick"=>''
+                    // ),
+                    // "role"=>array(
+                    //     "method"=>"href",
+                    //     "href"=>site_url('admin/role'),
+                    //     "name"=>"默认角色设置",
+                    //     "onclick"=>''
+                    // ),
                 ),
                 "default_menu"=>"index",
                 "name"=>'网站管理',

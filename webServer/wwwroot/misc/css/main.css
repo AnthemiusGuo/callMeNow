@@ -1124,3 +1124,10 @@ td.td_data_width {
 .relate_box_list .list-group{
   margin-bottom:0;
 }
+.footer{
+	background:#333;
+	color:#FFF;
+	font-size:1em;
+	text-align:center;
+	font-weight:normal;
+}

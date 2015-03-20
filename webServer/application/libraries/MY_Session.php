@@ -34,8 +34,8 @@ class MY_Session extends CI_Session {
 		$this->sess_use_mongo = $this->CI->config->item('sess_use_mongo');
 		$this->sess_collection_name = $this->CI->config->item('sess_collection_name');
 		$this->CI->load->library("cimongo/cimongo");
+		$this->isDebug = false;
 		parent::__construct();
-			
 	}
 
 	/**
@@ -63,64 +63,34 @@ class MY_Session extends CI_Session {
 		}
 		else
 		{
-			// encryption was not used, so we need to check the md5 hash
-			$hash	 = substr($session, strlen($session)-32); // get last 32 chars
-			$session = substr($session, 0, strlen($session)-32);
-
-			// Does the md5 hash match?  This is to prevent manipulation of session data in userspace
-			if ($hash !==  md5($session.$this->encryption_key))
-			{
-				log_message('error', 'The session cookie data did not match what was expected. This could be a possible hacking attempt.');
-				$this->sess_destroy();
-				return FALSE;
-			}
+			// // encryption was not used, so we need to check the md5 hash
+			// $hash	 = substr($session, strlen($session)-32); // get last 32 chars
+			// $session = substr($session, 0, strlen($session)-32);
+			//
+			// // Does the md5 hash match?  This is to prevent manipulation of session data in userspace
+			// if ($hash !==  md5($session.$this->encryption_key))
+			// {
+			// 	log_message('error', 'The session cookie data did not match what was expected. This could be a possible hacking attempt.');
+			// 	$this->sess_destroy();
+			// 	return FALSE;
+			// }
 		}
 
 		// Unserialize the session array
 		$session = $this->_unserialize($session);
 
 		// Is the session data we unserialized an array with the correct format?
-		if ( ! is_array($session) OR ! isset($session['session_id']) OR ! isset($session['ip_address']) OR ! isset($session['user_agent']) OR ! isset($session['last_activity']))
+		if ( ! is_array($session) OR ! isset($session['session_id']))
 		{
 			$this->sess_destroy();
 			return FALSE;
 		}
 
-		// Is the session current?
-		if (($session['last_activity'] + $this->sess_expiration) < $this->now)
-		{
-			$this->sess_destroy();
-			return FALSE;
-		}
-
-		// Does the IP Match?
-		if ($this->sess_match_ip == TRUE AND $session['ip_address'] != $this->CI->input->ip_address())
-		{
-			$this->sess_destroy();
-			return FALSE;
-		}
-
-		// Does the User Agent Match?
-		if ($this->sess_match_useragent == TRUE AND trim($session['user_agent']) != trim(substr($this->CI->input->user_agent(), 0, 120)))
-		{
-			$this->sess_destroy();
-			return FALSE;
-		}
 
 		// Is there a corresponding session in the DB?
 		if ($this->sess_use_mongo === TRUE)
 		{
 			$this->CI->cimongo->where(array('session_id'=>$session['session_id']));
-
-			if ($this->sess_match_ip == TRUE)
-			{
-				$this->CI->cimongo->where(array('ip_address'=>$session['ip_address']));
-			}
-
-			if ($this->sess_match_useragent == TRUE)
-			{
-				$this->CI->cimongo->where(array('user_agent'=>$session['user_agent']));
-			}
 
 			$query = $this->CI->cimongo->get($this->sess_collection_name);
 
@@ -133,9 +103,31 @@ class MY_Session extends CI_Session {
 
 			// Is there custom data?  If so, add it to the main session array
 			$row = $query->row();
-			if (isset($row->user_data) AND $row->user_data != '')
+
+			// Is the session current?
+			if (($row['last_activity'] + $this->sess_expiration) < $this->now)
 			{
-				$custom_data = $this->_unserialize($row->user_data);
+				$this->sess_destroy();
+				return FALSE;
+			}
+
+			// Does the IP Match?
+			if ($this->sess_match_ip == TRUE AND $row['ip_address'] != $this->CI->input->ip_address())
+			{
+				$this->sess_destroy();
+				return FALSE;
+			}
+
+			// Does the User Agent Match?
+			if ($this->sess_match_useragent == TRUE AND trim($row['user_agent']) != trim(substr($this->CI->input->user_agent(), 0, 120)))
+			{
+				$this->sess_destroy();
+				return FALSE;
+			}
+
+			if (isset($row['user_data']) AND $row['user_data'] != '')
+			{
+				$custom_data = $this->_unserialize($row['user_data']);
 
 				if (is_array($custom_data))
 				{
@@ -149,7 +141,11 @@ class MY_Session extends CI_Session {
 
 		// Session is valid!
 		$this->userdata = $session;
+		$this->userdata['last_activity'] = $row['last_activity'];
 		unset($session);
+		if ($this->isDebug){
+			var_dump('sess read',$this->userdata);
+		}
 
 		return TRUE;
 	}
@@ -177,11 +173,11 @@ class MY_Session extends CI_Session {
 		// Before continuing, we need to determine if there is any custom data to deal with.
 		// Let's determine this by removing the default indexes to see if there's anything left in the array
 		// and set the session data while we're at it
-		foreach (array('session_id','ip_address','user_agent','last_activity') as $val)
-		{
-			unset($custom_userdata[$val]);
-			$cookie_userdata[$val] = $this->userdata[$val];
-		}
+		// foreach (array('session_id','ip_address','user_agent','last_activity') as $val)
+		// {
+		// 	unset($custom_userdata[$val]);
+		// 	$cookie_userdata[$val] = $this->userdata[$val];
+		// }
 
 		// Did we find any custom data?  If not, we turn the empty array into a string
 		// since there's no reason to serialize and store an empty array in the DB
@@ -191,8 +187,11 @@ class MY_Session extends CI_Session {
 		}
 		else
 		{
+			$cookie_userdata['session_id'] = $custom_userdata['session_id'];
+
 			// Serialize the custom data array so we can store it
 			$custom_userdata = $this->_serialize($custom_userdata);
+
 		}
 
 		// Run the update query
@@ -203,6 +202,10 @@ class MY_Session extends CI_Session {
 		// _set_cookie() function. Normally that function will store $this->userdata, but
 		// in this case that array contains custom data, which we do not want in the cookie.
 		$this->_set_cookie($cookie_userdata);
+		if ($this->isDebug){
+			var_dump('sess write',$cookie_userdata,$custom_userdata);
+		}
+
 	}
 
 	/**
@@ -238,7 +241,11 @@ class MY_Session extends CI_Session {
 		}
 
 		// Write the cookie
-		$this->_set_cookie();
+		if ($this->isDebug){
+			var_dump('sess_create',$this->userdata['session_id']);
+		}
+
+		$this->_set_cookie(array('session_id'=>$this->userdata['session_id']));
 	}
 
 
@@ -293,7 +300,11 @@ class MY_Session extends CI_Session {
 		}
 
 		// Write the cookie
-		$this->_set_cookie($cookie_data);
+		if ($this->isDebug){
+			var_dump('update seesion',$this->userdata['session_id']);
+		}
+
+		$this->_set_cookie(array('session_id'=>$this->userdata['session_id']));
 	}
 
 	/**
@@ -304,6 +315,9 @@ class MY_Session extends CI_Session {
 	 */
 	function sess_destroy()
 	{
+		if ($this->isDebug){
+		var_dump('sess_destroy');
+		}
 		// Kill the session DB row
 		if ($this->sess_use_mongo === TRUE AND isset($this->userdata['session_id']))
 		{

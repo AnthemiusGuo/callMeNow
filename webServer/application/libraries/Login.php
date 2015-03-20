@@ -9,16 +9,16 @@ class Login {
 		$this->CI =& get_instance();
 		//$this->_user = $this->CI->session->userdata('user');
 	}
-	
+
 	public function is_login() {
 		$logininfo = get_cookie('uinfo');
 
 		if ($logininfo==false){
 			return false;
-		} 
+		}
 
 		$loginUser = $this->decode_cookie_data($logininfo);
-		
+
 		if (substr(md5($loginUser['uuid'].$loginUser['login_ts'].'Sa34KJ9'), 10,8)!=$loginUser['auth']){
 			return false;
 		}
@@ -29,7 +29,7 @@ class Login {
 
 		//取出数据库的数据
 		$sessionUser = $this->get_onlince_info();
-		
+
 		if ($sessionUser==false){
 			if ($rememberme) {
 				//自动登录
@@ -38,16 +38,16 @@ class Login {
 				return $this->process_login($loginUser['loginname'],$loginUser['uuid'],true,true);
 
 			} else {
-				return false;	
+				return false;
 			}
-			
-		} 
-		
+
+		}
+
 
 		if($loginUser['uuid'] == $sessionUser['uuid']) {
 			//判断用户是否登录超时
 			$current_ts = time();
-			if(empty($sessionUser['login_ts']) 
+			if(empty($sessionUser['login_ts'])
 			|| $current_ts - $sessionUser['login_ts'] > $this->CI->config->item('login_expire')) {
 				return false;
 			}
@@ -55,11 +55,11 @@ class Login {
 				//60秒以上，刷新session
 				$this->up_onlince_info(new MongoId($this->cookie_onlineId),array('login_ts'=>$current_ts));
 			}
-			
-			
+
+
 			$this->uid = $sessionUser['uuid'];
 			return true;
-		} 
+		}
 
 		return false;
 	}
@@ -109,7 +109,7 @@ class Login {
 
 	        if ($query->num_rows() > 0)
 	        {
-	            $result = $query->row_array(); 
+	            $result = $query->row_array();
 	            return $result;
 			} else {
 				return false;
@@ -132,7 +132,7 @@ class Login {
 
 	public function process_login($loginname, $uid, $save_cookie = true,$auto_login = false) {
 		$zeit =  time();
-		
+
 		$user = array(
 			'loginname' => $loginname,
 			'uid'      => $uid,
@@ -150,7 +150,7 @@ class Login {
 
 		if($save_cookie){
 			$cookie_timeout = $zeit+86400*30;
-			
+
 		} else {
 			$cookie_timeout = '0';
 		}
@@ -169,11 +169,11 @@ class Login {
 			);
 			set_cookie($cookie);
 		}
-		
+
 		return true;
 	}
-	
-	
+
+
 	public function logout() {
 		delete_cookie('uinfo');
 	}

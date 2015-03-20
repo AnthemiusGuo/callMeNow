@@ -10,8 +10,8 @@ $config['db'] = "callmenow";
 $config['user'] = "";
 $config['pass'] = "";
 
-/*  
- * Defaults to FALSE. If FALSE, the program continues executing without waiting for a database response. 
+/*
+ * Defaults to FALSE. If FALSE, the program continues executing without waiting for a database response.
  * If TRUE, the program will wait for the database response and throw a MongoCursorException if the update did not succeed.
 */
 $config['query_safety'] = TRUE;
@@ -22,5 +22,4 @@ $config['db_flag'] = TRUE;
 //consider these config only if you want to store the session into mongoDB
 //They will be used in MY_Session.php
 $config['sess_use_mongo'] = TRUE;
-$config['sess_collection_name']	= 'ci_sessions';
- 
+$config["sess_collection_name"] = 'onlineSession'; 
