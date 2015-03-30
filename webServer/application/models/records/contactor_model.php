@@ -10,10 +10,10 @@ class Contactor_model extends Record_model {
         $this->info_link = 'crm/subinfo/contactor/';
 
         $this->field_list['_id'] = $this->load->field('Field_mongoid',"id","_id");
-        $this->field_list['orgId'] = $this->load->field('Field_mongoid',"组织","orgId");
+        $this->field_list['orgId'] = $this->load->field('Field_mongoid',"商户","orgId");
         $this->field_list['name'] = $this->load->field('Field_string',"姓名","name",true);
         $this->field_list['name']->is_title = true;
-        $this->field_list['crmId'] = $this->load->field('Field_string',"crmId","crmId");
+        $this->field_list['crmId'] = $this->load->field('Field_relate_crm',"客户","crmId");
         $this->field_list['dianhua'] = $this->load->field('Field_string',"电话","dianhua");
         $this->field_list['qq'] = $this->load->field('Field_string',"QQ","qq");
         $this->field_list['weixin'] = $this->load->field('Field_string',"微信","weixin");
@@ -32,6 +32,15 @@ class Contactor_model extends Record_model {
     }
     public function buildInfoTitle(){
         return $this->field_list['name']->gen_show_html().' <small> '.$this->field_list['dianhua']->gen_show_html().' </small>';
+    }
+
+    public function buildQuickChangeShowFields(){
+            return array(
+                    array('name','crmId'),
+                    array('dianhua','qq'),
+                    array('weixin','qitafangshi'),
+
+                );
     }
 
     public function buildChangeShowFields(){

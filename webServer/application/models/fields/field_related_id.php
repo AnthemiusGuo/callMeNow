@@ -155,5 +155,10 @@ class Field_related_id extends Field_relate_simple_id {
 
         return $editor;
     }
+
+    public function build_validator(){
+        $validater .= Fields::build_validator();
+        return $validater;
+    }
 }
 ?>

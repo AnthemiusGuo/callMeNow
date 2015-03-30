@@ -80,6 +80,29 @@ class User_model extends Record_model {
                 );
     }
 
+    public function gen_auth_code($client_id=''){
+        $auth_code = uniqid($this->uid);
+        $this->update_db(array('client_auth_code'=>$auth_code,'client_id'=>$client_id),$this->uid);
+        return $auth_code;
+    }
+
+    public function check_auth_code($auth_code){
+        $this->cimongo->where(array('client_auth_code'=>$auth_code));
+
+        $query = $this->cimongo->get($this->tableName);
+        if ($query->num_rows() > 0)
+        {
+            $result = $query->row_array();
+            $this->init_with_data($result['_id'],$result);
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
+
     public function init($id){
 
         parent::init($id);

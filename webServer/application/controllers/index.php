@@ -357,9 +357,9 @@ http://www.npone.cn<br/>
 			$data['goto_url'] = site_url('index/index');
 			echo $this->exportData($data,$login_rst);
 		} else {
-			$err_codes = array(-1=>array('id'=>'uEmail','msg'=>'用户不存在'),
+			$err_codes = array(-1=>array('id'=>'uPhone','msg'=>'用户不存在'),
 								-2=>array('id'=>'uPassword','msg'=>'密码不正确'));
-			$err_code = isset($err_codes[$login_rst])? $err_codes[$login_rst]:array('id'=>'uEmail','msg'=>'未知错误');
+			$err_code = isset($err_codes[$login_rst])? $err_codes[$login_rst]:array('id'=>'uPhone','msg'=>'未知错误');
 			;
 
 			echo $this->exportData(array('err'=>$err_code),$login_rst);

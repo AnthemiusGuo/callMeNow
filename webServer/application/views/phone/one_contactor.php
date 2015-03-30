@@ -4,7 +4,7 @@ include_once(APPPATH."views/phone/mini_search.php");
 <div class="row">
     <div class="col-md-12">
         <h3><?php echo $this->phone ?> : <?=$this->contactorInfo->field_list['name']->gen_show_value()?>
-            <small><?=$this->crmInfo->field_list['name']->gen_show_value()?></small>
+            <small><?=$this->contactorInfo->field_list['crmId']->gen_show_value()?></small>
         </h3>
     </div>
 </div>
@@ -107,7 +107,7 @@ include_once(APPPATH."views/phone/mini_search.php");
     <div class="col-lg-12">
         <ul id="nav-phone" class="nav nav-tabs">
             <li id="nav-phone-info" class="active"><a href="#" onclick="info_load('phone','info')">基本信息</a></li>
-            <li id="nav-phone-input" ><a href="#" onclick="info_load('phone','input')">来电快捷录入</a></li>
+            <!-- <li id="nav-phone-input" ><a href="#" onclick="info_load('phone','input')">来电快捷录入</a></li> -->
         </ul>
     </div>
 </div>
@@ -118,8 +118,9 @@ include_once(APPPATH."views/phone/mini_search.php");
         ?>
     </div>
     <div class="row info-phone hidden" id="info-phone-input">
+
         <?php
-        include_once(APPPATH."views/phone/create.php");
+        // include_once(APPPATH."views/phone/create.php");
         ?>
     </div>
 </div>

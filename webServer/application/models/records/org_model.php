@@ -49,9 +49,14 @@ class Org_model extends Record_model {
     public function isVip(){
         if ($this->field_list['isVip']->toBool()) {
             $zeit = time();
+            if ($this->field_list['vipOver']->value<86400){
+                //极小值就是永远
+                return true;
+            }
             if ($zeit<=$this->field_list['vipOver']->value) {
                 return true;
             } else {
+
                 return false;
             }
         } else {

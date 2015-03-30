@@ -4,7 +4,7 @@ $inputName = $editorData->build_input_name($editorData->editor_typ);
 $validates = $editorData->build_validator();
 ?>
 <div class="relate_box_holder">
-    <input id="<?=$inputName?>" name="<?=$inputName?>" class="form-control" placeholder="" type="text" value="<?=$editorData->default?>" >
+    <input id="<?=$inputName?>" name="<?=$inputName?>" <?=$validates?> class="form-control" placeholder="" type="text" value="<?=$editorData->default?>" >
     <div id="<?=$inputName?>_list_holder" class="relate_box_list hidden">
         <ul id="<?=$inputName?>_list" class="list-group relate_box_ul">
 

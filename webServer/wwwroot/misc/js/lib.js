@@ -181,14 +181,14 @@ if (!String.prototype.trim) {
             };
         options = $.extend(defaults, options);
             return this.each(function() {
-                var selector = $(this); 
+                var selector = $(this);
                 var pageCounter = 1;
                 if (!selector.parent().hasClass('simplePagerContainer')){
                     selector.wrap("<div class='simplePagerContainer'></div>");
                 }
                 var real_counter=0;
                 selector.children().each(function(i){
-                        
+
                     $(this).removeAttr('PagerPage');
                     if ($(this).attr('skipPager')==1){
                         $(this).attr('PagerPage',0);
@@ -201,12 +201,12 @@ if (!String.prototype.trim) {
                             pageCounter ++;
                         }
                         real_counter++;
-                    }   
+                    }
                 });
                 options.pageCounter = pageCounter;
                 // show/hide the appropriate regions
                 selector.children().addClass('hide').removeClass('nposhowPage');
-                
+
                 if (options.need_odd==1){
                     selector.children("[PagerPage="+options.currentPage+"]").removeClass('hide').addClass('nposhowPage').each(function(index){
                         var odd = index % 2 + 1;
@@ -225,7 +225,7 @@ if (!String.prototype.trim) {
                 }
                 if (pageCounter>10){
                     options.need_compress = 1;
-                    
+
                 }
                 if (options.typ=='page'){
                     //Build pager navigation
@@ -236,7 +236,7 @@ if (!String.prototype.trim) {
                     }
                     for (i=1;i<=pageCounter;i++){
                         if (i==options.currentPage) {
-                            pageNav += "<li class='active simplePageNav"+i+"' rel='"+i+"'><a>"+i+"</a></li>";    
+                            pageNav += "<li class='active simplePageNav"+i+"' rel='"+i+"'><a>"+i+"</a></li>";
                         }
                         else {
                             if (options.currentPage<5){
@@ -249,25 +249,25 @@ if (!String.prototype.trim) {
                             } else {
                                 pageNav += "<li class='simplePageNav"+i+"' rel='"+i+"'><a>"+i+"</a></li>";
                             }
-                            
+
                         }
                     }
                     if (options.need_compress==1 && options.currentPage<10){
                         pageNav += "<li class='disabled'><a class='page_post_compress'>...</a></li>";
                     }
                     pageNav += "</ul>";
-                    
+
                 } else {
                     //Build pager navigation
                     var pageNav = '';
                     pageNav = "<ul class='pagination center-block' id='"+options.id+"' cur_page='"+options.currentPage+"' >";
-                    
+
                     pageNav += "<li class='' rel_typ='pre'><a>&laquo;</a></li>";
                     pageNav += "<li class='' rel_typ='next'><a>&raquo;</a></li>";
                     pageNav += "</ul>";
 
                 }
-                
+
                 if(!options.holder) {
                     $("#"+options.id).remove();
                     switch(options.pagerLocation)
@@ -286,8 +286,8 @@ if (!String.prototype.trim) {
                 }
                 else {
                     var click_target = $(options.holder);
-                    click_target.html(pageNav);   
-                }   
+                    click_target.html(pageNav);
+                }
                 //pager navigation behaviour
                 click_target.find(".pagination li").click(function() {
                     if (options.typ=='page'){
@@ -334,9 +334,9 @@ if (!String.prototype.trim) {
                                     pageDom.find("a[rel='"+i+"']").addClass('hide');
                                     //alert(i);
                                 }
-                            }                            
-                        } 
-                        
+                            }
+                        }
+
                         return false;
                     } else {
                         if ($(this).attr("rel_typ")=='pre'){
@@ -359,7 +359,7 @@ if (!String.prototype.trim) {
                         } else {
                             selector.find("[PagerPage="+options.currentPage+']').removeClass('hide').addClass('nposhowPage');
                         }
-                        
+
                         return false;
                     }
                 });
@@ -385,7 +385,7 @@ function ajax_get(opts){
     $.each(opts.data,function(k,v){
         url = url + '&'+k+'='+v;
     });
-    $.ajax( 
+    $.ajax(
         {type: "GET",
         url: url,
         dataType:"json"}
@@ -411,7 +411,7 @@ function ajax_post(opts){
     opts = $.extend({},dft_opt,opts);
     $.blockUI();
     var url = req_url_template.str_supplant({ctrller:opts.m,action:opts.a})+'/'+opts.plus;
-    $.ajax( 
+    $.ajax(
         {type: "POST",
         url: url,
         dataType:"json",
@@ -456,7 +456,7 @@ function lightbox(opts) {
         size:'m',
         url:''
     };
-    
+
     var width = 720;
     if (opts.size=="l"){
         width = 960;
@@ -480,7 +480,7 @@ function lightbox(opts) {
         });
     }
 
-    
+
 }
 
 function lightbox_close(){
@@ -501,7 +501,7 @@ function create_crm_step_2(typ,id){
         lightbox({size:'l',url:base_url+'?crm/edit_crm_typ/'+field_crm_typ+'/'+id});
 
     }
-    
+
 }
 
 function toggle_search_box(){
@@ -601,7 +601,7 @@ function relatedSearch(){
     } else {
         var searchInfo = {t:'quick',i:quicksearch};
     }
-    
+
 
     var url = moduleUrl + '/'+Base64.encode(JSON.stringify(searchInfo));
 
@@ -642,7 +642,7 @@ function build_relate_box(tag,smTyp,cmsTyp,moduleUrl){
         build_relate_id();
 
     }).removeClass('hidden');
-    
+
 }
 function hide_relate_box(){
     $("#editor-related-id")
@@ -668,7 +668,7 @@ function reqEdit(url_m,url_a,fields,validator){
             data[value.name] = $("#modify_"+value.name).val();
         }
     });
-    var id = $("#modify_id").val(); 
+    var id = $("#modify_id").val();
     if (typeof now_page != "undefined") {
         data['now_page'] = now_page;
     }
@@ -676,7 +676,7 @@ function reqEdit(url_m,url_a,fields,validator){
             if (json.rstno>0){
                 lightbox_close();
                 if (json.data.goto_url!=undefined) {
-                    window.location.href=json.data.goto_url; 
+                    window.location.href=json.data.goto_url;
                 }
                 lightbox_close();
             } else {
@@ -687,7 +687,7 @@ function reqEdit(url_m,url_a,fields,validator){
                 } else {
                     alert(json.data.err.msg);
                 }
-                
+
             }
         }
     });
@@ -708,14 +708,14 @@ function reqCreate(url_m,url_a,fields,validator){
             data[value.name] = $("#creator_"+value.name).val();
             console.log("value:"+$("#creator_"+value.name).val());
         }
-        
+
 
     });
 
     if (typeof now_page != "undefined") {
         data['now_page'] = now_page;
     }
-    
+
     ajax_post({m:url_m,a:url_a,data:data,callback:function(json){
             if (json.rstno>0){
                 if (json.data.reload_comment){
@@ -724,9 +724,14 @@ function reqCreate(url_m,url_a,fields,validator){
                 }
                 lightbox_close();
                 if (json.data.goto_url!=undefined) {
-                    window.location.href=json.data.goto_url; 
+                    if (json.data.goto_url == 'refer'){
+                        window.location.href=window.location.href;
+                    } else {
+                        window.location.href=json.data.goto_url;
+                    }
+
                 } else if (json.data.lightbox!=undefined) {
-                    lightbox({size:json.data.lightbox.size,url:json.data.lightbox.url}); 
+                    lightbox({size:json.data.lightbox.size,url:json.data.lightbox.url});
                 }
                 if (json.data.succ!=undefined && json.data.succ.msg!=undefined){
                     alert(json.data.succ.msg);
@@ -751,7 +756,7 @@ function reqDelete(url_m,url_a,id){
         $(".nposhowPage input[name='check_target[]']").each(function(){
             var val = $(this).val();
             if($(this).prop("checked")){
-               ids += val+'-'; 
+               ids += val+'-';
             }
         });
         if(ids != '') {
@@ -782,14 +787,14 @@ function reqDelete(url_m,url_a,id){
                 lightbox_close();
                 alert("删除成功");
                 if (json.data.goto_url!=undefined) {
-                    window.location.href=json.data.goto_url; 
+                    window.location.href=json.data.goto_url;
                 } else if (json.data.lightbox!=undefined) {
-                    lightbox({size:json.data.lightbox.size,url:json.data.lightbox.url}); 
+                    lightbox({size:json.data.lightbox.size,url:json.data.lightbox.url});
                 } else {
-                    window.location.href=window.location.href; 
+                    window.location.href=window.location.href;
                 }
             } else {
-                
+
                 alert(json.data.err.msg);
             }
         }
@@ -805,13 +810,13 @@ function reqOperator(url_m,url_a,id){
                 lightbox_close();
                 alert("操作成功! ");
                 if (json.data.goto_url!=undefined) {
-                    window.location.href=json.data.goto_url; 
+                    window.location.href=json.data.goto_url;
                 } else if (json.data.lightbox!=undefined) {
-                    lightbox({size:json.data.lightbox.size,url:json.data.lightbox.url}); 
-                } 
-                
+                    lightbox({size:json.data.lightbox.size,url:json.data.lightbox.url});
+                }
+
             } else {
-                
+
                 alert(json.data.err.msg);
             }
         }
@@ -981,7 +986,7 @@ function syncDescInvestigation(input_id_prefix){
         } else {
             $("#syncDataRst").addClass("has-error").html(json.data.err.msg);
         }
-           
+
         }
     });
 }
@@ -1002,7 +1007,7 @@ function syncData(input_id_prefix){
         } else {
             $("#syncDataRst").addClass("has-error").html(json.data.err.msg);
         }
-           
+
         }
     });
 }
@@ -1015,12 +1020,12 @@ function quicksearchFromTo(c,a){
     } else {
         var searchInfo = {t:'quick',ifrom:quicksearch_from,ito:quicksearch_to};
     }
-    
+
 
     var url = req_url_template.str_supplant({ctrller:c,action:a});
     url = url + '/'+Base64.encode(JSON.stringify(searchInfo));
 
-    window.location.href=url; 
+    window.location.href=url;
 }
 
 function quicksearch(c,a){
@@ -1030,16 +1035,16 @@ function quicksearch(c,a){
     } else {
         var searchInfo = {t:'quick',i:quicksearch};
     }
-    
+
 
     var url = req_url_template.str_supplant({ctrller:c,action:a});
     url = url + '/'+Base64.encode(JSON.stringify(searchInfo));
 
-    window.location.href=url; 
+    window.location.href=url;
 }
 
 function fullsearch(c,a,fields,validator){
-    
+
     if (validator!=undefined && validator.form()==false) {
         return;
     };
@@ -1055,23 +1060,23 @@ function fullsearch(c,a,fields,validator){
             flag = false;
         }
     });
-    
+
     if (flag){
         var searchInfo = {t:'no'};
     } else {
         var searchInfo = {t:'full',i:data};
     }
-    
+
 
     var url = req_url_template.str_supplant({ctrller:c,action:a});
     url = url + '/'+encodeURIComponent(Base64.encode(JSON.stringify(searchInfo)));
 
-    window.location.href=url; 
+    window.location.href=url;
 }
 
 $(function() {
     $("#selectAll").click(function () {
-        if ($(this).prop("checked")) { // 全选 
+        if ($(this).prop("checked")) { // 全选
             $(".nposhowPage input[name='check_target[]']").each(function () {
                 $(this).prop("checked", true);
             });
@@ -1091,7 +1096,7 @@ $(function() {
     $(".selectAll").click(function () {
         var tag = $(this).attr("data-select");
 
-        if ($(this).prop("checked")) { // 全选 
+        if ($(this).prop("checked")) { // 全选
             $("#"+tag+" .nposhowPage input[name='check_target[]']").each(function () {
                 $(this).prop("checked", true);
             });
@@ -1114,7 +1119,7 @@ $(function() {
 function finance_anylytic(typ){
     var url = req_url_template.str_supplant({ctrller:"finance",action:"analytics"});
     url = url + '/'+typ+'/'+$("#filter_beginTS").val()+"/"+$("#filter_endTS").val();
-    window.location.href=url; 
+    window.location.href=url;
 }
 
 function turnoverInputTypShow(typ){
@@ -1161,7 +1166,7 @@ function ajaxFileUpload(url,hidden_input)
                 } else {
                     var msg="上传文件 "+data.data.client_name+" 成功！"+
                         "下载地址 <a href='"+data.data.url+"' target='_blank' >"+data.data.url+"</a>";
-                    
+
                     if (data.data.is_image==true) {
                         msg = msg+'<div><img src="'+data.data.url+'" class="img-thumbnail" width="100%"></div>';
                     }

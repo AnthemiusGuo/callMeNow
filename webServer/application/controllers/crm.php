@@ -242,6 +242,99 @@ class Crm extends P_Controller {
         $this->template->load('default_lightbox_edit', 'common/create_related');
     }
 
+	function doQuickCreateContactor(){
+		$this->load->model('records/Contactor_model',"dataModel");
+		if ($this->input->post('dianhua')=="" && $this->input->post('qq')=="" && $this->input->post('weixin')=="" && $this->input->post('qitafangshi')==""){
+			$jsonRst = -1;
+			$jsonData = array();
+			$jsonData['err']['id'] = 'creator_dianhua';
+			$jsonData['err']['msg'] ='至少填写一种联系方式';
+			echo $this->exportData($jsonData,$jsonRst);
+			return;
+		}
+		//逻辑区别，这里也要 crmId，但要在 gen_value之后
+
+
+		//处理数据
+		$this->createPostFields = $this->dataModel->buildChangeNeedFields(array('crmId'));
+
+        $dataInfo = array();
+        foreach ($this->createPostFields as $value) {
+            if (isset($this->dataModel->field_list[$value])){
+                $dataInfo[$value] = $this->dataModel->field_list[$value]->gen_value($this->input->post($value));
+            }
+
+        }
+		$crmId = $dataInfo['crmId'];
+		$this->load->model('records/Crm_model',"crmModel");
+		$this->crmModel->init_with_id($crmId);
+		if ($this->crmModel->field_list['mainContactorId']->value===0){
+			//尚未创建mainContactorId
+			$this->contactor_hack = true;
+		}
+
+        $checkRst = $this->dataModel->check_data($dataInfo);
+        if (!$checkRst){
+            $jsonRst = -1;
+            $jsonData = array();
+            $jsonData['err']['id'] = 'creator_'.$this->dataModel->get_error_field();
+            $jsonData['err']['msg'] ='请填写所有星号字段！';
+            echo $this->exportData($jsonData,$jsonRst);
+            return;
+        }
+        $dataInfo['orgId'] = $this->myOrgId;
+
+        $zeit = time();
+        if (isset($this->dataModel->field_list['createUid'])){
+            $dataInfo['createUid'] = $this->userInfo->uid;
+            $dataInfo['createTS'] = $zeit;
+        }
+        if (isset($this->dataModel->field_list['lastModifyUid'])){
+            $dataInfo['lastModifyUid'] = $this->userInfo->uid;
+            $dataInfo['lastModifyTS'] = $zeit;
+        }
+		if ($this->contactor_hack){
+			$dataInfo['isMain'] = 1;
+		}
+		$dataInfo['newId'] = $this->dataModel->insert_db($dataInfo);
+
+
+
+        $this->updateCrmUpdateTS($dataInfo['crmId']);
+
+        if ($dataInfo==false){
+            return;
+        }
+
+		if ($dataInfo['isMain']==1){
+			//是主要联系人，更新主要联系人段落
+			$contactorData = array();
+			$contactorData['mainContactorName']= $dataInfo['name'];
+			if ($dataInfo['dianhua']!=''){
+				$contactorData['mainContactorType'] = 0;
+				$contactorData['mainContactorNum'] = $dataInfo['dianhua'];
+			} else if ($dataInfo['qq']!=''){
+				$contactorData['mainContactorType'] = 1;
+				$contactorData['mainContactorNum'] = $dataInfo['qq'];
+			} else if ($dataInfo['weixin']!=''){
+				$contactorData['mainContactorType'] = 2;
+				$contactorData['mainContactorNum'] = $dataInfo['weixin'];
+			} else {
+				$contactorData['mainContactorType'] = 3;
+				$contactorData['mainContactorNum'] = $dataInfo['qitafangshi'];
+			}
+			$contactorData['mainContactorId'] = $dataInfo['newId'];
+
+			$this->db->where(array('_id'=>new MongoId($dataInfo['crmId'])))->update('cCrm',$contactorData);
+		}
+		$jsonRst = 1;
+        $jsonData = array();
+        $jsonData['goto_url'] = 'refer';
+        $jsonData['newId'] = $dataInfo['newId'];
+        echo $this->exportData($jsonData,$jsonRst);
+
+	}
+
     function doCreateSub($typ){
         $zeit = time();
         $targetSubMenu = $typ;

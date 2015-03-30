@@ -295,7 +295,7 @@ $.extend($.validator, {
 		range: $.validator.format("Please enter a value between {0} and {1}."),
 		max: $.validator.format("需要输入小于等于{0}的数字。"),
 		min: $.validator.format("需要输入大于等于{0}的数字。"),
-		notnull: $.validator.format("不可使用默认值。"),
+		notnull: $.validator.format("不可为空。"),
 	},
 
 	autoCreateRanges: false,

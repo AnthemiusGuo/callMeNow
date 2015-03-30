@@ -6,33 +6,40 @@ class Phone extends P_Controller {
 
 	}
 
-	function call($phone =""){
+	function call($phone ="",$callId=""){
 		$this->controller_name = "index";
 		$this->phone = trim($phone);
 
 		$this->load_menus();
         $this->load_org_info();
 
-		if ($phone==""){
+		if ($this->phone==""){
 			$this->template->load('default_page', 'phone/no_phone');
 			return;
 		}
 		//添加 title
 		array_unshift($this->title,$this->phone);
 
-		//搜索数据
-		$regex = new MongoRegex("/$info/iu");
+		if ($callId!="" && MongoId::isValid($callId)){
+			$this->load->model('lists/Contactor_list',"contactorList");
+			$where_clause = array(
+				'_id'=>new MongoId($callId)
+				);
 
-		$this->load->model('lists/Contactor_list',"contactorList");
-		$where_clause = array(
-			'orgId'=>$this->myOrgId,
-			'$or'=>array(array("dianhua"=>$regex),
-					array("qq"=>$regex))
-			);
+			$num = $this->contactorList->load_data_with_orignal_where($where_clause);
+		} else {
+			//搜索数据
+			$regex = new MongoRegex("/{$this->phone}/iu");
 
+			$this->load->model('lists/Contactor_list',"contactorList");
+			$where_clause = array(
+				'orgId'=>$this->myOrgId,
+				'$or'=>array(array("dianhua"=>$regex),
+						array("qq"=>$regex))
+				);
 
-		$num = $this->contactorList->load_data_with_orignal_where($where_clause);
-
+			$num = $this->contactorList->load_data_with_orignal_where($where_clause);
+		}
 
         if ($num > 1)
         {
@@ -50,7 +57,10 @@ class Phone extends P_Controller {
 			return;
         } else if ($num==1){
 			//有查到一个联系人
-			$this->contactorInfo = $this->contactorList->recordList[0];
+			foreach ($this->contactorList->record_list as $key=>$this_record){
+				$this->contactorInfo = $this_record;
+			}
+
 			$this->__one_contactor();
 			return;
 		} else {
@@ -96,10 +106,56 @@ class Phone extends P_Controller {
         $this->load->model('lists/Pay_list',"payList");
         $this->payList->load_data_with_foreign_key("crmId",$this->crmId,5);
 
+		$this->setViewType(VIEW_TYPE_HTML);
+
+        $this->createUrlC = 'crm';
+        $this->createUrlF = 'batchCreate';
+
+        $this->load->model('records/Pay_model',"payModel");
+        $this->payModel->setRelatedOrgId($this->myOrgId);
+        $this->payModel->field_list['payTS']->default = time();
+
+		$this->load->model('records/Contact_model',"contactModel");
+        $this->contactModel->setRelatedOrgId($this->myOrgId);
+        $this->contactModel->field_list['contactTS']->default = time();
+
+		$this->load->model('records/Send_model',"sendModel");
+        $this->sendModel->setRelatedOrgId($this->myOrgId);
+        $this->sendModel->field_list['beginTS']->default = time();
+
+		$this->load->model('records/Book_model',"bookModel");
+        $this->bookModel->setRelatedOrgId($this->myOrgId);
+        $this->bookModel->field_list['beginTS']->default = time();
+
+		$this->load->model('records/Bookin_model',"bookinModel");
+        $this->bookinModel->setRelatedOrgId($this->myOrgId);
+        $this->bookinModel->field_list['beginTS']->default = time();
+
+		// $this->load->model('records/Pay_model',"payModel");
+        // $this->payModel->setRelatedOrgId($this->myOrgId);
+        // $this->payModel->field_list['payTS']->default = time();
+
+
 		$this->template->load('default_page', 'phone/one_contactor');
 	}
 
 	private function __no_contactor(){
+		$this->setViewType(VIEW_TYPE_HTML);
+
+        $this->createUrlC = 'crm';
+        $this->createUrlF = 'doQuickCreateContactor';
+
+        $this->load->model('records/Contactor_model',"dataInfo");
+        $this->dataInfo->setRelatedOrgId($this->myOrgId);
+		$this->dataInfo->field_list['dianhua']->default = $this->phone;
+		$this->dataInfo->field_list['crmId']->is_must_input = true;
+
+        $this->createPostFields = $this->dataInfo->buildChangeNeedFields(array('crmId'));
+        $this->modifyNeedFields = $this->dataInfo->buildQuickChangeShowFields();
+
+        $this->editor_typ = 0;
+        $this->title_create = "新建联系人";
+
 		$this->template->load('default_page', 'phone/no_contactor');
 	}
 
